@@ -1,0 +1,15 @@
+{
+  "ExpandedNodes": [
+    "",
+    "\\webAPI",
+    "\\webAPI\\Controllers",
+    "\\webAPI\\obj",
+    "\\webAPI\\obj\\Debug",
+    "\\webAPI\\obj\\Debug\\net6.0",
+    "\\webAPI\\obj\\Debug\\net6.0\\ref",
+    "\\webAPI\\obj\\Debug\\net6.0\\refint",
+    "\\webAPI\\obj\\Release",
+    "\\webAPI\\obj\\Release\\net6.0"
+  ],
+  "PreviewInSolutionExplorer": false
+}
