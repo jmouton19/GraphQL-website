@@ -57,7 +57,7 @@ function PrimaryAppBar() {
           >
             <MenuItem
               component={Link}
-              to={`/map/`}
+              to={`/map`}
               onClick={handleUserMenuClose}
             >
               Map
