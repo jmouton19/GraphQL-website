@@ -2,7 +2,7 @@ import { Route, BrowserRouter as Router, Routes } from 'react-router-dom';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import Home from './pages/Home';
-import Map from './pages/Map';
+import MapPage from './pages/MapPage';
 import PrimaryAppBar from './components/AppBar';
 
 const darkTheme = createTheme({
@@ -22,7 +22,7 @@ function App() {
         <PrimaryAppBar />
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/map" element={<Map />} />
+          <Route path="/map" element={<MapPage />} />
         </Routes>
       </Router>
     </ThemeProvider>
