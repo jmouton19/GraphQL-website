@@ -1,13 +1,12 @@
 import {
-  Navigate,
   Route,
   BrowserRouter as Router,
   Routes,
-  useLocation,
 } from 'react-router-dom';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import Home from './pages/Home';
+import PrimaryAppBar from './components/AppBar';
 
 const darkTheme = createTheme({
   palette: {
@@ -23,6 +22,7 @@ function App() {
     <ThemeProvider theme={darkTheme}>
       <CssBaseline />
       <Router>
+        <PrimaryAppBar/>
         <Routes>
           <Route path="/" element={<Home />} />
         </Routes>
