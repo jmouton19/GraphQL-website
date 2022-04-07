@@ -19,7 +19,7 @@ function PrimaryAppBar() {
       <AppBar>
         <Toolbar>
           <StyledLink to="/">
-            <Typography variant="h6" component="div">
+            <Typography variant="h6" component="div" color="primary">
               <b>Kasie</b>
             </Typography>
           </StyledLink>
