@@ -23,10 +23,10 @@ function MapPage() {
     <>
       <MapContainer
         center={userLocation}
-        zoom={13}
+        zoom={16}
         style={{ height: '50vh', marginTop: '65px' }}
       >
-        <ChangeView center={userLocation} zoom={13} /> 
+        <ChangeView center={userLocation} zoom={16} />
         <TileLayer
           attribution='&copy; <a href="https://stadiamaps.com/">Stadia Maps</a>, &copy; <a href="https://openmaptiles.org/">OpenMapTiles</a> &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors'
           url="https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{x}/{y}{r}.png"
@@ -37,6 +37,7 @@ function MapPage() {
           </Popup>
         </Marker>
       </MapContainer>
+      
     </>
   );
 }
