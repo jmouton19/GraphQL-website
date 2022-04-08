@@ -83,7 +83,7 @@ namespace webAPI.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Post",
+                name: "Posts",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
@@ -95,9 +95,9 @@ namespace webAPI.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Post", x => x.Id);
+                    table.PrimaryKey("PK_Posts", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Post_Memberships_creatorId",
+                        name: "FK_Posts_Memberships_creatorId",
                         column: x => x.creatorId,
                         principalTable: "Memberships",
                         principalColumn: "Id",
@@ -105,7 +105,7 @@ namespace webAPI.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Comment",
+                name: "Comments",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
@@ -117,34 +117,29 @@ namespace webAPI.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Comment", x => x.Id);
+                    table.PrimaryKey("PK_Comments", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Comment_Memberships_memberId",
+                        name: "FK_Comments_Memberships_memberId",
                         column: x => x.memberId,
                         principalTable: "Memberships",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Comment_Post_postId",
+                        name: "FK_Comments_Posts_postId",
                         column: x => x.postId,
-                        principalTable: "Post",
+                        principalTable: "Posts",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
-            migrationBuilder.InsertData(
-                table: "Users",
-                columns: new[] { "Id", "DOB", "avatar", "email", "firstName", "lastName", "password", "username" },
-                values: new object[] { 1, new DateOnly(1943, 11, 23), null, "nicolvisser@yahoo.com", "Nicol", "Visser", "1234", "VisserMan" });
-
             migrationBuilder.CreateIndex(
-                name: "IX_Comment_memberId",
-                table: "Comment",
+                name: "IX_Comments_memberId",
+                table: "Comments",
                 column: "memberId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Comment_postId",
-                table: "Comment",
+                name: "IX_Comments_postId",
+                table: "Comments",
                 column: "postId");
 
             migrationBuilder.CreateIndex(
@@ -163,18 +158,18 @@ namespace webAPI.Migrations
                 column: "userId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Post_creatorId",
-                table: "Post",
+                name: "IX_Posts_creatorId",
+                table: "Posts",
                 column: "creatorId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "Comment");
+                name: "Comments");
 
             migrationBuilder.DropTable(
-                name: "Post");
+                name: "Posts");
 
             migrationBuilder.DropTable(
                 name: "Memberships");

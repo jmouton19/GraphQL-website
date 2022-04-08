@@ -12,7 +12,7 @@ using webAPI.data;
 namespace webAPI.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20220408120800_addInitialDb")]
+    [Migration("20220408214020_addInitialDb")]
     partial class addInitialDb
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -52,7 +52,7 @@ namespace webAPI.Migrations
 
                     b.HasIndex("postId");
 
-                    b.ToTable("Comment");
+                    b.ToTable("Comments");
                 });
 
             modelBuilder.Entity("webAPI.Models.Group", b =>
@@ -138,7 +138,7 @@ namespace webAPI.Migrations
 
                     b.HasIndex("creatorId");
 
-                    b.ToTable("Post");
+                    b.ToTable("Posts");
                 });
 
             modelBuilder.Entity("webAPI.Models.User", b =>
@@ -176,18 +176,6 @@ namespace webAPI.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Users");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            DOB = new DateOnly(1943, 11, 23),
-                            email = "nicolvisser@yahoo.com",
-                            firstName = "Nicol",
-                            lastName = "Visser",
-                            password = "1234",
-                            username = "VisserMan"
-                        });
                 });
 
             modelBuilder.Entity("webAPI.Models.Comment", b =>
