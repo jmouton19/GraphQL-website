@@ -14,7 +14,7 @@ namespace webAPI.data
         public DbSet<Comment> Comments { get; set; } = default!;
         protected override void OnModelCreating(ModelBuilder modelBuilder){
                 modelBuilder.HasPostgresExtension("postgis");
-                User nicol= new User {
+                modelBuilder.Entity<User>().HasData(new User {
                         Id = 1,
                         lastName = "Visser",
                         firstName = "Nicol",
@@ -22,9 +22,7 @@ namespace webAPI.data
                         email="nicolvisser@yahoo.com",
                         password="1234",
                         username="VisserMan"
-                        };
-
-                    modelBuilder.Entity<User>().HasData(nicol);
+                        });
                 }
 
         }

@@ -5,23 +5,28 @@ using webAPI.Models;
 namespace webAPI.graphQL{
     public class Query{
         [UseProjection]
-        public IQueryable<User> GetUsers([Service] AppDbContext context){
+        [UseDbContext(typeof(AppDbContext))]
+        public IQueryable<User> GetUsers([ScopedService] AppDbContext context){
             return context.Users;
         }
         [UseProjection]
-        public IQueryable<Group> GetGroups([Service] AppDbContext context){
+        [UseDbContext(typeof(AppDbContext))]
+        public IQueryable<Group> GetGroups([ScopedService] AppDbContext context){
             return context.Groups;
         }
         [UseProjection]
-        public IQueryable<Membership> GetMemberships([Service] AppDbContext context){
+        [UseDbContext(typeof(AppDbContext))]
+        public IQueryable<Membership> GetMemberships([ScopedService] AppDbContext context){
             return context.Memberships;
         }
         [UseProjection]
-        public IQueryable<Post> GetPosts([Service] AppDbContext context){
+        [UseDbContext(typeof(AppDbContext))]
+        public IQueryable<Post> GetPosts([ScopedService] AppDbContext context){
             return context.Posts;
         }
         [UseProjection]
-        public IQueryable<Comment> GetComments([Service] AppDbContext context){
+        [UseDbContext(typeof(AppDbContext))]
+        public IQueryable<Comment> GetComments([ScopedService] AppDbContext context){
             return context.Comments;
         }
     }

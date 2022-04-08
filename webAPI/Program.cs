@@ -6,7 +6,7 @@ using webAPI.graphQL;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddDbContext<AppDbContext>(opts =>
+builder.Services.AddPooledDbContextFactory<AppDbContext>(opts =>
 {
     var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
     opts.UseNpgsql(connectionString);

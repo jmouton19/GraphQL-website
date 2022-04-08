@@ -174,6 +174,18 @@ namespace webAPI.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Users");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            DOB = new DateOnly(1943, 11, 23),
+                            email = "nicolvisser@yahoo.com",
+                            firstName = "Nicol",
+                            lastName = "Visser",
+                            password = "1234",
+                            username = "VisserMan"
+                        });
                 });
 
             modelBuilder.Entity("webAPI.Models.Comment", b =>

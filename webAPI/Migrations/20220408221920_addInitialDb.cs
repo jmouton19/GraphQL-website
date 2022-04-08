@@ -132,6 +132,11 @@ namespace webAPI.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.InsertData(
+                table: "Users",
+                columns: new[] { "Id", "DOB", "avatar", "email", "firstName", "lastName", "password", "username" },
+                values: new object[] { 1, new DateOnly(1943, 11, 23), null, "nicolvisser@yahoo.com", "Nicol", "Visser", "1234", "VisserMan" });
+
             migrationBuilder.CreateIndex(
                 name: "IX_Comments_memberId",
                 table: "Comments",
