@@ -13,12 +13,12 @@ const cheeseIcon = new Icon({
 });
 
 const posts = [
-  { location: [-33.9321, 18.8602] },
-  { location: [-33.9421, 18.8702] },
-  { location: [-33.9521, 18.8802] },
-  { location: [-33.9321, 18.8902] },
-  { location: [-33.9421, 18.8502] },
-  { location: [-33.9521, 18.8402] },
+  { id: 1, location: [-33.9321, 18.8602] },
+  { id: 2, location: [-33.9421, 18.8702] },
+  { id: 3, location: [-33.9521, 18.8802] },
+  { id: 4, location: [-33.9321, 18.8902] },
+  { id: 5, location: [-33.9421, 18.8502] },
+  { id: 6, location: [-33.9521, 18.8402] },
 ];
 
 function MapPage() {
@@ -48,10 +48,10 @@ function MapPage() {
           </Popup>
         </Marker>
         {posts.map((post)=> (
-          <Marker position={post['location']} icon={cheeseIcon}/>
+          <Marker key={post['id']} position={post['location']} icon={cheeseIcon}/>
         ))}
       </MapContainer>
-      <Container maxWidth="sm">
+      <Container flexGrow>
         <PostSlider posts={posts}/>
       </Container>
     </>
