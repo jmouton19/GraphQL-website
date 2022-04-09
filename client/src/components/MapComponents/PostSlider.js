@@ -1,13 +1,25 @@
-import { Card, CardContent, Stack, Box } from '@mui/material';
+import { Stack, Box } from '@mui/material';
 import React, { Component } from 'react';
 import Slider from 'react-slick';
+import PostCard from '../PostCard';
 
 export default class PostSlider extends Component {
+  constructor(props) {
+    super(props);
+    this.slider = React.createRef();
+  }
+  componentDidUpdate(prevProps) {
+    if (prevProps.focusedPost !== this.props.focusedPost) {
+      console.log(this.props.focusedPost);
+      this.slider.current.slickGoTo(
+        this.props.posts.indexOf(this.props.focusedPost)
+      );
+    }
+  }
   render() {
     const { posts } = this.props;
     const settings = {
-      className: "center",
-      infinite: true,
+      infinite: false,
       slidesToShow: 3,
       speed: 500,
       dots: true,
@@ -23,19 +35,16 @@ export default class PostSlider extends Component {
           settings: {
             slidesToShow: 1,
             slidesToScroll: 1,
-            centerMode: false,
           },
         },
       ],
     };
     return (
       <Box mt={2} ml={2} mr={2}>
-        <Slider {...settings}>
+        <Slider {...settings} ref={this.slider}>
           {posts.map((post) => (
             <Stack padding={1}>
-              <Card>
-                <CardContent>{post.name}</CardContent>
-              </Card>
+              <PostCard postData={post} frameHeight="300" />
             </Stack>
           ))}
         </Slider>

@@ -3,9 +3,7 @@ import { Stack } from '@mui/material';
 import { Container } from '@mui/material';
 import React from 'react';
 import PostCard from '../components/PostCard';
-import {usePosts} from '../providers/PostProvider';
-
-
+import { usePosts } from '../providers/PostProvider';
 
 function Feed() {
   const data = usePosts();
@@ -20,7 +18,7 @@ function Feed() {
         >
           <Stack spacing={2}>
             {data.map((postData) => (
-              <PostCard postData={postData} />
+              <PostCard postData={postData} frameHeight="460" />
             ))}
           </Stack>
         </Box>

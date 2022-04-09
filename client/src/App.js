@@ -18,19 +18,32 @@ const darkTheme = createTheme({
 
 function App() {
   return (
-    <PostProvider>
-      <ThemeProvider theme={darkTheme}>
-        <CssBaseline />
-        <Router>
-          <PrimaryAppBar />
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/map" element={<MapPage />} />
-            <Route path="/feed" element={<Feed />} />
-          </Routes>
-        </Router>
-      </ThemeProvider>
-    </PostProvider>
+    <ThemeProvider theme={darkTheme}>
+      <CssBaseline />
+      <Router>
+        <PrimaryAppBar />
+        <Routes>
+          <Route path="/" element={<Home />} />
+
+          <Route
+            path="/map"
+            element={
+              <PostProvider>
+                <MapPage />
+              </PostProvider>
+            }
+          />
+          <Route
+            path="/feed"
+            element={
+              <PostProvider>
+                <Feed />
+              </PostProvider>
+            }
+          />
+        </Routes>
+      </Router>
+    </ThemeProvider>
   );
 }
 

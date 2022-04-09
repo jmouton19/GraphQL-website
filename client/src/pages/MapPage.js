@@ -15,6 +15,7 @@ const cheeseIcon = new Icon({
 
 function MapPage() {
   const [userLocation, setUserLocation] = useState([-33.9321, 18.8602]);
+  const [focusedPost, setFocusedPost] = useState(null);
   const posts = usePosts();
 
   useEffect(() => {
@@ -28,7 +29,7 @@ function MapPage() {
       <MapContainer
         center={userLocation}
         zoom={16}
-        style={{ height: '50vh', marginTop: '65px' }}
+        style={{ height: '40vh', marginTop: '65px' }}
       >
         <ChangeView center={userLocation} zoom={16} />
         <TileLayer
@@ -40,12 +41,20 @@ function MapPage() {
             You are Gru-<b>hère</b>.
           </Popup>
         </Marker>
-        {posts.map((post)=> (
-          <Marker key={post['id']} position={post['location']} icon={cheeseIcon}/>
+        {posts.map((post) => (
+          <Marker
+            position={post.location}
+            icon={cheeseIcon}
+            eventHandlers={{
+              click: (e) => {
+                setFocusedPost(post);
+              },
+            }}
+          />
         ))}
       </MapContainer>
       <Container flexGrow>
-        <PostSlider posts={posts}/>
+        <PostSlider posts={posts} focusedPost={focusedPost} />
       </Container>
     </>
   );

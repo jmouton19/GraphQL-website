@@ -25,7 +25,7 @@ const ExpandMore = styled((props) => {
   }),
 }));
 
-function PostCard({ postData }) {
+function PostCard({ postData, frameHeight }) {
   const [expanded, setExpanded] = React.useState(false);
 
   const handleExpandClick = () => {
@@ -48,7 +48,9 @@ function PostCard({ postData }) {
         title={postData.name}
         subheader={`Posted in ${postData.group}`}
       />
-      <CardMedia component="iframe" height="460" image={postData.src} />
+      {postData.src && (
+        <CardMedia component="iframe" height={frameHeight} image={postData.src} />
+      )}
       <CardContent>
         <Typography variant="body2" color="text.secondary">
           {postData.caption}
