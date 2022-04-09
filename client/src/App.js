@@ -3,6 +3,7 @@ import { ThemeProvider, createTheme } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import Home from './pages/Home';
 import MapPage from './pages/MapPage';
+import Feed from './pages/Feed';
 import PrimaryAppBar from './components/AppBar';
 
 const darkTheme = createTheme({
@@ -23,6 +24,7 @@ function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/map" element={<MapPage />} />
+          <Route path="/feed" element={<Feed />} />
         </Routes>
       </Router>
     </ThemeProvider>
