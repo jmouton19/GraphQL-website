@@ -10,17 +10,17 @@ export default class PostSlider extends Component {
   }
   componentDidUpdate(prevProps) {
     if (prevProps.focusedPost !== this.props.focusedPost) {
-      console.log(this.props.focusedPost);
+      console.log(this.slider.current.props)
       this.slider.current.slickGoTo(
-        this.props.posts.indexOf(this.props.focusedPost)
+        this.props.posts.indexOf(this.props.focusedPost) - (window.innerWidth > 1024 ? 1 : 0)
       );
     }
   }
   render() {
     const { posts } = this.props;
     const settings = {
-      infinite: false,
-      slidesToShow: 3,
+      infinite: (posts.length < 3 ? false : true),
+      slidesToShow: (posts.length < 3 ? posts.length : 3),
       speed: 500,
       dots: true,
       responsive: [

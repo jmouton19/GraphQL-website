@@ -60,12 +60,16 @@ function MapPage() {
             position={post.location}
             icon={cheeseIcon}
             eventHandlers={{
-              click: (e) => {
+              click: () => {
                 setFocusedPost(post);
                 setCenter(post.location);
               },
             }}
-          />
+          > 
+            <Popup>
+              {post.caption}
+            </Popup>
+          </Marker>
         ))}
       </MapContainer>
       <Container flexGrow>
