@@ -5,6 +5,7 @@ import Home from './pages/Home';
 import MapPage from './pages/MapPage';
 import Feed from './pages/Feed';
 import PrimaryAppBar from './components/AppBar';
+import PostProvider from './providers/PostProvider';
 
 const darkTheme = createTheme({
   palette: {
@@ -17,17 +18,19 @@ const darkTheme = createTheme({
 
 function App() {
   return (
-    <ThemeProvider theme={darkTheme}>
-      <CssBaseline />
-      <Router>
-        <PrimaryAppBar />
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/map" element={<MapPage />} />
-          <Route path="/feed" element={<Feed />} />
-        </Routes>
-      </Router>
-    </ThemeProvider>
+    <PostProvider>
+      <ThemeProvider theme={darkTheme}>
+        <CssBaseline />
+        <Router>
+          <PrimaryAppBar />
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/map" element={<MapPage />} />
+            <Route path="/feed" element={<Feed />} />
+          </Routes>
+        </Router>
+      </ThemeProvider>
+    </PostProvider>
   );
 }
 

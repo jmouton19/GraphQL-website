@@ -6,9 +6,7 @@ export default class PostSlider extends Component {
   render() {
     const { posts } = this.props;
     const settings = {
-      className: 'center',
       infinite: true,
-      centerPadding: '60px',
       slidesToShow: 3,
       speed: 500,
       dots: true,
