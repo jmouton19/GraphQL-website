@@ -91,7 +91,9 @@ namespace webAPI.Migrations
                     creatorId = table.Column<int>(type: "integer", nullable: false),
                     postType = table.Column<string>(type: "text", nullable: false),
                     dateCreated = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    body = table.Column<string>(type: "text", nullable: false)
+                    body = table.Column<string>(type: "text", nullable: false),
+                    latitude = table.Column<float>(type: "real", nullable: false),
+                    longitude = table.Column<float>(type: "real", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -110,7 +112,7 @@ namespace webAPI.Migrations
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    memberId = table.Column<int>(type: "integer", nullable: false),
+                    creatorId = table.Column<int>(type: "integer", nullable: false),
                     postId = table.Column<int>(type: "integer", nullable: false),
                     dateCreated = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     body = table.Column<string>(type: "text", nullable: false)
@@ -119,8 +121,8 @@ namespace webAPI.Migrations
                 {
                     table.PrimaryKey("PK_Comments", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Comments_Memberships_memberId",
-                        column: x => x.memberId,
+                        name: "FK_Comments_Memberships_creatorId",
+                        column: x => x.creatorId,
                         principalTable: "Memberships",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -137,10 +139,15 @@ namespace webAPI.Migrations
                 columns: new[] { "Id", "DOB", "avatar", "email", "firstName", "lastName", "password", "username" },
                 values: new object[] { 1, new DateOnly(1943, 11, 23), null, "nicolvisser@yahoo.com", "Nicol", "Visser", "1234", "VisserMan" });
 
+            migrationBuilder.InsertData(
+                table: "Groups",
+                columns: new[] { "Id", "avatar", "dateCreated", "description", "name", "ownerId" },
+                values: new object[] { 1, null, new DateOnly(1947, 11, 3), "Chess group for nerds", "Nicol's Chess Club", 1 });
+
             migrationBuilder.CreateIndex(
-                name: "IX_Comments_memberId",
+                name: "IX_Comments_creatorId",
                 table: "Comments",
-                column: "memberId");
+                column: "creatorId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Comments_postId",

@@ -35,18 +35,18 @@ namespace webAPI.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<int>("creatorId")
+                        .HasColumnType("integer");
+
                     b.Property<DateTime>("dateCreated")
                         .HasColumnType("timestamp with time zone");
-
-                    b.Property<int>("memberId")
-                        .HasColumnType("integer");
 
                     b.Property<int>("postId")
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("memberId");
+                    b.HasIndex("creatorId");
 
                     b.HasIndex("postId");
 
@@ -82,6 +82,16 @@ namespace webAPI.Migrations
                     b.HasIndex("ownerId");
 
                     b.ToTable("Groups");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            dateCreated = new DateOnly(1947, 11, 3),
+                            description = "Chess group for nerds",
+                            name = "Nicol's Chess Club",
+                            ownerId = 1
+                        });
                 });
 
             modelBuilder.Entity("webAPI.Models.Membership", b =>
@@ -196,9 +206,9 @@ namespace webAPI.Migrations
 
             modelBuilder.Entity("webAPI.Models.Comment", b =>
                 {
-                    b.HasOne("webAPI.Models.Membership", "member")
+                    b.HasOne("webAPI.Models.Membership", "creator")
                         .WithMany("comments")
-                        .HasForeignKey("memberId")
+                        .HasForeignKey("creatorId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -208,7 +218,7 @@ namespace webAPI.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("member");
+                    b.Navigation("creator");
 
                     b.Navigation("post");
                 });
@@ -216,7 +226,7 @@ namespace webAPI.Migrations
             modelBuilder.Entity("webAPI.Models.Group", b =>
                 {
                     b.HasOne("webAPI.Models.User", "owner")
-                        .WithMany("groups")
+                        .WithMany("OwnedGroups")
                         .HasForeignKey("ownerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -273,7 +283,7 @@ namespace webAPI.Migrations
 
             modelBuilder.Entity("webAPI.Models.User", b =>
                 {
-                    b.Navigation("groups");
+                    b.Navigation("OwnedGroups");
 
                     b.Navigation("memberships");
                 });

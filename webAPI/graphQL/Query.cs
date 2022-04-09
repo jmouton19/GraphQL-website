@@ -9,7 +9,7 @@ namespace webAPI.graphQL{
         public IQueryable<User> GetUsers([ScopedService] AppDbContext context){
             return context.Users;
         }
-      [UseDbContext(typeof(AppDbContext))]
+        [UseDbContext(typeof(AppDbContext))]
         [UseProjection]
         public IQueryable<Group> GetGroups([ScopedService] AppDbContext context){
             return context.Groups;

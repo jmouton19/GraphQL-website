@@ -19,7 +19,7 @@ namespace webAPI.Models
         [GraphQLDescription("Hashed user password.")]
         public string password { get; set; } = string.Empty;
         [GraphQLDescription("Groups this user owns.")]
-        public List<Group> ?groups { get; set; }
+        public List<Group> ?OwnedGroups { get; set; }
         [GraphQLDescription("Groups this user is part of, including the groups owned by user.")]
         public List<Membership> ?memberships { get; set; } 
     }

@@ -12,7 +12,7 @@ builder.Services.AddPooledDbContextFactory<AppDbContext>(opts =>
     opts.UseNpgsql(connectionString);
 });
 
-builder.Services.AddGraphQLServer().AddProjections().AddQueryType<Query>();
+builder.Services.AddGraphQLServer().AddProjections().AddType<UserType>().AddQueryType<Query>();
 
 
 var app = builder.Build();

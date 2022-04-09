@@ -14,6 +14,12 @@ namespace webAPI.data
         public DbSet<Comment> Comments { get; set; } = default!;
         protected override void OnModelCreating(ModelBuilder modelBuilder){
                 modelBuilder.HasPostgresExtension("postgis");
+                modelBuilder.Entity<User>().HasMany(u=>u.OwnedGroups).WithOne(g=>g.owner!).HasForeignKey(g=>g.ownerId);
+                modelBuilder.Entity<Group>().HasMany(g=>g.memberships).WithOne(g=>g.group!).HasForeignKey(m=>m.groupId);
+                modelBuilder.Entity<User>().HasMany(u=>u.memberships).WithOne(u=>u.user!).HasForeignKey(m=>m.userId);
+                modelBuilder.Entity<Membership>().HasMany(m=>m.posts).WithOne(m=>m.creator!).HasForeignKey(p=>p.creatorId);
+                modelBuilder.Entity<Membership>().HasMany(m=>m.comments).WithOne(m=>m.creator!).HasForeignKey(p=>p.creatorId);
+                modelBuilder.Entity<Post>().HasMany(p=>p.comments).WithOne(c=>c.post!).HasForeignKey(c=>c.postId);
                 modelBuilder.Entity<User>().HasData(new User {
                         Id = 1,
                         lastName = "Visser",
@@ -23,7 +29,13 @@ namespace webAPI.data
                         password="1234",
                         username="VisserMan"
                         });
-                }
-
+                        modelBuilder.Entity<Group>().HasData(new Group {
+                        Id = 1,
+                        description="Chess group for nerds",
+                        name="Nicol's Chess Club",
+                        dateCreated=DateOnly.Parse("11/03/1947"),
+                        ownerId=1,
+                        }); 
+                }  
         }
 }

@@ -7,8 +7,11 @@ namespace webAPI.Models
         [Key]
         public int Id { get; set; }
         [Required]
+        public int creatorId { get; set; }
+        [Required]
         [GraphQLDescription("Member who created the post.")]
         public Membership ?creator { get; set; }
+
         [Required]
         [GraphQLDescription("Specifies the type of post. Video or text.")]
         public string postType { get; set; } = string.Empty;

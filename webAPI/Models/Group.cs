@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+
 namespace webAPI.Models
 {
     [GraphQLDescription("Represents a group on Kasie.")]
@@ -6,8 +7,12 @@ namespace webAPI.Models
         [Key]
         public int Id { get; set; }
         [Required]
+
         public User ?owner { get; set; }
         [Required]
+        public int ownerId { get; set; }
+        [Required]
+
         public string name { get; set; } = string.Empty;
         [Required]
         public DateOnly dateCreated { get; set; }
