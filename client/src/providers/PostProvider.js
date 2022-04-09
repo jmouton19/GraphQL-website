@@ -16,9 +16,9 @@ function PostProvider({ children }) {
       location: [-33.9293, 18.864],
     },
     {
-      name: 'Nicol Visser',
-      group: 'Code with Holes',
-      caption: "I'm out here coding",
+      name: 'JC Mouton',
+      group: 'Nightowls',
+      caption: "Another easy 3am code push :sunglasses:",
       src: null,
       location: [-33.9293, 18.866],
     },
