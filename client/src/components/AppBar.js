@@ -1,18 +1,30 @@
 import React, { useState } from 'react';
-import { AppBar, Avatar, IconButton, Menu, MenuItem, Box, Toolbar, Typography } from '@mui/material';
+import {
+  AppBar,
+  Avatar,
+  IconButton,
+  Menu,
+  MenuItem,
+  Box,
+  Toolbar,
+  Typography,
+} from '@mui/material';
 import { Link } from 'react-router-dom';
-import StyledLink from './StyledLink'
+import StyledLink from './StyledLink';
+import NotificationsIcon from '@mui/icons-material/Notifications';
+import ChatIcon from '@mui/icons-material/Chat';
+import SearchIcon from '@mui/icons-material/Search';
 
 function PrimaryAppBar() {
-	const [userMenuAnchorEl, setUserMenuAnchorEl] = useState(null);
+  const [userMenuAnchorEl, setUserMenuAnchorEl] = useState(null);
 
-	const handleMenu = (event) => {
-		setUserMenuAnchorEl(event.currentTarget);
-	};
+  const handleMenu = (event) => {
+    setUserMenuAnchorEl(event.currentTarget);
+  };
 
-	const handleUserMenuClose = () => {
-		setUserMenuAnchorEl(null);
-	};
+  const handleUserMenuClose = () => {
+    setUserMenuAnchorEl(null);
+  };
 
   return (
     <>
@@ -24,6 +36,18 @@ function PrimaryAppBar() {
             </Typography>
           </StyledLink>
           <Box sx={{ flexGrow: 1 }} />
+
+          <IconButton size="large" color="primary">
+            <SearchIcon />
+          </IconButton>
+
+          <IconButton size="large" color="primary">
+            <ChatIcon />
+          </IconButton>
+
+          <IconButton size="large" color="primary">
+            <NotificationsIcon />
+          </IconButton>
 
           <IconButton
             size="large"
@@ -61,6 +85,13 @@ function PrimaryAppBar() {
               onClick={handleUserMenuClose}
             >
               Map
+            </MenuItem>
+            <MenuItem
+              component={Link}
+              to={`/feed`}
+              onClick={handleUserMenuClose}
+            >
+              Feed
             </MenuItem>
           </Menu>
         </Toolbar>
