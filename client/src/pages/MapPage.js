@@ -6,23 +6,16 @@ import { Icon } from 'leaflet';
 import ChangeView from '../components/MapComponents/ChangeView';
 import PostSlider from '../components/MapComponents/PostSlider';
 import { Container } from '@mui/material';
+import { usePosts } from '../providers/PostProvider';
 
 const cheeseIcon = new Icon({
   iconUrl: cheeseMarker,
   iconSize: [32, 46],
 });
 
-const posts = [
-  { id: 1, location: [-33.9321, 18.8602] },
-  { id: 2, location: [-33.9421, 18.8702] },
-  { id: 3, location: [-33.9521, 18.8802] },
-  { id: 4, location: [-33.9321, 18.8902] },
-  { id: 5, location: [-33.9421, 18.8502] },
-  { id: 6, location: [-33.9521, 18.8402] },
-];
-
 function MapPage() {
   const [userLocation, setUserLocation] = useState([-33.9321, 18.8602]);
+  const posts = usePosts();
 
   useEffect(() => {
     navigator.geolocation.getCurrentPosition(function (position) {
