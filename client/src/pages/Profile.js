@@ -17,11 +17,11 @@ import {
 //    Tab,
 	Typography,
 } from "@mui/material";
-//import { usePosts } from '../providers/PostProvider';
-//import PostCard from '../components/PostCard';
+import { usePosts } from '../providers/PostProvider';
+import PostCard from '../components/PostCard';
 
 function Profile() {
-   // const data = usePosts();
+    const data = usePosts();
     const [activeTabNumber, setActiveTabNumber] = React.useState("1");
 
     const handleTabChange = (event, newValue) => {
@@ -31,8 +31,8 @@ function Profile() {
         <Container>
             <Stack
                 direction = "column"
-                spacing={5} 
-                padding={10}  
+                spacing={3}  
+                mt={12} 
                 alignItems = "center"
                 //justifyContent="flex-end" 
             >
@@ -42,11 +42,15 @@ function Profile() {
                         width: 200,
                         height: 200, 
                         //borderRadius: "16px",
-                        //border: 4,
+                        border: 4,
+                        borderColor: "#ffc619",
                     }}
                 ></Avatar>
+                <Typography variant="h6" component="div" >
+                    Cheddar
+                </Typography>
                 <Typography>
-                    Kasie
+                    Bio ?
                 </Typography>
             </Stack>
             <TabContext value={activeTabNumber}>
@@ -67,21 +71,18 @@ function Profile() {
 		    		</Stack>
                 </Box>
                 <TabPanel value="1">
-
-
-
-                    <Typography>
-                        Tab1
-                    </Typography>
-
-
+                    <Stack spacing={2}>
+                        {data.map((postData) => (
+                        <PostCard postData={postData} frameHeight="460" />
+                        ))}
+                    </Stack>
                 </TabPanel>
                 <TabPanel value="2">
 
 
 
                     <Typography>
-                        Tab2
+                        Add groups
                     </Typography>
 
 
