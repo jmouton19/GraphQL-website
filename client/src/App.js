@@ -2,6 +2,7 @@ import { Route, BrowserRouter as Router, Routes } from 'react-router-dom';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import Home from './pages/Home';
+import Profile from './pages/Profile';
 import MapPage from './pages/MapPage';
 import Feed from './pages/Feed';
 import PrimaryAppBar from './components/AppBar';
@@ -41,7 +42,16 @@ function App() {
               </PostProvider>
             }
           />
+        <Route
+            path="/profile"
+            element={
+              <PostProvider>
+                <Profile />
+              </PostProvider>
+            }
+          />
         </Routes>
+        
       </Router>
     </ThemeProvider>
   );
