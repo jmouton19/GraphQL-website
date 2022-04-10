@@ -12,7 +12,7 @@ using webAPI.data;
 namespace webAPI.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20220410004036_addInitialDb")]
+    [Migration("20220410150921_addInitialDb")]
     partial class addInitialDb
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -221,6 +221,12 @@ namespace webAPI.Migrations
                         .HasColumnType("text");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("email")
+                        .IsUnique();
+
+                    b.HasIndex("username")
+                        .IsUnique();
 
                     b.ToTable("Users");
 

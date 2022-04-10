@@ -193,6 +193,18 @@ namespace webAPI.Migrations
                 name: "IX_Posts_creatorId",
                 table: "Posts",
                 column: "creatorId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Users_email",
+                table: "Users",
+                column: "email",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Users_username",
+                table: "Users",
+                column: "username",
+                unique: true);
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)

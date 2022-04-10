@@ -21,6 +21,13 @@ namespace webAPI.data
                 modelBuilder.Entity<Membership>().HasMany(m=>m.comments).WithOne(m=>m.creator!).HasForeignKey(p=>p.creatorId);
                 modelBuilder.Entity<Post>().HasMany(p=>p.comments).WithOne(c=>c.post!).HasForeignKey(c=>c.postId);
 
+                modelBuilder.Entity<User>()
+                .HasIndex(u => u.username)
+                .IsUnique(true);
+                modelBuilder.Entity<User>()
+                .HasIndex(u =>u.email)
+                .IsUnique(true);
+
 
                 modelBuilder.Entity<User>().HasData(new User {
                         Id = 1,

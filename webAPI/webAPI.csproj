@@ -9,8 +9,10 @@
   <ItemGroup>
     <PackageReference Include="GraphQL.Server.Ui.Voyager" Version="5.2.1" />
     <PackageReference Include="HotChocolate.AspNetCore" Version="12.7.0" />
+    <PackageReference Include="HotChocolate.AspNetCore.Authorization" Version="12.7.0" />
     <PackageReference Include="HotChocolate.Data.EntityFramework" Version="12.7.0" />
     <PackageReference Include="HotChocolate.Types.Selections" Version="10.5.5" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.3" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="6.0.3">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>

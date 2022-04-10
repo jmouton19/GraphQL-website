@@ -220,6 +220,12 @@ namespace webAPI.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("email")
+                        .IsUnique();
+
+                    b.HasIndex("username")
+                        .IsUnique();
+
                     b.ToTable("Users");
 
                     b.HasData(
