@@ -3,7 +3,8 @@ import { Box } from '@mui/material';
 import { Stack } from '@mui/material';
 import { Container } from '@mui/material';
 import { TabContext, TabList, TabPanel } from "@mui/lab";
-import { Tabs, Tab } from '@mui/material';
+import { Tab } from '@mui/material';
+import cheeseMarker from '../assets/cheese-pin.png';
 //import { styled } from '@mui/material/styles';
 //import { red } from '@mui/material/colors';
 import {
@@ -20,6 +21,8 @@ import {
 import { usePosts } from '../providers/PostProvider';
 import PostCard from '../components/PostCard';
 
+
+
 function Profile() {
     const data = usePosts();
     const [activeTabNumber, setActiveTabNumber] = React.useState("1");
@@ -31,7 +34,7 @@ function Profile() {
         <Container>
             <Stack
                 direction = "column"
-                spacing={3}  
+                spacing={1}  
                 mt={12} 
                 alignItems = "center"
                 //justifyContent="flex-end" 
@@ -46,9 +49,18 @@ function Profile() {
                         borderColor: "#ffc619",
                     }}
                 ></Avatar>
-                <Typography variant="h6" component="div" >
+                <Typography variant="h4"  >
                     Cheddar
                 </Typography>
+                <Stack
+                direction = "row"
+                spacing={0.2}  
+                >
+                    <img src={cheeseMarker} style={{ width: 25, height: 35, marginRight: 10 }} />
+                    <Typography variant="h6">
+                        Cape Town, South Africa
+                    </Typography>
+                </Stack>
                 <Typography>
                     Bio ?
                 </Typography>
