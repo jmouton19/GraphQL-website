@@ -20,6 +20,8 @@ namespace webAPI.data
                 modelBuilder.Entity<Membership>().HasMany(m=>m.posts).WithOne(m=>m.creator!).HasForeignKey(p=>p.creatorId);
                 modelBuilder.Entity<Membership>().HasMany(m=>m.comments).WithOne(m=>m.creator!).HasForeignKey(p=>p.creatorId);
                 modelBuilder.Entity<Post>().HasMany(p=>p.comments).WithOne(c=>c.post!).HasForeignKey(c=>c.postId);
+
+
                 modelBuilder.Entity<User>().HasData(new User {
                         Id = 1,
                         lastName = "Visser",
@@ -28,6 +30,33 @@ namespace webAPI.data
                         email="nicolvisser@yahoo.com",
                         password="1234",
                         username="VisserMan"
+                        },
+                        new User {
+                        Id = 2,
+                        lastName = "Mouton",
+                        firstName = "JC",
+                        DOB= DateOnly.Parse("06/03/2000"),
+                        email="jcmouton@protonmail.com",
+                        password="42069",
+                        username="JaySea"
+                        },
+                        new User {
+                        Id = 3,
+                        lastName = "Schommarz",
+                        firstName = "Philip",
+                        DOB= DateOnly.Parse("11/23/2000"),
+                        email="philler@gmail.com",
+                        password="qwerty",
+                        username="Fillet"
+                        },
+                        new User {
+                        Id = 4,
+                        lastName = "Steyn",
+                        firstName = "Lize",
+                        DOB= DateOnly.Parse("03/11/200"),
+                        email="mssteyn@rocketmail.com",
+                        password="hockey",
+                        username="MorneSteyn"
                         });
                         modelBuilder.Entity<Group>().HasData(new Group {
                         Id = 1,
@@ -35,7 +64,32 @@ namespace webAPI.data
                         name="Nicol's Chess Club",
                         dateCreated=DateOnly.Parse("11/03/1947"),
                         ownerId=1,
-                        }); 
+                        },
+                        new Group {
+                        Id = 2,
+                        description="Hit ball with stick",
+                        name="Maties Hockey",
+                        dateCreated=DateOnly.Parse("11/03/1969"),
+                        ownerId=4,
+                        });
+                        modelBuilder.Entity<Membership>().HasData(new Membership {
+                        Id = 1,
+                        admin=true,
+                        groupId=1,
+                        userId=1,
+                        },
+                        new Membership {
+                        Id = 2,
+                        admin=true,
+                        groupId=2,
+                        userId=4,
+                        },
+                        new Membership {
+                        Id = 3,
+                        admin=false,
+                        groupId=1,
+                        userId=2,
+                        });
                 }  
         }
 }

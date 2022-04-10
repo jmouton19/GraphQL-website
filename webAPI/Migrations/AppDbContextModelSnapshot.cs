@@ -91,6 +91,14 @@ namespace webAPI.Migrations
                             description = "Chess group for nerds",
                             name = "Nicol's Chess Club",
                             ownerId = 1
+                        },
+                        new
+                        {
+                            Id = 2,
+                            dateCreated = new DateOnly(1969, 11, 3),
+                            description = "Hit ball with stick",
+                            name = "Maties Hockey",
+                            ownerId = 4
                         });
                 });
 
@@ -118,6 +126,29 @@ namespace webAPI.Migrations
                     b.HasIndex("userId");
 
                     b.ToTable("Memberships");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            admin = true,
+                            groupId = 1,
+                            userId = 1
+                        },
+                        new
+                        {
+                            Id = 2,
+                            admin = true,
+                            groupId = 2,
+                            userId = 4
+                        },
+                        new
+                        {
+                            Id = 3,
+                            admin = false,
+                            groupId = 1,
+                            userId = 2
+                        });
                 });
 
             modelBuilder.Entity("webAPI.Models.Post", b =>
@@ -201,6 +232,36 @@ namespace webAPI.Migrations
                             lastName = "Visser",
                             password = "1234",
                             username = "VisserMan"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            DOB = new DateOnly(2000, 6, 3),
+                            email = "jcmouton@protonmail.com",
+                            firstName = "JC",
+                            lastName = "Mouton",
+                            password = "42069",
+                            username = "JaySea"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            DOB = new DateOnly(2000, 11, 23),
+                            email = "philler@gmail.com",
+                            firstName = "Philip",
+                            lastName = "Schommarz",
+                            password = "qwerty",
+                            username = "Fillet"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            DOB = new DateOnly(200, 3, 11),
+                            email = "mssteyn@rocketmail.com",
+                            firstName = "Lize",
+                            lastName = "Steyn",
+                            password = "hockey",
+                            username = "MorneSteyn"
                         });
                 });
 

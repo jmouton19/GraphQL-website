@@ -137,12 +137,32 @@ namespace webAPI.Migrations
             migrationBuilder.InsertData(
                 table: "Users",
                 columns: new[] { "Id", "DOB", "avatar", "email", "firstName", "lastName", "password", "username" },
-                values: new object[] { 1, new DateOnly(1943, 11, 23), null, "nicolvisser@yahoo.com", "Nicol", "Visser", "1234", "VisserMan" });
+                values: new object[,]
+                {
+                    { 1, new DateOnly(1943, 11, 23), null, "nicolvisser@yahoo.com", "Nicol", "Visser", "1234", "VisserMan" },
+                    { 2, new DateOnly(2000, 6, 3), null, "jcmouton@protonmail.com", "JC", "Mouton", "42069", "JaySea" },
+                    { 3, new DateOnly(2000, 11, 23), null, "philler@gmail.com", "Philip", "Schommarz", "qwerty", "Fillet" },
+                    { 4, new DateOnly(200, 3, 11), null, "mssteyn@rocketmail.com", "Lize", "Steyn", "hockey", "MorneSteyn" }
+                });
 
             migrationBuilder.InsertData(
                 table: "Groups",
                 columns: new[] { "Id", "avatar", "dateCreated", "description", "name", "ownerId" },
-                values: new object[] { 1, null, new DateOnly(1947, 11, 3), "Chess group for nerds", "Nicol's Chess Club", 1 });
+                values: new object[,]
+                {
+                    { 1, null, new DateOnly(1947, 11, 3), "Chess group for nerds", "Nicol's Chess Club", 1 },
+                    { 2, null, new DateOnly(1969, 11, 3), "Hit ball with stick", "Maties Hockey", 4 }
+                });
+
+            migrationBuilder.InsertData(
+                table: "Memberships",
+                columns: new[] { "Id", "admin", "groupId", "userId" },
+                values: new object[,]
+                {
+                    { 1, true, 1, 1 },
+                    { 2, true, 2, 4 },
+                    { 3, false, 1, 2 }
+                });
 
             migrationBuilder.CreateIndex(
                 name: "IX_Comments_creatorId",
