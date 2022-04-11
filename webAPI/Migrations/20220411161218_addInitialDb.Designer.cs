@@ -12,7 +12,7 @@ using webAPI.data;
 namespace webAPI.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20220410150921_addInitialDb")]
+    [Migration("20220411161218_addInitialDb")]
     partial class addInitialDb
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -22,7 +22,6 @@ namespace webAPI.Migrations
                 .HasAnnotation("ProductVersion", "6.0.3")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
-            NpgsqlModelBuilderExtensions.HasPostgresExtension(modelBuilder, "postgis");
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
             modelBuilder.Entity("webAPI.Models.Comment", b =>
