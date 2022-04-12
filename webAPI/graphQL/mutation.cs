@@ -1,8 +1,7 @@
 using webAPI.data;
 using webAPI.graphQL.Users;
 using webAPI.Models;
-using BCrypt;
-using HotChocolate;
+using BCrypt.Net;
 
 namespace webAPI.graphQL{
 
@@ -16,7 +15,7 @@ namespace webAPI.graphQL{
                 lastName=input.lastName,
                 DOB=input.DOB,
                 avatar=input.avatar,
-                password=input.password
+                password=BCrypt.Net.BCrypt.HashPassword(input.password)
             };
             var currentUser = context.Users.Where(u => u.email == input.email || u.username == input.username).FirstOrDefault();
             if(currentUser == null){
@@ -30,11 +29,13 @@ namespace webAPI.graphQL{
         [UseDbContext(typeof(AppDbContext))]
         public bool UserLogin(LoginInput login,[ScopedService] AppDbContext context)
     {
-    	var currentUser = context.Users.Where(u => u.email == login.email && u.password == login.password).FirstOrDefault();
-
+    	var currentUser = context.Users.Where(u => u.email == login.email).FirstOrDefault();
+   
     	if (currentUser != null)
     	{
-    		return true;
+            bool verified = BCrypt.Net.BCrypt.Verify(login.password, currentUser.password);
+            if(verified)
+    		    return true;
     	}
         
     	return false;
