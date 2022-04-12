@@ -6,6 +6,8 @@ import MapPage from './pages/MapPage';
 import Feed from './pages/Feed';
 import PrimaryAppBar from './components/AppBar';
 import PostProvider from './providers/PostProvider';
+import Login from './pages/Login';
+import SignUp from './pages/SignUp';
 
 const darkTheme = createTheme({
   palette: {
@@ -24,7 +26,8 @@ function App() {
         <PrimaryAppBar />
         <Routes>
           <Route path="/" element={<Home />} />
-
+          <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<SignUp />} />
           <Route
             path="/map"
             element={

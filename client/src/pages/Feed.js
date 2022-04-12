@@ -13,7 +13,6 @@ function Feed() {
         <Box
           sx={{
             padding: 2,
-            paddingTop: 10,
           }}
         >
           <Stack spacing={2}>

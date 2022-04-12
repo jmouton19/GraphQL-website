@@ -28,7 +28,7 @@ function PrimaryAppBar() {
 
   return (
     <>
-      <AppBar>
+      <AppBar position='sticky'>
         <Toolbar>
           <StyledLink to="/">
             <Typography variant="h6" component="div" color="primary">
@@ -79,6 +79,20 @@ function PrimaryAppBar() {
             open={Boolean(userMenuAnchorEl)}
             onClose={handleUserMenuClose}
           >
+            <MenuItem
+              component={Link}
+              to={`/login`}
+              onClick={handleUserMenuClose}
+            >
+              Login
+            </MenuItem>
+            <MenuItem
+              component={Link}
+              to={`/signup`}
+              onClick={handleUserMenuClose}
+            >
+              Signup
+            </MenuItem>
             <MenuItem
               component={Link}
               to={`/map`}

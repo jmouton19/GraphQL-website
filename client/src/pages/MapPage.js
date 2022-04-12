@@ -43,7 +43,7 @@ function MapPage() {
       <MapContainer
         center={center}
         zoom={16}
-        style={{ height: '40vh', marginTop: '65px' }}
+        style={{ height: '40vh' }}
       >
         <ChangeView center={center} zoom={16} />
         <TileLayer
