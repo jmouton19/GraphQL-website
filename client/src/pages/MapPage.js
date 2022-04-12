@@ -2,12 +2,21 @@ import React, { useEffect, useState } from 'react';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import cheeseMarker from '../assets/cheese-pin.png';
-import userMarker from '../assets/userMarker.png'
+import userMarker from '../assets/userMarker.png';
 import { Icon } from 'leaflet';
 import ChangeView from '../components/MapComponents/ChangeView';
 import PostSlider from '../components/MapComponents/PostSlider';
-import { Container, Fab } from '@mui/material';
+import {
+  Container,
+  Fab,
+  IconButton,
+  Snackbar,
+  SnackbarContent,
+} from '@mui/material';
 import { usePosts } from '../providers/PostProvider';
+import { useTheme } from '@mui/material';
+import DoneIcon from '@mui/icons-material/Done';
+import CloseIcon from '@mui/icons-material/Close';
 
 import CenterFocusStrongIcon from '@mui/icons-material/CenterFocusStrong';
 
@@ -19,33 +28,58 @@ const cheeseIcon = new Icon({
 const userIcon = new Icon({
   iconUrl: userMarker,
   iconSize: [32, 32],
-})
+});
 
 function MapPage() {
+  const theme = useTheme();
+  const [hasLocationAccess, setHasLocationAccess] = useState(
+    JSON.parse(window.sessionStorage.getItem('locationAccess'))
+  );
   const [userLocation, setUserLocation] = useState([-33.9321, 18.8602]);
   const [focusedPost, setFocusedPost] = useState(null);
-  const [center, setCenter] = useState([-33.9321, 18.8602])
+  const [centerLocation, setCenterLocation] = useState([-33.9321, 18.8602]);
   const posts = usePosts();
 
   useEffect(() => {
-    navigator.geolocation.getCurrentPosition(function (position) {
-      setUserLocation([position.coords.latitude, position.coords.longitude]);
-    });
-  }, []);
+    if (hasLocationAccess) {
+      navigator.geolocation.getCurrentPosition(function (position) {
+        setUserLocation([position.coords.latitude, position.coords.longitude]);
+      });
+    }
+  }, [hasLocationAccess]);
 
   useEffect(() => {
-    setCenter(userLocation);
-  }, [userLocation])
-  
+    setCenterLocation(userLocation);
+  }, [userLocation]);
+
+  function setLocationAccessState(state) {
+    setHasLocationAccess(state);
+    window.sessionStorage.setItem('locationAccess', state);
+  }
 
   return (
     <>
-      <MapContainer
-        center={center}
-        zoom={16}
-        style={{ height: '40vh' }}
+      <Snackbar
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+        open={(hasLocationAccess == null ? true : false)}
       >
-        <ChangeView center={center} zoom={16} />
+        <SnackbarContent
+          sx={{ backgroundColor: theme.palette.primary.main }}
+          action={
+            <>
+              <IconButton color="inherit" onClick={() => setLocationAccessState(true)}>
+                <DoneIcon />
+              </IconButton>
+              <IconButton color="inherit" onClick={() => setLocationAccessState(false)}>
+                <CloseIcon />
+              </IconButton>
+            </>
+          }
+          message="Provide location access"
+        />
+      </Snackbar>
+      <MapContainer center={userLocation} zoom={16} style={{ height: '40vh' }}>
+        <ChangeView center={centerLocation} zoom={16} />
         <TileLayer
           attribution='&copy; <a href="https://stadiamaps.com/">Stadia Maps</a>, &copy; <a href="https://openmaptiles.org/">OpenMapTiles</a> &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors'
           url="https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{x}/{y}{r}.png"
@@ -62,13 +96,11 @@ function MapPage() {
             eventHandlers={{
               click: () => {
                 setFocusedPost(post);
-                setCenter(post.location);
+                setCenterLocation(post.location);
               },
             }}
-          > 
-            <Popup>
-              {post.caption}
-            </Popup>
+          >
+            <Popup>{post.caption}</Popup>
           </Marker>
         ))}
       </MapContainer>
@@ -87,7 +119,7 @@ function MapPage() {
         color="primary"
         aria-label="edit"
         onClick={() => {
-          setCenter([...userLocation]);
+          setCenterLocation([...userLocation]);
         }}
       >
         <CenterFocusStrongIcon />
