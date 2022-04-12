@@ -1,6 +1,7 @@
 using webAPI.data;
 using webAPI.graphQL.Users;
 using webAPI.Models;
+using BCrypt;
 
 namespace webAPI.graphQL{
 
@@ -20,5 +21,18 @@ namespace webAPI.graphQL{
             await context.SaveChangesAsync();
             return new AddUserPayload(user);
         }
+
+        [UseDbContext(typeof(AppDbContext))]
+        public bool UserLogin(LoginInput login,[ScopedService] AppDbContext context)
+    {
+    	var currentUser = context.Users.Where(u => u.email == login.email && u.password == login.password).FirstOrDefault();
+
+    	if (currentUser != null)
+    	{
+    		return true;
+    	}
+        
+    	return false;
+    }
     }
 }
