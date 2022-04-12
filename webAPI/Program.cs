@@ -17,8 +17,9 @@ builder.Services.AddPooledDbContextFactory<AppDbContext>(opts =>
     opts.UseNpgsql(connectionString);
 });
 
-builder.Services.AddGraphQLServer().AddAuthorization().AddQueryType<Query>().AddMutationType<Mutation>().AddProjections().AddFiltering().AddSorting();
-//.AddType<UserType>()
+builder.Services.AddGraphQLServer().AddAuthorization().AddQueryType<Query>().AddMutationType<Mutation>().AddProjections()
+.AddFiltering().AddSorting();
+
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme,
