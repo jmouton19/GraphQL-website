@@ -12,6 +12,7 @@ import {
   IconButton,
   Snackbar,
   SnackbarContent,
+  Stack,
 } from '@mui/material';
 import { usePosts } from '../providers/PostProvider';
 import { useTheme } from '@mui/material';
@@ -19,6 +20,7 @@ import DoneIcon from '@mui/icons-material/Done';
 import CloseIcon from '@mui/icons-material/Close';
 
 import CenterFocusStrongIcon from '@mui/icons-material/CenterFocusStrong';
+import PostFilter from '../components/PostFilter';
 
 const cheeseIcon = new Icon({
   iconUrl: cheeseMarker,
@@ -105,7 +107,11 @@ function MapPage() {
         ))}
       </MapContainer>
       <Container flexGrow>
-        <PostSlider posts={posts} focusedPost={focusedPost} />
+        <Stack padding={1}>
+
+          <PostFilter/>
+          <PostSlider posts={posts} focusedPost={focusedPost} />
+        </Stack>
       </Container>
       <Fab
         style={{
