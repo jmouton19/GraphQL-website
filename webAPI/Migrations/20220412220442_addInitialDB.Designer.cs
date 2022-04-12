@@ -12,8 +12,8 @@ using webAPI.data;
 namespace webAPI.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20220411161218_addInitialDb")]
-    partial class addInitialDb
+    [Migration("20220412220442_addInitialDB")]
+    partial class addInitialDB
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -237,7 +237,7 @@ namespace webAPI.Migrations
                             email = "nicolvisser@yahoo.com",
                             firstName = "Nicol",
                             lastName = "Visser",
-                            password = "1234",
+                            password = "$2a$11$L/C/cOLbNmLTBcnx.HapwefwDbu5qnvHmcWK6HZy/EAhpcfPVz4FS",
                             username = "VisserMan"
                         },
                         new
@@ -247,7 +247,7 @@ namespace webAPI.Migrations
                             email = "jcmouton@protonmail.com",
                             firstName = "JC",
                             lastName = "Mouton",
-                            password = "42069",
+                            password = "$2a$11$FvBuMuP/TEG3l8GyLixEO.IepuXwc2Q1EGNBCv3tlte.2egQ5ApH2",
                             username = "JaySea"
                         },
                         new
@@ -257,7 +257,7 @@ namespace webAPI.Migrations
                             email = "philler@gmail.com",
                             firstName = "Philip",
                             lastName = "Schommarz",
-                            password = "qwerty",
+                            password = "$2a$11$XK4ZYtV7MV1yfWc.WZq45u0xntkrCKPlO1Kzpbif5JT2kYaDBpcnC",
                             username = "Fillet"
                         },
                         new
@@ -267,7 +267,7 @@ namespace webAPI.Migrations
                             email = "mssteyn@rocketmail.com",
                             firstName = "Lize",
                             lastName = "Steyn",
-                            password = "hockey",
+                            password = "$2a$11$Uy5CZ089wNIXoXNS68Lwc.UsWyJ0Kl6/sJfYvYmgqEYiK916sGf9S",
                             username = "MorneSteyn"
                         });
                 });

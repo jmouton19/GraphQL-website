@@ -12,6 +12,10 @@ namespace webAPI.data
         public DbSet<Membership> Memberships { get; set; } = default!;
         public DbSet<Post> Posts { get; set; } = default!;
         public DbSet<Comment> Comments { get; set; } = default!;
+
+        public string Hasher(string password){
+                return BCrypt.Net.BCrypt.HashPassword(password);
+         }
         protected override void OnModelCreating(ModelBuilder modelBuilder){
                 modelBuilder.Entity<User>().HasMany(u=>u.OwnedGroups).WithOne(g=>g.owner!).HasForeignKey(g=>g.ownerId);
                 modelBuilder.Entity<Group>().HasMany(g=>g.memberships).WithOne(g=>g.group!).HasForeignKey(m=>m.groupId);
@@ -27,14 +31,13 @@ namespace webAPI.data
                 .HasIndex(u =>u.email)
                 .IsUnique(true);
 
-
                 modelBuilder.Entity<User>().HasData(new User {
                         Id = 1,
                         lastName = "Visser",
                         firstName = "Nicol",
                         DOB= DateOnly.Parse("11/23/1943"),
                         email="nicolvisser@yahoo.com",
-                        password="1234",
+                        password=Hasher("Visser"),
                         username="VisserMan"
                         },
                         new User {
@@ -43,7 +46,7 @@ namespace webAPI.data
                         firstName = "JC",
                         DOB= DateOnly.Parse("06/03/2000"),
                         email="jcmouton@protonmail.com",
-                        password="42069",
+                        password=Hasher("Mouton"),
                         username="JaySea"
                         },
                         new User {
@@ -52,7 +55,7 @@ namespace webAPI.data
                         firstName = "Philip",
                         DOB= DateOnly.Parse("11/23/2000"),
                         email="philler@gmail.com",
-                        password="qwerty",
+                        password=Hasher("Schommarz"),
                         username="Fillet"
                         },
                         new User {
@@ -61,7 +64,7 @@ namespace webAPI.data
                         firstName = "Lize",
                         DOB= DateOnly.Parse("03/11/200"),
                         email="mssteyn@rocketmail.com",
-                        password="hockey",
+                        password=Hasher("Steyn"),
                         username="MorneSteyn"
                         });
                         modelBuilder.Entity<Group>().HasData(new Group {

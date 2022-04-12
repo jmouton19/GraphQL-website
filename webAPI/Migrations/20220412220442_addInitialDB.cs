@@ -6,7 +6,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace webAPI.Migrations
 {
-    public partial class addInitialDb : Migration
+    public partial class addInitialDB : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -136,10 +136,10 @@ namespace webAPI.Migrations
                 columns: new[] { "Id", "DOB", "avatar", "email", "firstName", "lastName", "password", "username" },
                 values: new object[,]
                 {
-                    { 1, new DateOnly(1943, 11, 23), null, "nicolvisser@yahoo.com", "Nicol", "Visser", "1234", "VisserMan" },
-                    { 2, new DateOnly(2000, 6, 3), null, "jcmouton@protonmail.com", "JC", "Mouton", "42069", "JaySea" },
-                    { 3, new DateOnly(2000, 11, 23), null, "philler@gmail.com", "Philip", "Schommarz", "qwerty", "Fillet" },
-                    { 4, new DateOnly(200, 3, 11), null, "mssteyn@rocketmail.com", "Lize", "Steyn", "hockey", "MorneSteyn" }
+                    { 1, new DateOnly(1943, 11, 23), null, "nicolvisser@yahoo.com", "Nicol", "Visser", "$2a$11$L/C/cOLbNmLTBcnx.HapwefwDbu5qnvHmcWK6HZy/EAhpcfPVz4FS", "VisserMan" },
+                    { 2, new DateOnly(2000, 6, 3), null, "jcmouton@protonmail.com", "JC", "Mouton", "$2a$11$FvBuMuP/TEG3l8GyLixEO.IepuXwc2Q1EGNBCv3tlte.2egQ5ApH2", "JaySea" },
+                    { 3, new DateOnly(2000, 11, 23), null, "philler@gmail.com", "Philip", "Schommarz", "$2a$11$XK4ZYtV7MV1yfWc.WZq45u0xntkrCKPlO1Kzpbif5JT2kYaDBpcnC", "Fillet" },
+                    { 4, new DateOnly(200, 3, 11), null, "mssteyn@rocketmail.com", "Lize", "Steyn", "$2a$11$Uy5CZ089wNIXoXNS68Lwc.UsWyJ0Kl6/sJfYvYmgqEYiK916sGf9S", "MorneSteyn" }
                 });
 
             migrationBuilder.InsertData(
