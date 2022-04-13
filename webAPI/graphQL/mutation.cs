@@ -1,7 +1,10 @@
 using webAPI.data;
 using webAPI.graphQL.Users;
 using webAPI.Models;
-using BCrypt.Net;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+using webAPI.Models.other;
+using System.IdentityModel.Tokens.Jwt;
 
 namespace webAPI.graphQL
 {
@@ -32,7 +35,7 @@ namespace webAPI.graphQL
         }
 
         [UseDbContext(typeof(AppDbContext))]
-        public bool UserLogin(LoginInput input, [ScopedService] AppDbContext context)
+        public string UserLogin(LoginInput input, [Service] IConfiguration config, [ScopedService] AppDbContext context)
         {
             var currentUser = context.Users.Where(u => u.email == input.email).FirstOrDefault();
 
@@ -40,10 +43,23 @@ namespace webAPI.graphQL
             {
                 bool verified = BCrypt.Net.BCrypt.Verify(input.password, currentUser.password);
                 if (verified)
-                    return true;
+                {
+                    var symmetricSecurityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["tokenSettings:Key"]));
+                    var credentials = new SigningCredentials(symmetricSecurityKey, SecurityAlgorithms.HmacSha256);
+
+                    var jwtToken = new JwtSecurityToken(
+                        issuer: config["tokenSettings:Issuer"],
+                        audience: config["tokenSettings:Audience"],
+                        expires: DateTime.Now.AddMinutes(2),
+                        signingCredentials: credentials
+                    );
+                    string token = new JwtSecurityTokenHandler().WriteToken(jwtToken);
+                    return token;
+                }
+
             }
 
-            return false;
+            return "false";
         }
     }
 }

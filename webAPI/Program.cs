@@ -7,9 +7,6 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
-//hide this lol
-var signingKey = new SymmetricSecurityKey(
-    Encoding.UTF8.GetBytes("MySuperSecretKey"));
 
 builder.Services.AddPooledDbContextFactory<AppDbContext>(opts =>
 {
@@ -27,15 +24,16 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         {
             options.TokenValidationParameters = new TokenValidationParameters
             {
-                ValidIssuer = "https://auth.chillicream.com",
-                ValidAudience = "https://graphql.chillicream.com",
+                ValidateIssuer = true,
+                ValidateAudience = true,
+                ValidIssuer = builder.Configuration["tokenSettings:Issuer"],
+                ValidAudience = builder.Configuration["tokenSettings:Audience"],
                 ValidateIssuerSigningKey = true,
-                IssuerSigningKey = signingKey
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["tokenSettings:Key"])) //hide this lol
             };
         });
 
 var app = builder.Build();
-app.UseRouting();
 
 app.UseAuthentication();
 app.MapGraphQL();
