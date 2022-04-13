@@ -8,7 +8,6 @@ namespace webAPI.graphQL
     public class Query
     {
         [UseDbContext(typeof(AppDbContext))]
-        [UsePaging]
         [UseProjection]
         [UseFiltering]
         [UseSorting]
@@ -18,7 +17,6 @@ namespace webAPI.graphQL
             return context.Users;
         }
         [UseDbContext(typeof(AppDbContext))]
-        [UsePaging]
         [UseProjection]
         [UseFiltering]
         [UseSorting]
@@ -28,7 +26,6 @@ namespace webAPI.graphQL
             return context.Groups;
         }
         [UseDbContext(typeof(AppDbContext))]
-        [UsePaging]
         [UseProjection]
         [UseFiltering]
         [UseSorting]
@@ -38,7 +35,6 @@ namespace webAPI.graphQL
             return context.Memberships;
         }
         [UseDbContext(typeof(AppDbContext))]
-        [UsePaging]
         [UseProjection]
         [UseFiltering]
         [UseSorting]
@@ -48,7 +44,6 @@ namespace webAPI.graphQL
             return context.Posts;
         }
         [UseDbContext(typeof(AppDbContext))]
-        [UsePaging]
         [UseProjection]
         [UseFiltering]
         [UseSorting]
