@@ -3,14 +3,15 @@ using System.ComponentModel.DataAnnotations;
 namespace webAPI.Models
 {
     [GraphQLDescription("Represents a post made by a member of Kasie.")]
-    public class Post{
+    public class Post
+    {
         [Key]
         public int Id { get; set; }
         [Required]
         public int creatorId { get; set; }
         [Required]
         [GraphQLDescription("Member who created the post.")]
-        public Membership ?creator { get; set; }
+        public Membership? creator { get; set; }
 
         [Required]
         [GraphQLDescription("Specifies the type of post. Video or text.")]
@@ -24,9 +25,9 @@ namespace webAPI.Models
         [GraphQLDescription("Latitude coordiante of where the post was made.")]
         public float latitude { get; set; }
         [Required]
-         [GraphQLDescription("Longitude coordiante of where the post was made.")]
+        [GraphQLDescription("Longitude coordiante of where the post was made.")]
         public float longitude { get; set; }
         [GraphQLDescription("Comments made on the post.")]
-        public List<Comment> ?comments { get; set; }
+        public List<Comment>? comments { get; set; }
     }
 }

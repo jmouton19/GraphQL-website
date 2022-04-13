@@ -23,13 +23,15 @@ builder.Services.AddGraphQLServer().AddAuthorization().AddQueryType<Query>().Add
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme,
-        options => {
-          options.TokenValidationParameters=new TokenValidationParameters{
+        options =>
+        {
+            options.TokenValidationParameters = new TokenValidationParameters
+            {
                 ValidIssuer = "https://auth.chillicream.com",
                 ValidAudience = "https://graphql.chillicream.com",
                 ValidateIssuerSigningKey = true,
                 IssuerSigningKey = signingKey
-          };
+            };
         });
 
 var app = builder.Build();

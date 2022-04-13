@@ -3,12 +3,13 @@ using System.ComponentModel.DataAnnotations;
 namespace webAPI.Models
 {
     [GraphQLDescription("Represents a group on Kasie.")]
-    public class Group{
+    public class Group
+    {
         [Key]
         public int Id { get; set; }
         [Required]
 
-        public User ?owner { get; set; }
+        public User? owner { get; set; }
         [Required]
         public int ownerId { get; set; }
         [Required]
@@ -17,9 +18,9 @@ namespace webAPI.Models
         [Required]
         public DateOnly dateCreated { get; set; }
         [GraphQLDescription("Link of groups profile avatar.")]
-        public string ?avatar { get; set; }
-        public string ?description { get; set; }
+        public string? avatar { get; set; }
+        public string? description { get; set; }
         [GraphQLDescription("Members of the group.")]
-        public List<Membership> ?memberships { get; set; }
+        public List<Membership>? memberships { get; set; }
     }
 }
