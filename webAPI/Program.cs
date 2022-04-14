@@ -41,7 +41,7 @@ builder.Services.AddSpaStaticFiles(configuration =>
 });
 
 var app = builder.Build();
-
+app.UseCors();
 app.UseStaticFiles();
 app.UseSpaStaticFiles();
 app.UseSpa(spa =>
