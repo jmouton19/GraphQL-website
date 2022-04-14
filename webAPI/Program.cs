@@ -5,8 +5,10 @@ using webAPI.data;
 using webAPI.graphQL;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using Microsoft.AspNetCore.SpaServices.ReactDevelopmentServer;
 
 var builder = WebApplication.CreateBuilder(args);
+
 
 builder.Services.AddPooledDbContextFactory<AppDbContext>(opts =>
 {
@@ -33,7 +35,23 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             };
         });
 
+builder.Services.AddSpaStaticFiles(configuration =>
+{
+    configuration.RootPath = "../client/build";
+});
+
 var app = builder.Build();
+
+app.UseStaticFiles();
+app.UseSpaStaticFiles();
+app.UseSpa(spa =>
+{
+    spa.Options.SourcePath = "../client";
+    if (builder.Environment.IsDevelopment())
+    {
+        spa.UseReactDevelopmentServer(npmScript: "start");
+    }
+});
 
 app.UseAuthentication();
 app.MapGraphQL();
