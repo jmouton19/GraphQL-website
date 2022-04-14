@@ -95,6 +95,13 @@ function PrimaryAppBar() {
             </MenuItem>
             <MenuItem
               component={Link}
+              to={`/profile`}
+              onClick={handleUserMenuClose}
+            >
+              Profile
+            </MenuItem>
+            <MenuItem
+              component={Link}
               to={`/map`}
               onClick={handleUserMenuClose}
             >
