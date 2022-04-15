@@ -13,6 +13,7 @@ import { red } from '@mui/material/colors';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import CommentIcon from '@mui/icons-material/Comment';
 import ThumbUpIcon from '@mui/icons-material/ThumbUp';
+import VideoPlayer from './VideoPlayer/VideoPlayer';
 
 const ExpandMore = styled((props) => {
   const { expand, ...other } = props;
@@ -48,8 +49,13 @@ function PostCard({ postData, frameHeight }) {
         title={postData.name}
         subheader={`Posted in ${postData.group}`}
       />
-      {postData.src && (
-        <CardMedia component="iframe" height={frameHeight} image={postData.src} />
+      {postData.videoPublicID && (
+        <CardMedia>
+          <VideoPlayer
+            cloudName="de7amnbmo"
+            publicId={postData.videoPublicID}
+          />
+        </CardMedia>
       )}
       <CardContent>
         <Typography variant="body2" color="text.secondary">

@@ -5,6 +5,8 @@ import React from 'react';
 import PostCard from '../components/PostCard';
 import { usePosts } from '../providers/PostProvider';
 
+import shortid from 'shortid';
+
 function Feed() {
   const data = usePosts();
   return (
@@ -17,7 +19,11 @@ function Feed() {
         >
           <Stack spacing={2}>
             {data.map((postData) => (
-              <PostCard postData={postData} frameHeight="460" />
+              <PostCard
+                key={shortid.generate()}
+                postData={postData}
+                frameHeight="460"
+              />
             ))}
           </Stack>
         </Box>
