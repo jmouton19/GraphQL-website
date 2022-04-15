@@ -13,7 +13,7 @@ import { red } from '@mui/material/colors';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import CommentIcon from '@mui/icons-material/Comment';
 import ThumbUpIcon from '@mui/icons-material/ThumbUp';
-import VideoPlayer from './VideoPlayer/VideoPlayer';
+import VideoPlayer from './cloudindary/VideoPlayer';
 
 const ExpandMore = styled((props) => {
   const { expand, ...other } = props;

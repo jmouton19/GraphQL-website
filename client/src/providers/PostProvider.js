@@ -19,7 +19,7 @@ function PostProvider({ children }) {
       name: 'JC Mouton',
       group: 'Nightowls',
       caption: 'Another easy 3am code push :sunglasses:',
-      videoPublicID: null,
+      videoPublicID: 'u4vuh4i7wb9atdvj11rs',
       location: [-33.9293, 18.866],
     },
     {
