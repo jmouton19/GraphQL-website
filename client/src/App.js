@@ -9,6 +9,7 @@ import PrimaryAppBar from './components/AppBar';
 import PostProvider from './providers/PostProvider';
 import Login from './pages/Login';
 import SignUp from './pages/SignUp';
+import AuthProvider from './providers/AuthProvider';
 
 const darkTheme = createTheme({
   palette: {
@@ -21,42 +22,43 @@ const darkTheme = createTheme({
 
 function App() {
   return (
-    <ThemeProvider theme={darkTheme}>
-      <CssBaseline />
-      <Router>
-        <PrimaryAppBar />
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/signup" element={<SignUp />} />
-          <Route
-            path="/map"
-            element={
-              <PostProvider>
-                <MapPage />
-              </PostProvider>
-            }
-          />
-          <Route
-            path="/feed"
-            element={
-              <PostProvider>
-                <Feed />
-              </PostProvider>
-            }
-          />
-        <Route
-            path="/profile"
-            element={
-              <PostProvider>
-                <Profile />
-              </PostProvider>
-            }
-          />
-        </Routes>
-        
-      </Router>
-    </ThemeProvider>
+    <AuthProvider>
+      <ThemeProvider theme={darkTheme}>
+        <CssBaseline />
+        <Router>
+          <PrimaryAppBar />
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/signup" element={<SignUp />} />
+            <Route
+              path="/map"
+              element={
+                <PostProvider>
+                  <MapPage />
+                </PostProvider>
+              }
+            />
+            <Route
+              path="/feed"
+              element={
+                <PostProvider>
+                  <Feed />
+                </PostProvider>
+              }
+            />
+            <Route
+              path="/profile"
+              element={
+                <PostProvider>
+                  <Profile />
+                </PostProvider>
+              }
+            />
+          </Routes>
+        </Router>
+      </ThemeProvider>
+    </AuthProvider>
   );
 }
 

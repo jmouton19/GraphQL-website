@@ -18,6 +18,7 @@ import { Visibility, VisibilityOff } from '@mui/icons-material';
 import AvatarPicker from '../components/AvatarPicker';
 import StyledLink from '../components/StyledLink';
 import validator from 'validator';
+import { useSignUp } from '../providers/AuthProvider';
 
 function SignUp() {
   const [username, setUsername] = useState('');
@@ -35,6 +36,10 @@ function SignUp() {
   });
   const [showPassword, setShowPassword] = useState(false);
   const [avatarUrl, setAvatarUrl] = useState(null);
+
+  const signUp = useSignUp();
+
+  console.log(signUp);
 
   function toggleShowPassword() {
     setShowPassword(!showPassword);
@@ -106,6 +111,8 @@ function SignUp() {
       avatar: avatarUrl,
     };
     console.log(data);
+
+    signUp(email, username, password);
   }
 
   return (
