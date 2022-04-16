@@ -18,7 +18,7 @@ builder.Services.AddPooledDbContextFactory<AppDbContext>(opts =>
 
 builder.Services.AddGraphQLServer().AddAuthorization().AddQueryType<Query>().AddMutationType<Mutation>().AddProjections()
 .AddFiltering().AddSorting();
-
+builder.Services.AddCors();
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme,
@@ -41,7 +41,7 @@ builder.Services.AddSpaStaticFiles(configuration =>
 });
 
 var app = builder.Build();
-// app.UseCors(o=>o.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
+app.UseCors(o => o.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
 app.UseStaticFiles();
 app.UseSpaStaticFiles();
 app.UseSpa(spa =>
