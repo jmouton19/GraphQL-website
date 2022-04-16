@@ -14,6 +14,8 @@ import MoreVertIcon from '@mui/icons-material/MoreVert';
 import CommentIcon from '@mui/icons-material/Comment';
 import ThumbUpIcon from '@mui/icons-material/ThumbUp';
 import VideoPlayer from './cloudindary/VideoPlayer';
+import CommentProvider from '../providers/CommentProvider';
+import CommentViewer from './CommentViewer';
 
 const ExpandMore = styled((props) => {
   const { expand, ...other } = props;
@@ -78,6 +80,9 @@ function PostCard({ postData }) {
       <Collapse in={expanded} timeout="auto" unmountOnExit>
         <CardContent>
           <Typography paragraph>Comments:</Typography>
+          <CommentProvider>
+            <CommentViewer />
+          </CommentProvider>
         </CardContent>
       </Collapse>
     </Card>

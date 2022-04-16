@@ -18,7 +18,7 @@ import { useTheme } from '@mui/material';
 import DoneIcon from '@mui/icons-material/Done';
 import CloseIcon from '@mui/icons-material/Close';
 
-import shortid from 'shortid'
+import shortid from 'shortid';
 
 import CenterFocusStrongIcon from '@mui/icons-material/CenterFocusStrong';
 
@@ -63,16 +63,22 @@ function MapPage() {
     <>
       <Snackbar
         anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
-        open={(hasLocationAccess == null ? true : false)}
+        open={hasLocationAccess == null ? true : false}
       >
         <SnackbarContent
           sx={{ backgroundColor: theme.palette.primary.main }}
           action={
             <>
-              <IconButton color="inherit" onClick={() => setLocationAccessState(true)}>
+              <IconButton
+                color="inherit"
+                onClick={() => setLocationAccessState(true)}
+              >
                 <DoneIcon />
               </IconButton>
-              <IconButton color="inherit" onClick={() => setLocationAccessState(false)}>
+              <IconButton
+                color="inherit"
+                onClick={() => setLocationAccessState(false)}
+              >
                 <CloseIcon />
               </IconButton>
             </>
