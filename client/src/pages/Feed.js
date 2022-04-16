@@ -6,10 +6,8 @@ import PostCard from '../components/PostCard';
 import { usePosts } from '../providers/PostProvider';
 
 import shortid from 'shortid';
-import { Paper } from '@mui/material';
-import Button from '@mui/material/Button';
 
-import { showUploadWidget } from '../components/cloudindary/upload';
+import AddPostCard from '../components/AddPostCard';
 
 function Feed() {
   const data = usePosts();
@@ -22,18 +20,7 @@ function Feed() {
           }}
         >
           <Stack spacing={2}>
-            <Paper style={{ padding: 20 }}>
-              <Button
-                variant="contained"
-                onClick={() => {
-                  showUploadWidget();
-                }}
-              >
-                {' '}
-                Add Video
-              </Button>
-            </Paper>
-
+            <AddPostCard />
             {data.map((postData) => (
               <PostCard
                 key={shortid.generate()}

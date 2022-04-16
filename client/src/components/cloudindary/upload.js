@@ -1,4 +1,4 @@
-export function showUploadWidget() {
+export function showUploadWidget(onSuccess) {
   window.cloudinary.openUploadWidget(
     {
       cloudName: 'de7amnbmo',
@@ -38,7 +38,7 @@ export function showUploadWidget() {
     (err, info) => {
       if (!err) {
         if (info.event === 'success') {
-          alert(`Send this public ID to backend: ${info.info.public_id}`);
+          onSuccess(info.info.public_id);
         }
       }
     }
