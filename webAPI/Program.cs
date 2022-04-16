@@ -37,14 +37,14 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 
 builder.Services.AddSpaStaticFiles(configuration =>
 {
-    configuration.RootPath = "../client/build";
+    configuration.RootPath = "wwwroot";
 });
 
 var app = builder.Build();
 app.UseCors(o => o.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
 
 // app.UseStaticFiles();
-// app.UseSpaStaticFiles();
+app.UseSpaStaticFiles();
 // app.UseSpa(spa =>
 // {
 //     spa.Options.SourcePath = "../client";
