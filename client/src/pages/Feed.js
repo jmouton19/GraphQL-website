@@ -22,11 +22,7 @@ function Feed() {
           <Stack spacing={2}>
             <AddPostCard />
             {data.map((postData) => (
-              <PostCard
-                key={shortid.generate()}
-                postData={postData}
-                frameHeight="460"
-              />
+              <PostCard key={shortid.generate()} postData={postData} />
             ))}
           </Stack>
         </Box>

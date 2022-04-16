@@ -3,6 +3,7 @@ import React, { Component } from 'react';
 import Slider from 'react-slick';
 import PostCard from '../PostCard';
 
+import shortid from 'shortid';
 export default class PostSlider extends Component {
   constructor(props) {
     super(props);
@@ -10,17 +11,18 @@ export default class PostSlider extends Component {
   }
   componentDidUpdate(prevProps) {
     if (prevProps.focusedPost !== this.props.focusedPost) {
-      console.log(this.slider.current.props)
+      console.log(this.slider.current.props);
       this.slider.current.slickGoTo(
-        this.props.posts.indexOf(this.props.focusedPost) - (window.innerWidth > 1024 ? 1 : 0)
+        this.props.posts.indexOf(this.props.focusedPost) -
+          (window.innerWidth > 1024 ? 1 : 0)
       );
     }
   }
   render() {
     const { posts } = this.props;
     const settings = {
-      infinite: (posts.length < 3 ? false : true),
-      slidesToShow: (posts.length < 3 ? posts.length : 3),
+      infinite: posts.length < 3 ? false : true,
+      slidesToShow: posts.length < 3 ? posts.length : 3,
       speed: 500,
       dots: true,
       responsive: [
@@ -43,8 +45,8 @@ export default class PostSlider extends Component {
       <Box mt={2} ml={2} mr={2}>
         <Slider {...settings} ref={this.slider}>
           {posts.map((post) => (
-            <Stack padding={1}>
-              <PostCard postData={post} frameHeight="300" />
+            <Stack key={shortid.generate()} padding={1}>
+              <PostCard postData={post} />
             </Stack>
           ))}
         </Slider>

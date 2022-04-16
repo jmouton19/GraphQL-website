@@ -19,7 +19,7 @@ const emptyPostData = {
   videoPublicID: '',
 };
 
-function AddPostCard({ postData, frameHeight }) {
+function AddPostCard() {
   const [newPostData, setNewPostData] = useState(emptyPostData);
 
   const handleUploadSuccess = (publicID) => {

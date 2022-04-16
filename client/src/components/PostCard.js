@@ -26,7 +26,7 @@ const ExpandMore = styled((props) => {
   }),
 }));
 
-function PostCard({ postData, frameHeight }) {
+function PostCard({ postData }) {
   const [expanded, setExpanded] = React.useState(false);
 
   const handleExpandClick = () => {

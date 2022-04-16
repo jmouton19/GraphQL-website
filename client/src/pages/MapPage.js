@@ -18,6 +18,8 @@ import { useTheme } from '@mui/material';
 import DoneIcon from '@mui/icons-material/Done';
 import CloseIcon from '@mui/icons-material/Close';
 
+import shortid from 'shortid'
+
 import CenterFocusStrongIcon from '@mui/icons-material/CenterFocusStrong';
 
 const cheeseIcon = new Icon({
@@ -91,6 +93,7 @@ function MapPage() {
         </Marker>
         {posts.map((post) => (
           <Marker
+            key={shortid.generate()}
             position={post.location}
             icon={cheeseIcon}
             eventHandlers={{
@@ -104,7 +107,7 @@ function MapPage() {
           </Marker>
         ))}
       </MapContainer>
-      <Container flexGrow>
+      <Container>
         <PostSlider posts={posts} focusedPost={focusedPost} />
       </Container>
       <Fab
