@@ -15,11 +15,14 @@ import StyledLink from '../components/StyledLink';
 import Typography from '@mui/material/Typography';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
+import { useLogIn } from '../providers/AuthProvider';
 
 function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+
+  const login = useLogIn();
 
   function toggleShowPassword() {
     setShowPassword(!showPassword);
@@ -75,7 +78,14 @@ function Login() {
             </Grid>
             <Grid item xs={12}>
               <FormControl fullWidth>
-                <Button variant="contained">Login</Button>
+                <Button
+                  variant="contained"
+                  onClick={() => {
+                    login(email, password);
+                  }}
+                >
+                  Login
+                </Button>
               </FormControl>
             </Grid>
             <Grid item xs={12}>

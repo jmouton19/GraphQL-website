@@ -39,8 +39,6 @@ function SignUp() {
 
   const signUp = useSignUp();
 
-  console.log(signUp);
-
   function toggleShowPassword() {
     setShowPassword(!showPassword);
   }

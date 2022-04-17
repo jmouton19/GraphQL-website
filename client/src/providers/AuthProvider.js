@@ -1,6 +1,7 @@
 import React, { useContext, createContext, useState } from 'react';
 
 import { gql, useApolloClient } from '@apollo/client';
+import { useNotifyError, useNotifySuccess } from './NotificationProvider';
 
 const AuthUserContext = createContext();
 const SignUpContext = createContext();
@@ -23,6 +24,9 @@ function AuthProvider({ children }) {
 
   const client = useApolloClient();
 
+  const notifySuccess = useNotifySuccess();
+  const notifyError = useNotifyError();
+
   const signUp = (email, username, password) => {
     client
       .mutate({
@@ -40,20 +44,31 @@ function AuthProvider({ children }) {
       })
       .then((result) => {
         console.log(result);
+        if (result.data.addUser) {
+          notifySuccess('Signed up successfully.');
+        } else {
+          notifyError('Sign up failed.');
+          // Todo: Need more descriptive messages here from backend
+        }
       });
   };
 
   const logIn = (email, password) => {
     client
-      .query({
-        query: gql`
+      .mutate({
+        mutation: gql`
           mutation {
             userLogin(input: { email: "${email}", password: "${password}" })
           }
         `,
       })
       .then((result) => {
-        console.log(result);
+        if (result.data.userLogin) {
+          notifySuccess('Logged in successfully.');
+        } else {
+          notifyError('Log in failed.');
+          // Todo: Need more descriptive messages here from backend
+        }
       });
   };
 

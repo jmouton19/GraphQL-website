@@ -66,7 +66,6 @@ function AddPostCard() {
             color="primary"
             disabled={hasVideoData}
             onClick={() => {
-              console.log('Clicked');
               showUploadWidget(handleUploadSuccess);
             }}
           >
