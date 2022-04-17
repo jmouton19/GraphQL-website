@@ -22,8 +22,10 @@ import { usePosts } from '../providers/PostProvider';
 import PostCard from '../components/PostCard';
 
 import shortid from 'shortid';
+import { useAuthUser } from '../providers/AuthProvider';
 
 function Profile() {
+  const authUser = useAuthUser();
   const data = usePosts();
   const [activeTabNumber, setActiveTabNumber] = React.useState('1');
 
@@ -40,17 +42,14 @@ function Profile() {
         //justifyContent="flex-end"
       >
         <Avatar
-          src={
-            'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png'
-          }
+          src={authUser.avatar}
           sx={{
             width: 200,
             height: 200,
-            //borderRadius: "16px",
             border: 4,
             borderColor: '#ffc619',
           }}
-        ></Avatar>
+        />
         <Typography variant="h4">Cheddar</Typography>
         <Stack direction="row" spacing={0.2}>
           <img

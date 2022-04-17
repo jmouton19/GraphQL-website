@@ -15,17 +15,23 @@ import StyledLink from '../components/StyledLink';
 import Typography from '@mui/material/Typography';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
-import { useLogIn } from '../providers/AuthProvider';
+import { useAuthUser, useLogIn } from '../providers/AuthProvider';
+import { Navigate } from 'react-router-dom';
 
 function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
 
+  const authUser = useAuthUser();
   const login = useLogIn();
 
   function toggleShowPassword() {
     setShowPassword(!showPassword);
+  }
+
+  if (authUser) {
+    return <Navigate to="/" />;
   }
 
   return (

@@ -36,7 +36,7 @@ function PrimaryAppBar() {
         <Toolbar>
           <StyledLink to="/">
             <Typography variant="h6" component="div" color="primary">
-              <b>Kasie</b>
+              <b>'Kasie</b>
             </Typography>
           </StyledLink>
           <Box sx={{ flexGrow: 1 }} />
@@ -63,11 +63,7 @@ function PrimaryAppBar() {
             onClick={handleMenu}
             color="inherit"
           >
-            <Avatar
-              src={
-                'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png'
-              }
-            ></Avatar>
+            <Avatar src={authUser.avatar}></Avatar>
           </IconButton>
 
           <Menu
@@ -122,11 +118,7 @@ function PrimaryAppBar() {
               </MenuItem>
             )}
             {authUser && (
-              <MenuItem
-                component={Link}
-                to={`/feed`}
-                onClick={handleUserMenuClose}
-              >
+              <MenuItem component={Link} to={`/`} onClick={handleUserMenuClose}>
                 Feed
               </MenuItem>
             )}

@@ -9,7 +9,6 @@ import CssBaseline from '@mui/material/CssBaseline';
 import Home from './pages/Home';
 import Profile from './pages/Profile';
 import MapPage from './pages/MapPage';
-import Feed from './pages/Feed';
 import PrimaryAppBar from './components/AppBar';
 import PostProvider from './providers/PostProvider';
 import Login from './pages/Login';
@@ -45,7 +44,6 @@ function App() {
           <Router>
             <PrimaryAppBar />
             <Routes>
-              <Route path="/" element={<Home />} />
               <Route path="/login" element={<Login />} />
               <Route path="/signup" element={<SignUp />} />
               <Route
@@ -59,11 +57,11 @@ function App() {
                 }
               />
               <Route
-                path="/feed"
+                path="/"
                 element={
                   <PrivateRoute>
                     <PostProvider>
-                      <Feed />
+                      <Home />
                     </PostProvider>
                   </PrivateRoute>
                 }
