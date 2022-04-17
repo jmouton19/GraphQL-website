@@ -19,5 +19,5 @@ WORKDIR /app
 RUN mkdir /app/wwwroot
 COPY --from=dotnet-publish /app/publish .
 COPY --from=node-builder /node/build ./wwwroot
-ENTRYPOINT [ "dotnet","webAPI.dll" ]
-CMD ASPNETCORE_URLS=http://*:$PORT ./group8pro2
+
+CMD ASPNETCORE_URLS=http://*:$PORT ./cs334proj2group8
