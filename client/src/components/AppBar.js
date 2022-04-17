@@ -15,12 +15,21 @@ import NotificationsIcon from '@mui/icons-material/Notifications';
 import ChatIcon from '@mui/icons-material/Chat';
 import SearchIcon from '@mui/icons-material/Search';
 import { useAuthUser, useLogOut } from '../providers/AuthProvider';
+import logo from '../assets/logo.png';
+import { Stack } from '@mui/material';
+
+import FeedIcon from '@mui/icons-material/Feed';
+import MapIcon from '@mui/icons-material/Map';
+import { Tooltip } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
 
 function PrimaryAppBar() {
   const [userMenuAnchorEl, setUserMenuAnchorEl] = useState(null);
 
   const authUser = useAuthUser();
   const logOut = useLogOut();
+
+  const navigate = useNavigate();
 
   const handleMenu = (event) => {
     setUserMenuAnchorEl(event.currentTarget);
@@ -35,25 +44,59 @@ function PrimaryAppBar() {
       <AppBar position="sticky">
         <Toolbar>
           <StyledLink to="/">
-            <Typography variant="h6" component="div" color="primary">
-              <b>'Kasie</b>
-            </Typography>
+            <Stack spacing={1} direction="row">
+              <img src={logo} alt="logo" style={{ height: 25 }} />
+              <Typography variant="h6" component="div" color="primary">
+                <b>'Kasie</b>
+              </Typography>
+            </Stack>
           </StyledLink>
+
           <Box sx={{ flexGrow: 1 }} />
 
-          <IconButton size="large" color="primary">
-            <SearchIcon />
-          </IconButton>
+          <Tooltip title="Feed View">
+            <IconButton
+              size="large"
+              color="primary"
+              onClick={() => {
+                navigate('/');
+              }}
+            >
+              <FeedIcon />
+            </IconButton>
+          </Tooltip>
 
-          <IconButton size="large" color="primary">
-            <ChatIcon />
-          </IconButton>
+          <Tooltip title="Map View">
+            <IconButton
+              size="large"
+              color="primary"
+              onClick={() => {
+                navigate('/map');
+              }}
+            >
+              <MapIcon />
+            </IconButton>
+          </Tooltip>
 
-          <IconButton size="large" color="primary">
-            <NotificationsIcon />
-          </IconButton>
+          <Box sx={{ flexGrow: 1 }} />
 
-          {authUser && <Typography>{authUser.email}</Typography>}
+          <Tooltip title="Search">
+            <IconButton size="large" color="primary">
+              <SearchIcon />
+            </IconButton>
+          </Tooltip>
+
+          <Tooltip title="Direct Messages">
+            <IconButton size="large" color="primary">
+              <ChatIcon />
+            </IconButton>
+          </Tooltip>
+
+          <Tooltip title="Notifications">
+            <IconButton size="large" color="primary">
+              <NotificationsIcon />
+            </IconButton>
+          </Tooltip>
 
           <IconButton
             size="large"
@@ -63,7 +106,7 @@ function PrimaryAppBar() {
             onClick={handleMenu}
             color="inherit"
           >
-            <Avatar src={authUser.avatar}></Avatar>
+            <Avatar src={authUser ? authUser.avatar : null}></Avatar>
           </IconButton>
 
           <Menu
@@ -109,18 +152,13 @@ function PrimaryAppBar() {
               </MenuItem>
             )}
             {authUser && (
-              <MenuItem
-                component={Link}
-                to={`/map`}
-                onClick={handleUserMenuClose}
-              >
-                Map
-              </MenuItem>
+              <MenuItem onClick={handleUserMenuClose}>Find Groups</MenuItem>
             )}
             {authUser && (
-              <MenuItem component={Link} to={`/`} onClick={handleUserMenuClose}>
-                Feed
-              </MenuItem>
+              <MenuItem onClick={handleUserMenuClose}>My Groups</MenuItem>
+            )}
+            {authUser && (
+              <MenuItem onClick={handleUserMenuClose}>My Friends</MenuItem>
             )}
             {authUser && (
               <MenuItem
