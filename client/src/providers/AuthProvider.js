@@ -6,6 +6,7 @@ import { useNotifyError, useNotifySuccess } from './NotificationProvider';
 const AuthUserContext = createContext();
 const SignUpContext = createContext();
 const LogInContext = createContext();
+const LogOutContext = createContext();
 
 export function useAuthUser() {
   return useContext(AuthUserContext);
@@ -17,6 +18,10 @@ export function useSignUp() {
 
 export function useLogIn() {
   return useContext(LogInContext);
+}
+
+export function useLogOut() {
+  return useContext(LogOutContext);
 }
 
 const localStorageItemName = 'kasie-auth-user';
@@ -114,10 +119,18 @@ function AuthProvider({ children }) {
       });
   };
 
+  const logOut = () => {
+    setAuthUser(null);
+  };
+
   return (
     <AuthUserContext.Provider value={authUser}>
       <SignUpContext.Provider value={signUp}>
-        <LogInContext.Provider value={logIn}>{children}</LogInContext.Provider>
+        <LogInContext.Provider value={logIn}>
+          <LogOutContext.Provider value={logOut}>
+            {children}
+          </LogOutContext.Provider>
+        </LogInContext.Provider>
       </SignUpContext.Provider>
     </AuthUserContext.Provider>
   );

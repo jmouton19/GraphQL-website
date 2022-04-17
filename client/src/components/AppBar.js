@@ -14,12 +14,13 @@ import StyledLink from './StyledLink';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import ChatIcon from '@mui/icons-material/Chat';
 import SearchIcon from '@mui/icons-material/Search';
-import { useAuthUser } from '../providers/AuthProvider';
+import { useAuthUser, useLogOut } from '../providers/AuthProvider';
 
 function PrimaryAppBar() {
   const [userMenuAnchorEl, setUserMenuAnchorEl] = useState(null);
 
   const authUser = useAuthUser();
+  const logOut = useLogOut();
 
   const handleMenu = (event) => {
     setUserMenuAnchorEl(event.currentTarget);
@@ -52,7 +53,7 @@ function PrimaryAppBar() {
             <NotificationsIcon />
           </IconButton>
 
-          <Typography>{authUser.email}</Typography>
+          {authUser && <Typography>{authUser.email}</Typography>}
 
           <IconButton
             size="large"
@@ -84,41 +85,60 @@ function PrimaryAppBar() {
             open={Boolean(userMenuAnchorEl)}
             onClose={handleUserMenuClose}
           >
-            <MenuItem
-              component={Link}
-              to={`/login`}
-              onClick={handleUserMenuClose}
-            >
-              Login
-            </MenuItem>
-            <MenuItem
-              component={Link}
-              to={`/signup`}
-              onClick={handleUserMenuClose}
-            >
-              Signup
-            </MenuItem>
-            <MenuItem
-              component={Link}
-              to={`/profile`}
-              onClick={handleUserMenuClose}
-            >
-              Profile
-            </MenuItem>
-            <MenuItem
-              component={Link}
-              to={`/map`}
-              onClick={handleUserMenuClose}
-            >
-              Map
-            </MenuItem>
-            <MenuItem
-              component={Link}
-              to={`/feed`}
-              onClick={handleUserMenuClose}
-            >
-              Feed
-            </MenuItem>
+            {!authUser && (
+              <MenuItem
+                component={Link}
+                to={`/login`}
+                onClick={handleUserMenuClose}
+              >
+                Login
+              </MenuItem>
+            )}
+            {!authUser && (
+              <MenuItem
+                component={Link}
+                to={`/signup`}
+                onClick={handleUserMenuClose}
+              >
+                Signup
+              </MenuItem>
+            )}
+            {authUser && (
+              <MenuItem
+                component={Link}
+                to={`/profile`}
+                onClick={handleUserMenuClose}
+              >
+                Profile
+              </MenuItem>
+            )}
+            {authUser && (
+              <MenuItem
+                component={Link}
+                to={`/map`}
+                onClick={handleUserMenuClose}
+              >
+                Map
+              </MenuItem>
+            )}
+            {authUser && (
+              <MenuItem
+                component={Link}
+                to={`/feed`}
+                onClick={handleUserMenuClose}
+              >
+                Feed
+              </MenuItem>
+            )}
+            {authUser && (
+              <MenuItem
+                onClick={() => {
+                  logOut();
+                }}
+              >
+                Log Out
+              </MenuItem>
+            )}
           </Menu>
         </Toolbar>
       </AppBar>

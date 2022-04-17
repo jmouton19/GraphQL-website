@@ -1,4 +1,9 @@
-import { Route, BrowserRouter as Router, Routes } from 'react-router-dom';
+import {
+  Route,
+  BrowserRouter as Router,
+  Routes,
+  Navigate,
+} from 'react-router-dom';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import Home from './pages/Home';
@@ -9,7 +14,7 @@ import PrimaryAppBar from './components/AppBar';
 import PostProvider from './providers/PostProvider';
 import Login from './pages/Login';
 import SignUp from './pages/SignUp';
-import AuthProvider from './providers/AuthProvider';
+import AuthProvider, { useAuthUser } from './providers/AuthProvider';
 import NotificationProvider from './providers/NotificationProvider';
 
 const darkTheme = createTheme({
@@ -20,6 +25,16 @@ const darkTheme = createTheme({
     },
   },
 });
+
+function PrivateRoute({ children }) {
+  const authUser = useAuthUser();
+
+  if (authUser) {
+    return children;
+  } else {
+    return <Navigate to="/login" />;
+  }
+}
 
 function App() {
   return (
@@ -36,25 +51,31 @@ function App() {
               <Route
                 path="/map"
                 element={
-                  <PostProvider>
-                    <MapPage />
-                  </PostProvider>
+                  <PrivateRoute>
+                    <PostProvider>
+                      <MapPage />
+                    </PostProvider>
+                  </PrivateRoute>
                 }
               />
               <Route
                 path="/feed"
                 element={
-                  <PostProvider>
-                    <Feed />
-                  </PostProvider>
+                  <PrivateRoute>
+                    <PostProvider>
+                      <Feed />
+                    </PostProvider>
+                  </PrivateRoute>
                 }
               />
               <Route
                 path="/profile"
                 element={
-                  <PostProvider>
-                    <Profile />
-                  </PostProvider>
+                  <PrivateRoute>
+                    <PostProvider>
+                      <Profile />
+                    </PostProvider>
+                  </PrivateRoute>
                 }
               />
             </Routes>
