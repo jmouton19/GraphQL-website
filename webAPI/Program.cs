@@ -43,16 +43,16 @@ builder.Services.AddSpaStaticFiles(configuration =>
 var app = builder.Build();
 app.UseCors(o => o.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
 
-// app.UseStaticFiles();
+app.UseStaticFiles();
 app.UseSpaStaticFiles();
-// app.UseSpa(spa =>
-// {
-//     spa.Options.SourcePath = "../client";
-//     if (builder.Environment.IsDevelopment())
-//     {
-//         spa.UseReactDevelopmentServer(npmScript: "start");
-//     }
-// });
+app.UseSpa(spa =>
+{
+    spa.Options.SourcePath = "wwwroot";
+    if (builder.Environment.IsDevelopment())
+    {
+        spa.UseReactDevelopmentServer(npmScript: "start");
+    }
+});
 
 app.UseAuthentication();
 app.MapGraphQL();
