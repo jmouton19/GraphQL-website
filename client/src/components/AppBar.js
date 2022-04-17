@@ -14,9 +14,12 @@ import StyledLink from './StyledLink';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import ChatIcon from '@mui/icons-material/Chat';
 import SearchIcon from '@mui/icons-material/Search';
+import { useAuthUser } from '../providers/AuthProvider';
 
 function PrimaryAppBar() {
   const [userMenuAnchorEl, setUserMenuAnchorEl] = useState(null);
+
+  const authUser = useAuthUser();
 
   const handleMenu = (event) => {
     setUserMenuAnchorEl(event.currentTarget);
@@ -28,7 +31,7 @@ function PrimaryAppBar() {
 
   return (
     <>
-      <AppBar position='sticky'>
+      <AppBar position="sticky">
         <Toolbar>
           <StyledLink to="/">
             <Typography variant="h6" component="div" color="primary">
@@ -48,6 +51,8 @@ function PrimaryAppBar() {
           <IconButton size="large" color="primary">
             <NotificationsIcon />
           </IconButton>
+
+          <Typography>{authUser.email}</Typography>
 
           <IconButton
             size="large"
