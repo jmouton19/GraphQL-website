@@ -20,4 +20,4 @@ RUN mkdir /app/wwwroot
 COPY --from=dotnet-publish /app/publish .
 COPY --from=node-builder /node/build ./wwwroot
 # ENTRYPOINT [ "dotnet","webAPI.dll" ]
-CMD ASPNETCORE_URLS=http://*:$PORT dotnet webAPI.dll
+CMD ASPNETCORE_URLS=https://*:$PORT dotnet webAPI.dll
