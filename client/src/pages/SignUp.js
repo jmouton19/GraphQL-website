@@ -21,6 +21,7 @@ import validator from 'validator';
 import { useSignUp } from '../providers/AuthProvider';
 import { FormControlLabel } from '@mui/material';
 import { Checkbox } from '@mui/material';
+import { Divider } from '@mui/material';
 
 function SignUp() {
   const [username, setUsername] = useState('');
@@ -39,6 +40,8 @@ function SignUp() {
   const [showPassword, setShowPassword] = useState(false);
   const [avatarUrl, setAvatarUrl] = useState(null);
 
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
   const [rememberMe, setRememberMe] = useState(true);
 
   const signUp = useSignUp();
@@ -105,18 +108,19 @@ function SignUp() {
   };
 
   function completeSignUp() {
-    let data;
-    data = {
-      username,
-      email,
-      password,
+    const data = {
       avatar: avatarUrl,
+      email,
+      firstName,
+      lastName,
+      password,
       rememberMe,
+      username,
     };
+
     console.log(data);
 
-    // Todo: Update backend and authprovider to handle rememberMe
-    signUp(email, username, password, avatarUrl);
+    signUp(data);
   }
 
   return (
@@ -260,6 +264,37 @@ function SignUp() {
                       Passwords do not match
                     </FormHelperText>
                   ) : null}
+                </FormControl>
+              </Grid>
+              <Grid item xs={12}>
+                <Divider />
+              </Grid>
+              <Grid item xs={12}>
+                <FormControl fullWidth>
+                  <InputLabel htmlFor="email-input">First Name</InputLabel>
+                  <OutlinedInput
+                    id="firstname-input"
+                    name="firstname"
+                    value={firstName}
+                    onChange={(event) => {
+                      setFirstName(event.target.value);
+                    }}
+                    label="First Name"
+                  />
+                </FormControl>
+              </Grid>
+              <Grid item xs={12}>
+                <FormControl fullWidth>
+                  <InputLabel htmlFor="email-input">Last Name</InputLabel>
+                  <OutlinedInput
+                    id="firstname-input"
+                    name="firstname"
+                    value={lastName}
+                    onChange={(event) => {
+                      setLastName(event.target.value);
+                    }}
+                    label="Last Name"
+                  />
                 </FormControl>
               </Grid>
               <Grid item xs={12}>

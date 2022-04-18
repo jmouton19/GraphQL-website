@@ -48,17 +48,31 @@ function AuthProvider({ children }) {
   const notifySuccess = useNotifySuccess();
   const notifyError = useNotifyError();
 
-  const signUp = (email, username, password, avatarURL) => {
+  const signUp = (data) => {
+    // Todo: Update backend to handle rememberMe
+
+    const {
+      avatar,
+      email,
+      firstName,
+      lastName,
+      password,
+      //rememberMe,
+      username,
+    } = data;
+
     client
       .mutate({
         mutation: gql`
           mutation {
             addUser(
               input: {
+                avatar: "${avatar}"
                 email: "${email}"
-                username: "${username}"
+                firstName: "${firstName}"
+                lastName: "${lastName}"
                 password: "${password}"
-                avatar: "${avatarURL}"
+                username: "${username}"
               }
             )
           }

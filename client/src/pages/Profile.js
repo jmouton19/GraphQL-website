@@ -5,19 +5,8 @@ import { Container } from '@mui/material';
 import { TabContext, TabList, TabPanel } from '@mui/lab';
 import { Tab } from '@mui/material';
 import cheeseMarker from '../assets/cheese-pin.png';
-//import { styled } from '@mui/material/styles';
-//import { red } from '@mui/material/colors';
-import {
-  Avatar,
-  //Grid,
-  //	Paper,
-  //	Table,
-  //	TableBody,
-  //	TableContainer,
-  //	TableHead,
-  //    Tab,
-  Typography,
-} from '@mui/material';
+
+import { Avatar, Typography } from '@mui/material';
 import { usePosts } from '../providers/PostProvider';
 import PostCard from '../components/PostCard';
 
@@ -34,13 +23,7 @@ function Profile() {
   };
   return (
     <Container>
-      <Stack
-        direction="column"
-        spacing={1}
-        mt={12}
-        alignItems="center"
-        //justifyContent="flex-end"
-      >
+      <Stack direction="column" spacing={1} mt={12} alignItems="center">
         <Avatar
           src={authUser.avatar}
           sx={{
@@ -50,7 +33,7 @@ function Profile() {
             borderColor: '#ffc619',
           }}
         />
-        <Typography variant="h4">Cheddar</Typography>
+        <Typography variant="h4">{`${authUser.firstName} ${authUser.lastName}`}</Typography>
         <Stack direction="row" spacing={0.2}>
           <img
             alt="Location Icon"
