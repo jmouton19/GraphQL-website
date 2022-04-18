@@ -46,7 +46,7 @@ namespace webAPI.graphQL
         }
 
         [UseDbContext(typeof(AppDbContext))]
-        public async Task<string> AddGroupAsync(AddGroupInput input, [ScopedService] AppDbContext context)
+        public async Task<bool> AddGroupAsync(AddGroupInput input, [ScopedService] AppDbContext context)
         {
             var group = new Group
             {
