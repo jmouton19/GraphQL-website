@@ -17,17 +17,26 @@ import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import { useAuthUser, useLogIn } from '../providers/AuthProvider';
 import { Navigate } from 'react-router-dom';
+import { FormControlLabel } from '@mui/material';
+import { Checkbox } from '@mui/material';
 
 function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
 
+  const [rememberMe, setRememberMe] = useState(true);
+
   const authUser = useAuthUser();
   const login = useLogIn();
 
   function toggleShowPassword() {
     setShowPassword(!showPassword);
+  }
+
+  function handleLogIn() {
+    // Todo: update backend and authprovider for Remember Me functionality
+    login(email, password);
   }
 
   if (authUser) {
@@ -84,12 +93,19 @@ function Login() {
             </Grid>
             <Grid item xs={12}>
               <FormControl fullWidth>
-                <Button
-                  variant="contained"
-                  onClick={() => {
-                    login(email, password);
+                <FormControlLabel
+                  control={<Checkbox defaultChecked />}
+                  label="Remember Me"
+                  value={rememberMe}
+                  onChange={(event) => {
+                    setRememberMe(event.target.value);
                   }}
-                >
+                />
+              </FormControl>
+            </Grid>
+            <Grid item xs={12}>
+              <FormControl fullWidth>
+                <Button variant="contained" onClick={handleLogIn}>
                   Login
                 </Button>
               </FormControl>

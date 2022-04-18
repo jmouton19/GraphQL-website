@@ -19,6 +19,8 @@ import AvatarPicker from '../components/AvatarPicker';
 import StyledLink from '../components/StyledLink';
 import validator from 'validator';
 import { useSignUp } from '../providers/AuthProvider';
+import { FormControlLabel } from '@mui/material';
+import { Checkbox } from '@mui/material';
 
 function SignUp() {
   const [username, setUsername] = useState('');
@@ -36,6 +38,8 @@ function SignUp() {
   });
   const [showPassword, setShowPassword] = useState(false);
   const [avatarUrl, setAvatarUrl] = useState(null);
+
+  const [rememberMe, setRememberMe] = useState(true);
 
   const signUp = useSignUp();
 
@@ -107,10 +111,12 @@ function SignUp() {
       email,
       password,
       avatar: avatarUrl,
+      rememberMe,
     };
     console.log(data);
 
-    signUp(email, username, password);
+    // Todo: Update backend and authprovider to handle rememberMe
+    signUp(email, username, password, avatarUrl);
   }
 
   return (
@@ -261,6 +267,18 @@ function SignUp() {
                 <AvatarPicker
                   setAvatarUrl={(imageUrl) => setAvatarUrl(imageUrl)}
                 />
+              </Grid>
+              <Grid item xs={12}>
+                <FormControl fullWidth>
+                  <FormControlLabel
+                    control={<Checkbox defaultChecked />}
+                    label="Remember Me"
+                    value={rememberMe}
+                    onChange={(event) => {
+                      setRememberMe(event.target.value);
+                    }}
+                  />
+                </FormControl>
               </Grid>
               <Grid item xs={12}>
                 <FormControl fullWidth>

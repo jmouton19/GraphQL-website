@@ -48,7 +48,7 @@ function AuthProvider({ children }) {
   const notifySuccess = useNotifySuccess();
   const notifyError = useNotifyError();
 
-  const signUp = (email, username, password) => {
+  const signUp = (email, username, password, avatarURL) => {
     client
       .mutate({
         mutation: gql`
@@ -58,6 +58,7 @@ function AuthProvider({ children }) {
                 email: "${email}"
                 username: "${username}"
                 password: "${password}"
+                avatar: "${avatarURL}"
               }
             )
           }
