@@ -58,15 +58,9 @@ namespace webAPI.graphQL
             };
 
             context.Groups.Add(group);
-            try
-            {
-                await context.SaveChangesAsync();
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine("{0} Exception caught.", e);
-                return JsonConvert.SerializeObject(group);
-            }
+
+            await context.SaveChangesAsync();
+
 
             var memberInput = new AddMemberInput(group.Id, input.ownerId, true);
 
@@ -83,10 +77,16 @@ namespace webAPI.graphQL
                 groupId = input.groupId,
                 admin = input.admin
             };
+            var currentMember = context.Memberships.Where(u => u.groupId == input.groupId && u.userId == input.userId).FirstOrDefault();
+            if (currentMember == null)
+            {
+                context.Memberships.Add(member);
+                await context.SaveChangesAsync();
+                return true;
+            }
+            else
 
-            context.Memberships.Add(member);
-            await context.SaveChangesAsync();
-            return true;
+                return true;
         }
 
 
