@@ -23,6 +23,8 @@ namespace webAPI.data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<User>().HasMany(u => u.OwnedGroups).WithOne(g => g.owner!).HasForeignKey(g => g.ownerId);
+            modelBuilder.Entity<User>().HasMany(u => u.FriendshipsSent).WithOne(g => g.sender).HasForeignKey(g => g.senderId);
+            modelBuilder.Entity<User>().HasMany(u => u.FriendshipsReceived).WithOne(g => g.receiver).HasForeignKey(g => g.receiverId);
             modelBuilder.Entity<Group>().HasMany(g => g.memberships).WithOne(g => g.group!).HasForeignKey(m => m.groupId);
             modelBuilder.Entity<User>().HasMany(u => u.memberships).WithOne(u => u.user!).HasForeignKey(m => m.userId);
             modelBuilder.Entity<Membership>().HasMany(m => m.posts).WithOne(m => m.creator!).HasForeignKey(p => p.creatorId);
@@ -112,6 +114,46 @@ namespace webAPI.data
                 admin = false,
                 groupId = 1,
                 userId = 2,
+            });
+            modelBuilder.Entity<Post>().HasData(new Post
+            {
+                Id = 1,
+                body = "I like penguins",
+                video = false,
+                creatorId = 1,
+                latitude = 29.6537,
+                longitude = 79.9486,
+                dateCreated = DateTime.UtcNow
+            }, new Post
+            {
+                Id = 2,
+                body = "insert some penguin video link here",
+                video = true,
+                creatorId = 2,
+                latitude = 82.8628,
+                longitude = 135.0000,
+                dateCreated = DateTime.UtcNow
+            });
+
+            modelBuilder.Entity<Comment>().HasData(new Comment
+            {
+                Id = 1,
+                body = "i also like pengins",
+                creatorId = 2,
+                postId = 1,
+                dateCreated = DateTime.UtcNow
+            });
+            modelBuilder.Entity<Friendship>().HasData(new Friendship
+            {
+                Id = 1,
+                senderId = 1,
+                receiverId = 2,
+            }, new Friendship
+            {
+                Id = 2,
+                senderId = 3,
+                receiverId = 4,
+                accepted = true
             });
         }
     }

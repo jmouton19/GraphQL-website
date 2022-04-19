@@ -23,6 +23,7 @@ namespace webAPI.Models
         public List<Group>? OwnedGroups { get; set; }
         [GraphQLDescription("Groups this user is part of, including the groups owned by user.")]
         public List<Membership>? memberships { get; set; }
-        public List<Friendship>? Friendships { get; set; }
+        public List<Friendship>? FriendshipsSent { get; set; }
+        public List<Friendship>? FriendshipsReceived { get; set; }
     }
 }

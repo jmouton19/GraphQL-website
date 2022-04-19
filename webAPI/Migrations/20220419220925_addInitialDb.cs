@@ -6,7 +6,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace webAPI.Migrations
 {
-    public partial class addInitialDB : Migration
+    public partial class addInitialDb : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -27,6 +27,33 @@ namespace webAPI.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Users", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Friendships",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    senderId = table.Column<int>(type: "integer", nullable: false),
+                    receiverId = table.Column<int>(type: "integer", nullable: false),
+                    accepted = table.Column<bool>(type: "boolean", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Friendships", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Friendships_Users_receiverId",
+                        column: x => x.receiverId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Friendships_Users_senderId",
+                        column: x => x.senderId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -86,11 +113,11 @@ namespace webAPI.Migrations
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     creatorId = table.Column<int>(type: "integer", nullable: false),
-                    postType = table.Column<string>(type: "text", nullable: false),
+                    video = table.Column<bool>(type: "boolean", nullable: false),
                     dateCreated = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     body = table.Column<string>(type: "text", nullable: false),
-                    latitude = table.Column<float>(type: "real", nullable: false),
-                    longitude = table.Column<float>(type: "real", nullable: false)
+                    latitude = table.Column<double>(type: "double precision", nullable: false),
+                    longitude = table.Column<double>(type: "double precision", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -136,10 +163,19 @@ namespace webAPI.Migrations
                 columns: new[] { "Id", "DOB", "avatar", "email", "firstName", "lastName", "password", "username" },
                 values: new object[,]
                 {
-                    { 1, new DateOnly(1943, 11, 23), null, "nicolvisser@yahoo.com", "Nicol", "Visser", "$2a$11$L/C/cOLbNmLTBcnx.HapwefwDbu5qnvHmcWK6HZy/EAhpcfPVz4FS", "VisserMan" },
-                    { 2, new DateOnly(2000, 6, 3), null, "jcmouton@protonmail.com", "JC", "Mouton", "$2a$11$FvBuMuP/TEG3l8GyLixEO.IepuXwc2Q1EGNBCv3tlte.2egQ5ApH2", "JaySea" },
-                    { 3, new DateOnly(2000, 11, 23), null, "philler@gmail.com", "Philip", "Schommarz", "$2a$11$XK4ZYtV7MV1yfWc.WZq45u0xntkrCKPlO1Kzpbif5JT2kYaDBpcnC", "Fillet" },
-                    { 4, new DateOnly(200, 3, 11), null, "mssteyn@rocketmail.com", "Lize", "Steyn", "$2a$11$Uy5CZ089wNIXoXNS68Lwc.UsWyJ0Kl6/sJfYvYmgqEYiK916sGf9S", "MorneSteyn" }
+                    { 1, new DateOnly(1943, 11, 23), null, "nicolvisser@yahoo.com", "Nicol", "Visser", "$2a$11$HasxdUQ6dQwamlSzkcQC6.HOvCSQa5GgC0i7G64bCQNFHbjL41V/S", "VisserMan" },
+                    { 2, new DateOnly(2000, 6, 3), null, "jcmouton@protonmail.com", "JC", "Mouton", "$2a$11$8V6yAvXy9krx8w4gLQZobe9cDpKez/zPztnN.UygyToPnuEXOVvje", "JaySea" },
+                    { 3, new DateOnly(2000, 11, 23), null, "philler@gmail.com", "Philip", "Schommarz", "$2a$11$Cs8N28ioUWJNMY8v33ztHem8rCU5ysaY/rvnA.BX8taF4XduzIVAK", "Fillet" },
+                    { 4, new DateOnly(200, 3, 11), null, "mssteyn@rocketmail.com", "Lize", "Steyn", "$2a$11$VL29tc65BEcsE4A7EUcYIuOzbiMZTXMZJ4lvFGMf9BrbP6MJcUmei", "MorneSteyn" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "Friendships",
+                columns: new[] { "Id", "accepted", "receiverId", "senderId" },
+                values: new object[,]
+                {
+                    { 1, false, 2, 1 },
+                    { 2, true, 4, 3 }
                 });
 
             migrationBuilder.InsertData(
@@ -161,6 +197,20 @@ namespace webAPI.Migrations
                     { 3, false, 1, 2 }
                 });
 
+            migrationBuilder.InsertData(
+                table: "Posts",
+                columns: new[] { "Id", "body", "creatorId", "dateCreated", "latitude", "longitude", "video" },
+                values: new object[,]
+                {
+                    { 1, "I like penguins", 1, new DateTime(2022, 4, 19, 22, 9, 25, 109, DateTimeKind.Utc).AddTicks(3317), 29.653700000000001, 79.948599999999999, false },
+                    { 2, "insert some penguin video link here", 2, new DateTime(2022, 4, 19, 22, 9, 25, 109, DateTimeKind.Utc).AddTicks(3319), 82.862799999999993, 135.0, true }
+                });
+
+            migrationBuilder.InsertData(
+                table: "Comments",
+                columns: new[] { "Id", "body", "creatorId", "dateCreated", "postId" },
+                values: new object[] { 1, "i also like pengins", 2, new DateTime(2022, 4, 19, 22, 9, 25, 109, DateTimeKind.Utc).AddTicks(3340), 1 });
+
             migrationBuilder.CreateIndex(
                 name: "IX_Comments_creatorId",
                 table: "Comments",
@@ -170,6 +220,16 @@ namespace webAPI.Migrations
                 name: "IX_Comments_postId",
                 table: "Comments",
                 column: "postId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Friendships_receiverId",
+                table: "Friendships",
+                column: "receiverId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Friendships_senderId",
+                table: "Friendships",
+                column: "senderId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Groups_ownerId",
@@ -208,6 +268,9 @@ namespace webAPI.Migrations
         {
             migrationBuilder.DropTable(
                 name: "Comments");
+
+            migrationBuilder.DropTable(
+                name: "Friendships");
 
             migrationBuilder.DropTable(
                 name: "Posts");

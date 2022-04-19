@@ -23,10 +23,10 @@ namespace webAPI.Models
         public string body { get; set; } = string.Empty;
         [Required]
         [GraphQLDescription("Latitude coordiante of where the post was made.")]
-        public float latitude { get; set; }
+        public double latitude { get; set; }
         [Required]
         [GraphQLDescription("Longitude coordiante of where the post was made.")]
-        public float longitude { get; set; }
+        public double longitude { get; set; }
         [GraphQLDescription("Comments made on the post.")]
         public List<Comment>? comments { get; set; }
     }

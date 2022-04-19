@@ -12,8 +12,8 @@ using webAPI.data;
 namespace webAPI.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20220412220442_addInitialDB")]
-    partial class addInitialDB
+    [Migration("20220419220925_addInitialDb")]
+    partial class addInitialDb
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -52,6 +52,58 @@ namespace webAPI.Migrations
                     b.HasIndex("postId");
 
                     b.ToTable("Comments");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            body = "i also like pengins",
+                            creatorId = 2,
+                            dateCreated = new DateTime(2022, 4, 19, 22, 9, 25, 109, DateTimeKind.Utc).AddTicks(3340),
+                            postId = 1
+                        });
+                });
+
+            modelBuilder.Entity("webAPI.Models.Friendship", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<bool>("accepted")
+                        .HasColumnType("boolean");
+
+                    b.Property<int>("receiverId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("senderId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("receiverId");
+
+                    b.HasIndex("senderId");
+
+                    b.ToTable("Friendships");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            accepted = false,
+                            receiverId = 2,
+                            senderId = 1
+                        },
+                        new
+                        {
+                            Id = 2,
+                            accepted = true,
+                            receiverId = 4,
+                            senderId = 3
+                        });
                 });
 
             modelBuilder.Entity("webAPI.Models.Group", b =>
@@ -170,21 +222,42 @@ namespace webAPI.Migrations
                     b.Property<DateTime>("dateCreated")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<float>("latitude")
-                        .HasColumnType("real");
+                    b.Property<double>("latitude")
+                        .HasColumnType("double precision");
 
-                    b.Property<float>("longitude")
-                        .HasColumnType("real");
+                    b.Property<double>("longitude")
+                        .HasColumnType("double precision");
 
-                    b.Property<string>("postType")
-                        .IsRequired()
-                        .HasColumnType("text");
+                    b.Property<bool>("video")
+                        .HasColumnType("boolean");
 
                     b.HasKey("Id");
 
                     b.HasIndex("creatorId");
 
                     b.ToTable("Posts");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            body = "I like penguins",
+                            creatorId = 1,
+                            dateCreated = new DateTime(2022, 4, 19, 22, 9, 25, 109, DateTimeKind.Utc).AddTicks(3317),
+                            latitude = 29.653700000000001,
+                            longitude = 79.948599999999999,
+                            video = false
+                        },
+                        new
+                        {
+                            Id = 2,
+                            body = "insert some penguin video link here",
+                            creatorId = 2,
+                            dateCreated = new DateTime(2022, 4, 19, 22, 9, 25, 109, DateTimeKind.Utc).AddTicks(3319),
+                            latitude = 82.862799999999993,
+                            longitude = 135.0,
+                            video = true
+                        });
                 });
 
             modelBuilder.Entity("webAPI.Models.User", b =>
@@ -237,7 +310,7 @@ namespace webAPI.Migrations
                             email = "nicolvisser@yahoo.com",
                             firstName = "Nicol",
                             lastName = "Visser",
-                            password = "$2a$11$L/C/cOLbNmLTBcnx.HapwefwDbu5qnvHmcWK6HZy/EAhpcfPVz4FS",
+                            password = "$2a$11$HasxdUQ6dQwamlSzkcQC6.HOvCSQa5GgC0i7G64bCQNFHbjL41V/S",
                             username = "VisserMan"
                         },
                         new
@@ -247,7 +320,7 @@ namespace webAPI.Migrations
                             email = "jcmouton@protonmail.com",
                             firstName = "JC",
                             lastName = "Mouton",
-                            password = "$2a$11$FvBuMuP/TEG3l8GyLixEO.IepuXwc2Q1EGNBCv3tlte.2egQ5ApH2",
+                            password = "$2a$11$8V6yAvXy9krx8w4gLQZobe9cDpKez/zPztnN.UygyToPnuEXOVvje",
                             username = "JaySea"
                         },
                         new
@@ -257,7 +330,7 @@ namespace webAPI.Migrations
                             email = "philler@gmail.com",
                             firstName = "Philip",
                             lastName = "Schommarz",
-                            password = "$2a$11$XK4ZYtV7MV1yfWc.WZq45u0xntkrCKPlO1Kzpbif5JT2kYaDBpcnC",
+                            password = "$2a$11$Cs8N28ioUWJNMY8v33ztHem8rCU5ysaY/rvnA.BX8taF4XduzIVAK",
                             username = "Fillet"
                         },
                         new
@@ -267,7 +340,7 @@ namespace webAPI.Migrations
                             email = "mssteyn@rocketmail.com",
                             firstName = "Lize",
                             lastName = "Steyn",
-                            password = "$2a$11$Uy5CZ089wNIXoXNS68Lwc.UsWyJ0Kl6/sJfYvYmgqEYiK916sGf9S",
+                            password = "$2a$11$VL29tc65BEcsE4A7EUcYIuOzbiMZTXMZJ4lvFGMf9BrbP6MJcUmei",
                             username = "MorneSteyn"
                         });
                 });
@@ -289,6 +362,25 @@ namespace webAPI.Migrations
                     b.Navigation("creator");
 
                     b.Navigation("post");
+                });
+
+            modelBuilder.Entity("webAPI.Models.Friendship", b =>
+                {
+                    b.HasOne("webAPI.Models.User", "receiver")
+                        .WithMany("FriendshipsReceived")
+                        .HasForeignKey("receiverId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("webAPI.Models.User", "sender")
+                        .WithMany("FriendshipsSent")
+                        .HasForeignKey("senderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("receiver");
+
+                    b.Navigation("sender");
                 });
 
             modelBuilder.Entity("webAPI.Models.Group", b =>
@@ -351,6 +443,10 @@ namespace webAPI.Migrations
 
             modelBuilder.Entity("webAPI.Models.User", b =>
                 {
+                    b.Navigation("FriendshipsReceived");
+
+                    b.Navigation("FriendshipsSent");
+
                     b.Navigation("OwnedGroups");
 
                     b.Navigation("memberships");
