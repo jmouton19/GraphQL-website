@@ -13,14 +13,8 @@ namespace webAPI.graphQL
     public class Mutation
     {
         [UseDbContext(typeof(AppDbContext))]
-        public async Task<string> AddUserAsync(AddUserInput input, [ScopedService] AppDbContext context)
+        public async Task<bool> AddUserAsync(AddUserInput input, [ScopedService] AppDbContext context)
         {
-            var response = new Response
-            {
-                success = true,
-                message = "User added."
-            };
-
             var user = new User
             {
                 email = input.email,
@@ -36,13 +30,10 @@ namespace webAPI.graphQL
             {
                 context.Users.Add(user);
                 await context.SaveChangesAsync();
+                return true;
             }
             else
-            {
-                response.success = false;
-                response.message = "Email or username taken.";
-            }
-            return JsonConvert.SerializeObject(response);
+                return false;
         }
 
         [UseDbContext(typeof(AppDbContext))]
@@ -58,12 +49,9 @@ namespace webAPI.graphQL
             };
 
             context.Groups.Add(group);
-
             await context.SaveChangesAsync();
 
-
             var memberInput = new AddMemberInput(group.Id, input.ownerId, true);
-
             await AddMemberAsync(memberInput, context);
             return true;
         }
@@ -86,7 +74,7 @@ namespace webAPI.graphQL
             }
             else
 
-                return true;
+                return false;
         }
 
 
