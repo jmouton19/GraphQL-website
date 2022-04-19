@@ -145,7 +145,7 @@ namespace webAPI.graphQL
 
             var currentFriendship = context.Friendships.Where(u => u.senderId == input.senderId && u.receiverId == input.receiverId).FirstOrDefault();
             if (currentFriendship != null)
-                return "success:false,message:already sent";
+                return "success:false,message:request already sent";
             else
             {
                 var friendship = new Friendship
@@ -166,7 +166,7 @@ namespace webAPI.graphQL
                         return "success:true,message:friend added";
                     }
                     else
-                        return "success:true,message:already friends";
+                        return "success:false,message:already friends";
 
                 }
                 else
