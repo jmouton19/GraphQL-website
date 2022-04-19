@@ -20,14 +20,13 @@ export default function SearchMenu({ open }) {
   const [groups, setGroups] = useState([]);
   const [users, setUsers] = useState([]);
   const [searchValue, setSearchValue] = useState('');
-  console.log(users);
 
   useEffect(() => {
-    searchForGroups(searchValue);
-    searchForUsers(searchValue);
+    searchForGroups();
+    searchForUsers();
   }, [searchValue]);
 
-  function searchForGroups(searchValue) {
+  function searchForGroups() {
     if (searchValue !== '') {
       client
         .query({
@@ -57,7 +56,7 @@ export default function SearchMenu({ open }) {
     }
   }
 
-  function searchForUsers(searchValue) {
+  function searchForUsers() {
     if (searchValue !== '') {
       client
         .query({
@@ -172,7 +171,7 @@ export default function SearchMenu({ open }) {
             {users &&
               users.map((user) => {
                 return (
-                  <StyledLink key={user.id} to={`/profile/${user.id}`}>
+                  <StyledLink key={user.id} to={`/profile/${user.username}`}>
                     <ListItem>
                       <ListItemAvatar>
                         <Avatar src={user.avatar} />

@@ -30,6 +30,7 @@ function PrimaryAppBar() {
   const [searchMenuOpen, setSearchMenuOpen] = useState(false);
 
   const authUser = useAuthUser();
+  console.log(authUser);
   const logOut = useLogOut();
 
   const navigate = useNavigate();
@@ -155,7 +156,7 @@ function PrimaryAppBar() {
             {authUser && (
               <MenuItem
                 component={Link}
-                to={`/profile`}
+                to={`/profile/${authUser.username}`}
                 onClick={handleUserMenuClose}
               >
                 Profile

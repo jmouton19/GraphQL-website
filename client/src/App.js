@@ -76,6 +76,16 @@ function App() {
                   </PrivateRoute>
                 }
               />
+              <Route
+                path="/profile/:username"
+                element={
+                  <PrivateRoute>
+                    <PostProvider>
+                      <Profile />
+                    </PostProvider>
+                  </PrivateRoute>
+                }
+              />
             </Routes>
           </Router>
         </AuthProvider>

@@ -41,7 +41,6 @@ function AuthProvider({ children }) {
     window.localStorage.setItem(localStorageItemName, JSON.stringify(authUser));
   }, [authUser]);
 
-  console.log(authUser);
 
   const client = useApolloClient();
 
@@ -120,6 +119,7 @@ function AuthProvider({ children }) {
             firstName
             lastName
             avatar
+            username
           }
         }
       `,
