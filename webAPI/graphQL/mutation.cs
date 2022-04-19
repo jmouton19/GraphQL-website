@@ -139,5 +139,40 @@ namespace webAPI.graphQL
             return "true";
         }
 
+        [UseDbContext(typeof(AppDbContext))]
+        public async Task<string> AddFriendAsync(AddFriendInput input, [ScopedService] AppDbContext context)
+        {
+
+            var currentFriendship = context.Friendships.Where(u => u.senderId == input.senderId && u.receiverId == input.receiverId).FirstOrDefault();
+            if (currentFriendship != null)
+                return "false";
+            else
+            {
+                var friendship = new Friendship
+                {
+                    senderId = input.senderId,
+                    receiverId = input.receiverId,
+                    accepted = true
+                };
+
+                currentFriendship = context.Friendships.Where(u => u.senderId == input.receiverId && u.receiverId == input.senderId).FirstOrDefault();
+                if (currentFriendship != null)
+                {
+                    friendship.accepted = true;
+                    return "true";
+                }
+                else
+                {
+                    friendship.accepted = false;
+                    context.Friendships.Add(friendship);
+                    await context.SaveChangesAsync();
+                    return "true";
+                }
+
+
+            }
+
+        }
+
     }
 }

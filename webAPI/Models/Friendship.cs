@@ -8,11 +8,13 @@ namespace webAPI.Models
         public int Id { get; set; }
 
         [Required]
-        public int userId1 { get; set; }
+        public int senderId { get; set; }
 
 
         [Required]
-        public int userId2 { get; set; }
+        public int receiverId { get; set; }
+        [Required]
+        public bool accepted { get; set; } = false;
 
     }
 }
