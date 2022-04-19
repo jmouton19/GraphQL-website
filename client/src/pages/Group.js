@@ -6,12 +6,13 @@ import { TabContext, TabList, TabPanel } from '@mui/lab';
 import { Tab } from '@mui/material';
 import cheeseMarker from '../assets/cheese-pin.png';
 
-import { Avatar, Typography } from '@mui/material';
+import { Avatar, Typography, AvatarGroup } from '@mui/material';
 import { usePosts } from '../providers/PostProvider';
 import PostCard from '../components/PostCard';
 
 import shortid from 'shortid';
 import { useAuthUser } from '../providers/AuthProvider';
+import AddPostCard from '../components/AddPostCard';
 
 function Group() {
   const authUser = useAuthUser();
@@ -24,6 +25,7 @@ function Group() {
   return (
     <Container>
       <Stack direction="column" spacing={1} mt={12} alignItems="center">
+        
         <Avatar
           src={authUser.avatar}
           sx={{
@@ -33,6 +35,12 @@ function Group() {
             borderColor: '#ffc619',
           }}
         />
+        <AvatarGroup total = {24}>
+            <Avatar src={authUser.avatar}/>
+            <Avatar src={authUser.avatar}/>
+            <Avatar src={authUser.avatar}/>
+
+        </AvatarGroup>
         <Typography variant="h4">{`${authUser.firstName} ${authUser.lastName}`}</Typography>
         <Stack direction="row" spacing={0.2}>
           <img
@@ -43,6 +51,7 @@ function Group() {
           <Typography variant="h6">Cape Town, South Africa</Typography>
         </Stack>
         <Typography>Bio ?</Typography>
+        <AddPostCard />
       </Stack>
       <TabContext value={activeTabNumber}>
         <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
