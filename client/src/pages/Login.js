@@ -63,7 +63,7 @@ function Login() {
                   onChange={(event) => {
                     setEmail(event.target.value);
                   }}
-                  label="Email Address / Company Name"
+                  label="Email Address"
                 />
               </FormControl>
             </Grid>

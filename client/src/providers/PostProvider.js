@@ -37,6 +37,7 @@ function PostProvider({ children }) {
       location: [-33.9293, 18.8616],
     },
   ];
+  
   return <PostsContext.Provider value={data}>{children}</PostsContext.Provider>;
 }
 

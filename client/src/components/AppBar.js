@@ -22,9 +22,12 @@ import FeedIcon from '@mui/icons-material/Feed';
 import MapIcon from '@mui/icons-material/Map';
 import { Tooltip } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
+import SearchMenu from './SearchMenu';
 
 function PrimaryAppBar() {
   const [userMenuAnchorEl, setUserMenuAnchorEl] = useState(null);
+
+  const [searchMenuOpen, setSearchMenuOpen] = useState(false);
 
   const authUser = useAuthUser();
   const logOut = useLogOut();
@@ -41,6 +44,7 @@ function PrimaryAppBar() {
 
   return (
     <>
+      <SearchMenu open={searchMenuOpen} />
       <AppBar position="sticky">
         <Toolbar>
           <StyledLink to="/">
@@ -81,7 +85,13 @@ function PrimaryAppBar() {
           <Box sx={{ flexGrow: 1 }} />
 
           <Tooltip title="Search">
-            <IconButton size="large" color="primary">
+            <IconButton
+              size="large"
+              color="primary"
+              onClick={() => {
+                setSearchMenuOpen(!searchMenuOpen)
+              }}
+            >
               <SearchIcon />
             </IconButton>
           </Tooltip>
