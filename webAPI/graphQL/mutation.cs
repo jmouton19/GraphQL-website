@@ -12,7 +12,7 @@ namespace webAPI.graphQL
     public class Mutation
     {
         [UseDbContext(typeof(AppDbContext))]
-        public async Task<bool> AddUserAsync(AddUserInput input, [ScopedService] AppDbContext context)
+        public async Task<string> AddUserAsync(AddUserInput input, [ScopedService] AppDbContext context)
         {
             var user = new User
             {
@@ -29,14 +29,14 @@ namespace webAPI.graphQL
             {
                 context.Users.Add(user);
                 await context.SaveChangesAsync();
-                return true;
+                return "true";
             }
             else
-                return false;
+                return "false";
         }
 
         [UseDbContext(typeof(AppDbContext))]
-        public async Task<bool> AddGroupAsync(AddGroupInput input, [ScopedService] AppDbContext context)
+        public async Task<string> AddGroupAsync(AddGroupInput input, [ScopedService] AppDbContext context)
         {
             var group = new Group
             {
@@ -52,11 +52,11 @@ namespace webAPI.graphQL
 
             var memberInput = new AddMemberInput(group.Id, input.ownerId, true);
             await AddMemberAsync(memberInput, context);
-            return true;
+            return "true";
         }
 
         [UseDbContext(typeof(AppDbContext))]
-        public async Task<bool> AddMemberAsync(AddMemberInput input, [ScopedService] AppDbContext context)
+        public async Task<string> AddMemberAsync(AddMemberInput input, [ScopedService] AppDbContext context)
         {
             var member = new Membership
             {
@@ -69,11 +69,11 @@ namespace webAPI.graphQL
             {
                 context.Memberships.Add(member);
                 await context.SaveChangesAsync();
-                return true;
+                return "true";
             }
             else
 
-                return false;
+                return "false";
         }
 
 
@@ -106,31 +106,22 @@ namespace webAPI.graphQL
         }
 
         [UseDbContext(typeof(AppDbContext))]
-        public string UserLogin(LoginInput input, [Service] IConfiguration config, [ScopedService] AppDbContext context)
+        public async Task<string> AddPostAsync(AddPostInput input, [ScopedService] AppDbContext context)
         {
-            var currentUser = context.Users.Where(u => u.email == input.email).FirstOrDefault();
-
-            if (currentUser != null)
+            var post = new Post
             {
-                bool verified = BCrypt.Net.BCrypt.Verify(input.password, currentUser.password);
-                if (verified)
-                {
-                    var symmetricSecurityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["tokenSettings:Key"]));
-                    var credentials = new SigningCredentials(symmetricSecurityKey, SecurityAlgorithms.HmacSha256);
+                body = input.body,
+                dateCreated = input.dateCreated,
+                video = input.video,
+                latitude = input.latitude,
+                longitude = input.longitude,
+                creatorId = input.creatorId
+            };
 
-                    var jwtToken = new JwtSecurityToken(
-                        issuer: config["tokenSettings:Issuer"],
-                        audience: config["tokenSettings:Audience"],
-                        expires: DateTime.Now.AddMinutes(2),
-                        signingCredentials: credentials
-                    );
-                    string token = new JwtSecurityTokenHandler().WriteToken(jwtToken);
-                    return token;
-                }
-
-            }
-
-            return "false";
+            context.Posts.Add(post);
+            await context.SaveChangesAsync();
+            return "true";
         }
+
     }
 }

@@ -1,6 +1,6 @@
 namespace webAPI.graphQL.inputs
 {
 
-    public record AddPostInput(DateOnly dateCreated, bool video, string body, int creatorId, float latitude, float longitude);
+    public record AddPostInput(DateTime dateCreated, bool video, string body, int creatorId, float latitude, float longitude);
 
 }
