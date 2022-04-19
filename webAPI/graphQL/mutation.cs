@@ -123,5 +123,21 @@ namespace webAPI.graphQL
             return "true";
         }
 
+        [UseDbContext(typeof(AppDbContext))]
+        public async Task<string> AddCommmentAsync(AddCommentInput input, [ScopedService] AppDbContext context)
+        {
+            var comment = new Comment
+            {
+                body = input.body,
+                dateCreated = input.dateCreated,
+                creatorId = input.creatorId,
+                postId = input.postId
+            };
+
+            context.Comments.Add(comment);
+            await context.SaveChangesAsync();
+            return "true";
+        }
+
     }
 }
