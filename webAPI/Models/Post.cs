@@ -15,7 +15,7 @@ namespace webAPI.Models
 
         [Required]
         [GraphQLDescription("Specifies the type of post. Video or text.")]
-        public string postType { get; set; } = string.Empty;
+        public bool video { get; set; }
         [Required]
         public DateTime dateCreated { get; set; }
         [Required]

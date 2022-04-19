@@ -5,7 +5,6 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using webAPI.Models.other;
 using System.IdentityModel.Tokens.Jwt;
-using Newtonsoft.Json;
 
 namespace webAPI.graphQL
 {
@@ -77,6 +76,34 @@ namespace webAPI.graphQL
                 return false;
         }
 
+
+        [UseDbContext(typeof(AppDbContext))]
+        public string UserLogin(LoginInput input, [Service] IConfiguration config, [ScopedService] AppDbContext context)
+        {
+            var currentUser = context.Users.Where(u => u.email == input.email).FirstOrDefault();
+
+            if (currentUser != null)
+            {
+                bool verified = BCrypt.Net.BCrypt.Verify(input.password, currentUser.password);
+                if (verified)
+                {
+                    var symmetricSecurityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["tokenSettings:Key"]));
+                    var credentials = new SigningCredentials(symmetricSecurityKey, SecurityAlgorithms.HmacSha256);
+
+                    var jwtToken = new JwtSecurityToken(
+                        issuer: config["tokenSettings:Issuer"],
+                        audience: config["tokenSettings:Audience"],
+                        expires: DateTime.Now.AddMinutes(2),
+                        signingCredentials: credentials
+                    );
+                    string token = new JwtSecurityTokenHandler().WriteToken(jwtToken);
+                    return token;
+                }
+
+            }
+
+            return "false";
+        }
 
         [UseDbContext(typeof(AppDbContext))]
         public string UserLogin(LoginInput input, [Service] IConfiguration config, [ScopedService] AppDbContext context)

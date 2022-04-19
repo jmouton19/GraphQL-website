@@ -10,6 +10,7 @@ namespace webAPI.data
 
         }
         public DbSet<User> Users { get; set; } = default!;
+        public DbSet<Friendship> Friendships { get; set; } = default!;
         public DbSet<Group> Groups { get; set; } = default!;
         public DbSet<Membership> Memberships { get; set; } = default!;
         public DbSet<Post> Posts { get; set; } = default!;
