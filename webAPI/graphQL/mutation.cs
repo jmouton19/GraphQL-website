@@ -145,28 +145,35 @@ namespace webAPI.graphQL
 
             var currentFriendship = context.Friendships.Where(u => u.senderId == input.senderId && u.receiverId == input.receiverId).FirstOrDefault();
             if (currentFriendship != null)
-                return "false";
+                return "success:false,message:already sent";
             else
             {
                 var friendship = new Friendship
                 {
                     senderId = input.senderId,
                     receiverId = input.receiverId,
-                    accepted = true
+                    accepted = false
                 };
 
                 currentFriendship = context.Friendships.Where(u => u.senderId == input.receiverId && u.receiverId == input.senderId).FirstOrDefault();
                 if (currentFriendship != null)
                 {
-                    friendship.accepted = true;
-                    return "true";
+                    if (currentFriendship.accepted != true)
+                    {
+                        currentFriendship.accepted = true;
+                        context.Friendships.Update(currentFriendship);
+                        await context.SaveChangesAsync();
+                        return "success:true,message:friend added";
+                    }
+                    else
+                        return "success:true,message:already friends";
+
                 }
                 else
                 {
-                    friendship.accepted = false;
                     context.Friendships.Add(friendship);
                     await context.SaveChangesAsync();
-                    return "true";
+                    return "success:true,message:friend requested";
                 }
 
 
