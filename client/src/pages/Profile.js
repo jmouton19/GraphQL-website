@@ -30,7 +30,6 @@ function Profile() {
   const [activeTabNumber, setActiveTabNumber] = useState('1');
   const notifyError = useNotifyError();
   const notifySuccess = useNotifySuccess();
-  console.log(acceptedFriends);
 
   const handleTabChange = (event, newValue) => {
     setActiveTabNumber(newValue);

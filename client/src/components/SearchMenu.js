@@ -119,7 +119,7 @@ export default function SearchMenu() {
         open={Boolean(searchMenuAnchorEl)}
         onClose={handleUserMenuClose}
       >
-        <ListItem>
+        <ListItem onKeyDown={(e) => e.stopPropagation()}>
           <TextField
             variant="outlined"
             label="Search"
@@ -128,8 +128,8 @@ export default function SearchMenu() {
         </ListItem>
         {groups.length !== 0 && (
           <ListItem>
-            <Divider component="li" />
-            <li>
+            <Divider component="div" />
+            <div>
               <Typography
                 sx={{ mt: 0.5, ml: 2 }}
                 color="text.secondary"
@@ -138,13 +138,17 @@ export default function SearchMenu() {
               >
                 Groups
               </Typography>
-            </li>
+            </div>
           </ListItem>
         )}
         {groups &&
           groups.map((group) => {
             return (
-              <MenuItem key={group.id} component={Link} to={`/group/${group.id}`}>
+              <MenuItem
+                key={group.id}
+                component={Link}
+                to={`/group/${group.id}`}
+              >
                 <ListItemAvatar>
                   <Avatar src={group.avatar} />
                 </ListItemAvatar>
@@ -158,8 +162,8 @@ export default function SearchMenu() {
           })}
         {users.length !== 0 && (
           <MenuItem>
-            <Divider component="li" />
-            <li>
+            <Divider component="div" />
+            <div>
               <Typography
                 sx={{ mt: 0.5, ml: 2 }}
                 color="text.secondary"
@@ -168,13 +172,17 @@ export default function SearchMenu() {
               >
                 Users
               </Typography>
-            </li>
+            </div>
           </MenuItem>
         )}
         {users &&
           users.map((user) => {
             return (
-              <MenuItem key={user.id} component={Link} to={`/profile/${user.username}`}>
+              <MenuItem
+                key={user.id}
+                component={Link}
+                to={`/profile/${user.username}`}
+              >
                 <ListItemAvatar>
                   <Avatar src={user.avatar} />
                 </ListItemAvatar>
