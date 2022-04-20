@@ -23,8 +23,8 @@ namespace webAPI.data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<User>().HasMany(u => u.OwnedGroups).WithOne(g => g.owner!).HasForeignKey(g => g.ownerId);
-            modelBuilder.Entity<User>().HasMany(u => u.FriendshipsSent).WithOne(g => g.sender).HasForeignKey(g => g.senderId);
-            modelBuilder.Entity<User>().HasMany(u => u.FriendshipsReceived).WithOne(g => g.receiver).HasForeignKey(g => g.receiverId);
+            // modelBuilder.Entity<User>().HasMany(u => u.FriendshipsSent).WithOne(g => g.sender).HasForeignKey(g => g.senderId);
+            // modelBuilder.Entity<User>().HasMany(u => u.FriendshipsReceived).WithOne(g => g.receiver).HasForeignKey(g => g.receiverId);
             modelBuilder.Entity<Group>().HasMany(g => g.memberships).WithOne(g => g.group!).HasForeignKey(m => m.groupId);
             modelBuilder.Entity<User>().HasMany(u => u.memberships).WithOne(u => u.user!).HasForeignKey(m => m.userId);
             modelBuilder.Entity<Membership>().HasMany(m => m.posts).WithOne(m => m.creator!).HasForeignKey(p => p.creatorId);

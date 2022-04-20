@@ -51,5 +51,14 @@ namespace webAPI.graphQL
         {
             return context.Comments;
         }
+        [UseDbContext(typeof(AppDbContext))]
+        [UseProjection]
+        [UseFiltering]
+        [UseSorting]
+
+        public IQueryable<Friendship> GetFriendships([ScopedService] AppDbContext context)
+        {
+            return context.Friendships;
+        }
     }
 }
