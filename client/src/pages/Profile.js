@@ -12,9 +12,13 @@ import { gql, useApolloClient } from '@apollo/client';
 import shortid from 'shortid';
 import { useAuthUser } from '../providers/AuthProvider';
 import { useParams } from 'react-router-dom';
-import { useNotifyError } from '../providers/NotificationProvider';
+import {
+  useNotifyError,
+  useNotifySuccess,
+} from '../providers/NotificationProvider';
 import LoadingPage from './LoadingPage';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
+import { stringToObject } from '../utils/utils';
 
 function Profile() {
   const authUser = useAuthUser();
@@ -23,7 +27,8 @@ function Profile() {
   const params = useParams();
   const data = usePosts();
   const [activeTabNumber, setActiveTabNumber] = useState('1');
-  const notifyError = useNotifyError;
+  const notifyError = useNotifyError();
+  const notifySuccess = useNotifySuccess();
 
   const handleTabChange = (event, newValue) => {
     setActiveTabNumber(newValue);
@@ -44,6 +49,7 @@ function Profile() {
       query {
         users(where: { username: { eq: "${params.username}" } }) {
           email
+          id
           firstName
           lastName
           avatar
@@ -61,6 +67,45 @@ function Profile() {
         }
       });
   }
+
+  function addFriend() {
+    client
+      .mutate({
+        mutation: gql`
+        mutation {
+          addFriend(input: { senderId: ${authUser.id}, receiverId: ${viewUser.id} })
+        }
+      `,
+      })
+      .then((result) => {
+        let resultData = stringToObject(result.data.addFriend);
+        if (resultData.success == 'true') {
+          notifySuccess(resultData.message);
+        } else {
+          notifyError(resultData.message);
+        }
+      });
+  }
+
+  function acceptFriend() {
+    client
+      .mutate({
+        mutation: gql`
+        mutation {
+          addFriend(input: { senderId: ${authUser.id}, receiverId: ${viewUser.id} })
+        }
+      `,
+      })
+      .then((result) => {
+        let resultData = stringToObject(result.data.addFriend);
+        if (resultData.success == 'true') {
+          notifySuccess(resultData.message);
+        } else {
+          notifyError(resultData.message);
+        }
+      });
+  }
+
   if (!viewUser) {
     return <LoadingPage />;
   }
@@ -78,7 +123,7 @@ function Profile() {
           }}
         />
         <Typography variant="h4">{`${viewUser.firstName} ${viewUser.lastName}`}</Typography>
-        <Stack direction="row" spacing={0.2} alignItems='center'>
+        <Stack direction="row" spacing={0.2} alignItems="center">
           <img
             alt="Location Icon"
             src={cheeseMarker}
@@ -86,8 +131,8 @@ function Profile() {
           />
           <Typography variant="h6">Cape Town, South Africa</Typography>
           {authUser !== viewUser && (
-            <IconButton color='primary'>
-              <PersonAddIcon fontSize='large'/>
+            <IconButton color="primary" onClick={() => addFriend()}>
+              <PersonAddIcon fontSize="large" />
             </IconButton>
           )}
         </Stack>
@@ -105,6 +150,7 @@ function Profile() {
               >
                 <Tab label="Posts" value="1" />
                 <Tab label="Groups" value="2" />
+                <Tab label="Friends" value="3" />
               </TabList>
             </Stack>
           </Box>
@@ -117,6 +163,9 @@ function Profile() {
           </TabPanel>
           <TabPanel value="2">
             <Typography>Add groups</Typography>
+          </TabPanel>
+          <TabPanel value="3">
+            <Typography>Add friends</Typography>
           </TabPanel>
         </TabContext>
       )}

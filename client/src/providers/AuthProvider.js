@@ -116,6 +116,7 @@ function AuthProvider({ children }) {
         query {
           users(where: { email: { eq: "${email}" } }) {
             email
+            id
             firstName
             lastName
             avatar
