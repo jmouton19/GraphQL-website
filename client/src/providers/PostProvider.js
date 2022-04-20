@@ -13,7 +13,7 @@ function PostProvider({ children }) {
       group: 'Stellenbosch Hiking',
       caption: 'Very windy on top of Botmaskop',
       videoPublicID: 'IMG_0684_qo3ud7',
-      location: [-33.9293, 18.864],
+      location: [-17.8216,31.0492],
     },
     {
       name: 'JC Mouton',

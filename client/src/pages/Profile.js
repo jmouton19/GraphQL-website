@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Box, IconButton } from '@mui/material';
+import { Box, Card, CardContent, IconButton } from '@mui/material';
 import { Stack } from '@mui/material';
 import { Container } from '@mui/material';
 import { TabContext, TabList, TabPanel } from '@mui/lab';
@@ -23,12 +23,14 @@ import { stringToObject } from '../utils/utils';
 function Profile() {
   const authUser = useAuthUser();
   const [viewUser, setViewUser] = useState(null);
+  const [acceptedFriends, setAcceptedFriends] = useState([]);
   const client = useApolloClient();
   const params = useParams();
   const data = usePosts();
   const [activeTabNumber, setActiveTabNumber] = useState('1');
   const notifyError = useNotifyError();
   const notifySuccess = useNotifySuccess();
+  console.log(acceptedFriends);
 
   const handleTabChange = (event, newValue) => {
     setActiveTabNumber(newValue);
@@ -37,6 +39,7 @@ function Profile() {
   useEffect(() => {
     if (params.username === authUser.username) {
       setViewUser(authUser);
+      getFriends();
     } else {
       loadViewUser();
     }
@@ -106,6 +109,37 @@ function Profile() {
       });
   }
 
+  function getFriends() {
+    client
+      .query({
+        query: gql`
+        query{
+          sent:friendships(where: {and:[{ accepted: { eq: true } },{sender:{id:{eq:${authUser.id}}}}]})
+          {
+              receiver{
+                  avatar
+                  email
+                  id
+                  username
+              }
+          }
+           received:   friendships(where: {and:[{ accepted: { eq: true } },{receiver:{id:{eq:${authUser.id}}}}]})
+          {
+              sender{
+                  avatar
+                  email
+                  id
+                  username
+              }
+          }
+      }
+    `,
+      })
+      .then((result) => {
+        setAcceptedFriends([...result.data.sent.map(a => a.receiver), ...result.data.received.map(a => a.sender)]);
+      });
+  }
+
   if (!viewUser) {
     return <LoadingPage />;
   }
@@ -165,7 +199,15 @@ function Profile() {
             <Typography>Add groups</Typography>
           </TabPanel>
           <TabPanel value="3">
-            <Typography>Add friends</Typography>
+            <Stack spacing={2}>
+              {acceptedFriends.map((friend) => (
+                <Card key={friend.id}>
+                  <CardContent>
+                    {friend.username}
+                  </CardContent>
+                </Card>
+              ))}
+            </Stack>
           </TabPanel>
         </TabContext>
       )}
