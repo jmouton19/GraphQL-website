@@ -118,9 +118,19 @@ namespace webAPI.graphQL
                 creatorId = input.creatorId
             };
 
-            context.Posts.Add(post);
-            await context.SaveChangesAsync();
-            return "true";
+            try
+            {
+                context.Posts.Add(post);
+                await context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+                return "success:false,message:Post could not be created.";
+            }
+
+
+            return "success:true,message:Post created.";
         }
 
         [UseDbContext(typeof(AppDbContext))]
@@ -133,10 +143,18 @@ namespace webAPI.graphQL
                 creatorId = input.creatorId,
                 postId = input.postId
             };
+            try
+            {
+                context.Comments.Add(comment);
+                await context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+                return "success:false,message:Comment could not be created.";
+            }
 
-            context.Comments.Add(comment);
-            await context.SaveChangesAsync();
-            return "true";
+            return "success:true,message:Comment created.";
         }
 
         [UseDbContext(typeof(AppDbContext))]
@@ -147,9 +165,9 @@ namespace webAPI.graphQL
             if (currentFriendship != null)
             {
                 if (currentFriendship.accepted != true)
-                    return "success:false,message:request already sent";
+                    return "success:false,message:Friend request already sent.";
                 else
-                    return "success:false,message:already friends";
+                    return "success:false,message:You are already friends";
 
             }
             else
@@ -169,10 +187,10 @@ namespace webAPI.graphQL
                         currentFriendship.accepted = true;
                         context.Friendships.Update(currentFriendship);
                         await context.SaveChangesAsync();
-                        return "success:true,message:friend added";
+                        return "success:true,message:Friend added";
                     }
                     else
-                        return "success:false,message:already friends";
+                        return "success:false,message:You are already friends";
 
                 }
                 else
