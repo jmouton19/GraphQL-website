@@ -13,7 +13,6 @@ import { Link } from 'react-router-dom';
 import StyledLink from './StyledLink';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import ChatIcon from '@mui/icons-material/Chat';
-import SearchIcon from '@mui/icons-material/Search';
 import { useAuthUser, useLogOut } from '../providers/AuthProvider';
 import logo from '../assets/logo.png';
 import { Stack } from '@mui/material';
@@ -27,10 +26,7 @@ import SearchMenu from './SearchMenu';
 function PrimaryAppBar() {
   const [userMenuAnchorEl, setUserMenuAnchorEl] = useState(null);
 
-  const [searchMenuOpen, setSearchMenuOpen] = useState(false);
-
   const authUser = useAuthUser();
-  console.log(authUser);
   const logOut = useLogOut();
 
   const navigate = useNavigate();
@@ -45,7 +41,7 @@ function PrimaryAppBar() {
 
   return (
     <>
-      <SearchMenu open={searchMenuOpen} />
+      
       <AppBar position="sticky">
         <Toolbar>
           <StyledLink to="/">
@@ -86,15 +82,7 @@ function PrimaryAppBar() {
           <Box sx={{ flexGrow: 1 }} />
 
           <Tooltip title="Search">
-            <IconButton
-              size="large"
-              color="primary"
-              onClick={() => {
-                setSearchMenuOpen(!searchMenuOpen)
-              }}
-            >
-              <SearchIcon />
-            </IconButton>
+            <SearchMenu />
           </Tooltip>
 
           <Tooltip title="Direct Messages">

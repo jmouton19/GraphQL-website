@@ -13,6 +13,7 @@ import shortid from 'shortid';
 import { useAuthUser } from '../providers/AuthProvider';
 import { useParams } from 'react-router-dom';
 import { useNotifyError } from '../providers/NotificationProvider';
+import LoadingPage from './LoadingPage';
 
 function Profile() {
   const authUser = useAuthUser();
@@ -59,6 +60,9 @@ function Profile() {
         }
       });
   }
+  if (!viewUser) {
+		return <LoadingPage />;
+	}
 
   return (
     <Container>
