@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Box } from '@mui/material';
+import { Box, IconButton } from '@mui/material';
 import { Stack } from '@mui/material';
 import { Container } from '@mui/material';
 import { TabContext, TabList, TabPanel } from '@mui/lab';
@@ -14,6 +14,7 @@ import { useAuthUser } from '../providers/AuthProvider';
 import { useParams } from 'react-router-dom';
 import { useNotifyError } from '../providers/NotificationProvider';
 import LoadingPage from './LoadingPage';
+import PersonAddIcon from '@mui/icons-material/PersonAdd';
 
 function Profile() {
   const authUser = useAuthUser();
@@ -61,8 +62,8 @@ function Profile() {
       });
   }
   if (!viewUser) {
-		return <LoadingPage />;
-	}
+    return <LoadingPage />;
+  }
 
   return (
     <Container>
@@ -77,13 +78,18 @@ function Profile() {
           }}
         />
         <Typography variant="h4">{`${viewUser.firstName} ${viewUser.lastName}`}</Typography>
-        <Stack direction="row" spacing={0.2}>
+        <Stack direction="row" spacing={0.2} alignItems='center'>
           <img
             alt="Location Icon"
             src={cheeseMarker}
             style={{ width: 25, height: 35, marginRight: 10 }}
           />
           <Typography variant="h6">Cape Town, South Africa</Typography>
+          {authUser !== viewUser && (
+            <IconButton color='primary'>
+              <PersonAddIcon fontSize='large'/>
+            </IconButton>
+          )}
         </Stack>
         <Typography>Bio ?</Typography>
       </Stack>
