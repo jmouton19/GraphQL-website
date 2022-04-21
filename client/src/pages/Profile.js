@@ -1,5 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { Box, Card, CardContent, IconButton } from '@mui/material';
+import {
+  Box,
+  Divider,
+  IconButton,
+  ListItem,
+  ListItemAvatar,
+  ListItemText,
+} from '@mui/material';
 import { Stack } from '@mui/material';
 import { Container } from '@mui/material';
 import { TabContext, TabList, TabPanel } from '@mui/lab';
@@ -19,17 +26,21 @@ import {
 import LoadingPage from './LoadingPage';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import { stringToObject } from '../utils/utils';
+import DoneIcon from '@mui/icons-material/Done';
+import { useNavigate } from 'react-router-dom';
 
 function Profile() {
   const authUser = useAuthUser();
   const [viewUser, setViewUser] = useState(null);
   const [acceptedFriends, setAcceptedFriends] = useState([]);
+  const [pendingFriends, setPendingFriends] = useState([]);
   const client = useApolloClient();
   const params = useParams();
   const data = usePosts();
   const [activeTabNumber, setActiveTabNumber] = useState('1');
   const notifyError = useNotifyError();
   const notifySuccess = useNotifySuccess();
+  const navigate = useNavigate();
 
   const handleTabChange = (event, newValue) => {
     setActiveTabNumber(newValue);
@@ -89,12 +100,12 @@ function Profile() {
       });
   }
 
-  function acceptFriend() {
+  function acceptFriend(senderId) {
     client
       .mutate({
         mutation: gql`
         mutation {
-          addFriend(input: { senderId: ${authUser.id}, receiverId: ${viewUser.id} })
+          addFriend(input: { senderId: ${authUser.id}, receiverId: ${senderId} })
         }
       `,
       })
@@ -102,6 +113,7 @@ function Profile() {
         let resultData = stringToObject(result.data.addFriend);
         if (resultData.success == 'true') {
           notifySuccess(resultData.message);
+          getFriends();
         } else {
           notifyError(resultData.message);
         }
@@ -117,7 +129,8 @@ function Profile() {
           {
               receiver{
                   avatar
-                  email
+                  lastName
+              firstName
                   id
                   username
               }
@@ -126,7 +139,8 @@ function Profile() {
           {
               sender{
                   avatar
-                  email
+                  lastName
+                  firstName
                   id
                   username
               }
@@ -135,7 +149,30 @@ function Profile() {
     `,
       })
       .then((result) => {
-        setAcceptedFriends([...result.data.sent.map(a => a.receiver), ...result.data.received.map(a => a.sender)]);
+        setAcceptedFriends([
+          ...result.data.sent.map((a) => a.receiver),
+          ...result.data.received.map((a) => a.sender),
+        ]);
+      });
+    client
+      .query({
+        query: gql`
+        query{
+          received:   friendships(where: {and:[{ accepted: { eq: false } },{receiver:{id:{eq: ${authUser.id}}}}]})
+         {
+             sender{
+              avatar
+              lastName
+              firstName
+              id
+              username
+             }
+         }
+     }
+    `,
+      })
+      .then((result) => {
+        setPendingFriends([...result.data.received.map((a) => a.sender)]);
       });
   }
 
@@ -198,13 +235,51 @@ function Profile() {
             <Typography>Add groups</Typography>
           </TabPanel>
           <TabPanel value="3">
-            <Stack spacing={2}>
+            <Stack>
+              {acceptedFriends.length !== 0 && (
+                <>
+                  <Divider>Your Friends</Divider>
+                </>
+              )}
               {acceptedFriends.map((friend) => (
-                <Card key={friend.id}>
-                  <CardContent>
-                    {friend.username}
-                  </CardContent>
-                </Card>
+                <ListItem key={friend.id}>
+                  <ListItemAvatar>
+                    <Avatar src={friend.avatar} />
+                  </ListItemAvatar>
+
+                  <ListItemText
+                    primary={friend.username}
+                    secondary={`${friend.firstName} ${friend.lastName}`}
+                  />
+                </ListItem>
+              ))}
+              {pendingFriends.length !== 0 && (
+                <>
+                  <Divider>Friend Requests</Divider>
+                </>
+              )}
+              {pendingFriends.map((friend) => (
+                <ListItem
+                  key={friend.id}
+                  onClick={() => navigate(`/profile/${friend.username}`)}
+                  secondaryAction={
+                    <IconButton color = "success" onClick={(e) => {
+                      e.stopPropagation();
+                      acceptFriend(friend.id)}
+                      }>
+                      <DoneIcon />
+                    </IconButton>
+                  }
+                >
+                  <ListItemAvatar>
+                    <Avatar src={friend.avatar} />
+                  </ListItemAvatar>
+
+                  <ListItemText
+                    primary={friend.username}
+                    secondary={`${friend.firstName} ${friend.lastName}`}
+                  />
+                </ListItem>
               ))}
             </Stack>
           </TabPanel>
