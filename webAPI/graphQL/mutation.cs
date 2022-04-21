@@ -36,6 +36,60 @@ namespace webAPI.graphQL
         }
 
         [UseDbContext(typeof(AppDbContext))]
+        public async Task<string> UpdateUserAsync(UpdateUserInput input, [ScopedService] AppDbContext context)
+        {
+            var currentUser = context.Users.Where(u => u.Id == input.userId).FirstOrDefault();
+            if (currentUser != null)
+            {
+                if (input.firstName != null)
+                    currentUser.firstName = input.firstName;
+                if (input.lastName != null)
+                    currentUser.lastName = input.lastName;
+                if (input.avatar != null)
+                    currentUser.avatar = input.avatar;
+                if (input.DOB != null)
+                    currentUser.DOB = input.DOB;
+
+
+                if (input.username != null)
+                {
+                    var checker = context.Users.Where(u => u.username == input.username).FirstOrDefault();
+                    if (checker == null)
+                        currentUser.username = input.username;
+                    else
+                        return "success:false,message:Username already taken.";
+
+                }
+
+                if (input.email != null)
+                {
+                    var checker = context.Users.Where(u => u.email == input.email).FirstOrDefault();
+                    if (checker == null)
+                        currentUser.email = input.email;
+                    else
+                        return "success:false,message:Email already taken.";
+
+                }
+
+                if (input.newPassword != null && input.oldPassword != null)
+                {
+                    bool verified = BCrypt.Net.BCrypt.Verify(input.oldPassword, currentUser.password);
+                    if (verified)
+                        currentUser.password = BCrypt.Net.BCrypt.HashPassword(input.newPassword);
+                    else
+                        return "success:false,message:Incorrect password.";
+                }
+
+                context.Users.Update(currentUser);
+                await context.SaveChangesAsync();
+                return "success:true,message:User profile has been updated.";
+            }
+            else
+                return "success:false,message:This user does not exist.";
+        }
+
+
+        [UseDbContext(typeof(AppDbContext))]
         public async Task<string> AddGroupAsync(AddGroupInput input, [ScopedService] AppDbContext context)
         {
             var group = new Group
