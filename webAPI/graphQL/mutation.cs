@@ -96,6 +96,36 @@ namespace webAPI.graphQL
 
 
         [UseDbContext(typeof(AppDbContext))]
+        public async Task<string> DeleteUserAsync(int userId, [ScopedService] AppDbContext context)
+        {
+            var currentUser = context.Users.Where(u => u.Id == userId).FirstOrDefault();
+            if (currentUser != null)
+            {
+                context.Users.Remove(currentUser);
+                await context.SaveChangesAsync();
+                return "success:true,message:User profile deleted.";
+            }
+            else
+                return "success:false,message:This user does not exist.";
+        }
+
+        [UseDbContext(typeof(AppDbContext))]
+        public async Task<string> DeleteGroupAsync(int groupId, [ScopedService] AppDbContext context)
+        {
+            var currentGroup = context.Groups.Where(u => u.Id == groupId).FirstOrDefault();
+            if (currentGroup != null)
+            {
+                context.Groups.Remove(currentGroup);
+                await context.SaveChangesAsync();
+                return "success:true,message:Group deleted.";
+            }
+            else
+                return "success:false,message:This group does not exist.";
+        }
+
+
+
+        [UseDbContext(typeof(AppDbContext))]
         public async Task<string> AddGroupAsync(AddGroupInput input, [ScopedService] AppDbContext context)
         {
             var group = new Group
