@@ -51,7 +51,7 @@ namespace webAPI.graphQL
                     currentUser.DOB = input.DOB;
 
 
-                if (input.username != null)
+                if (input.username != null && input.username != currentUser.username)
                 {
                     var checker = context.Users.Where(u => u.username == input.username).FirstOrDefault();
                     if (checker == null)
@@ -61,7 +61,7 @@ namespace webAPI.graphQL
 
                 }
 
-                if (input.email != null)
+                if (input.email != null && input.email != currentUser.email)
                 {
                     var checker = context.Users.Where(u => u.email == input.email).FirstOrDefault();
                     if (checker == null)
@@ -71,13 +71,19 @@ namespace webAPI.graphQL
 
                 }
 
-                if (input.newPassword != null && input.oldPassword != null)
+                if (input.newPassword != null)
                 {
-                    bool verified = BCrypt.Net.BCrypt.Verify(input.oldPassword, currentUser.password);
-                    if (verified)
-                        currentUser.password = BCrypt.Net.BCrypt.HashPassword(input.newPassword);
+                    if (input.oldPassword != null)
+                    {
+                        bool verified = BCrypt.Net.BCrypt.Verify(input.oldPassword, currentUser.password);
+                        if (verified)
+                            currentUser.password = BCrypt.Net.BCrypt.HashPassword(input.newPassword);
+                        else
+                            return "success:false,message:Incorrect password.";
+                    }
                     else
-                        return "success:false,message:Incorrect password.";
+                        return "success:false,message:Please provide old password.";
+
                 }
 
                 context.Users.Update(currentUser);
