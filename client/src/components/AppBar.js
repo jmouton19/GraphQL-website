@@ -41,7 +41,6 @@ function PrimaryAppBar() {
 
   return (
     <>
-      
       <AppBar position="sticky">
         <Toolbar>
           <StyledLink to="/">
@@ -81,9 +80,7 @@ function PrimaryAppBar() {
 
           <Box sx={{ flexGrow: 1 }} />
 
-          <Tooltip title="Search">
-            <SearchMenu />
-          </Tooltip>
+          <SearchMenu />
 
           <Tooltip title="Direct Messages">
             <IconButton size="large" color="primary">

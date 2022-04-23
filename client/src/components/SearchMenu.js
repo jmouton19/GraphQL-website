@@ -10,11 +10,12 @@ import {
   IconButton,
   ListItem,
 } from '@mui/material';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import SearchIcon from '@mui/icons-material/Search';
 import { gql, useApolloClient } from '@apollo/client';
 import { useNotifyError } from '../providers/NotificationProvider';
 import { Link } from 'react-router-dom';
+import { Tooltip } from '@mui/material';
 
 export default function SearchMenu() {
   const client = useApolloClient();
@@ -24,35 +25,22 @@ export default function SearchMenu() {
   const [searchValue, setSearchValue] = useState('');
   const [searchMenuAnchorEl, setSearchMenuAnchorEl] = useState(null);
 
-  useEffect(() => {
-    searchForGroups();
-    searchForUsers();
-  }, [searchValue]);
-
-  const handleSearchMenu = (event) => {
-    setSearchMenuAnchorEl(event.currentTarget);
-  };
-
-  const handleUserMenuClose = () => {
-    setSearchMenuAnchorEl(null);
-  };
-
-  function searchForGroups() {
+  const searchForGroups = useCallback(() => {
     if (searchValue !== '') {
       client
         .query({
           query: gql`
-        query {
-          groups(
-            where:{ name: { contains: "${searchValue}" }}
-            
-          ) {
-            name
-            id
-            description
-          }
-          }
-        `,
+          query {
+            groups(
+              where:{ name: { contains: "${searchValue}" }}
+              
+            ) {
+              name
+              id
+              description
+            }
+            }
+          `,
         })
         .then((result) => {
           const retrievedGroups = result.data.groups;
@@ -65,26 +53,26 @@ export default function SearchMenu() {
     } else {
       setGroups([]);
     }
-  }
+  }, [searchValue, client, notifyError]);
 
-  function searchForUsers() {
+  const searchForUsers = useCallback(() => {
     if (searchValue !== '') {
       client
         .query({
           query: gql`
-        query {
-          users(
-            where:{ 
-              or: [{firstName: { contains: "${searchValue}" }}, {lastName: {contains: "${searchValue}"}}, {username: {contains: "${searchValue}"}}]
+          query {
+            users(
+              where:{ 
+                or: [{firstName: { contains: "${searchValue}" }}, {lastName: {contains: "${searchValue}"}}, {username: {contains: "${searchValue}"}}]
+              }
+            ) {
+              username
+              id
+              firstName
+              lastName
             }
-          ) {
-            username
-            id
-            firstName
-            lastName
-          }
-          }
-        `,
+            }
+          `,
         })
         .then((result) => {
           const retrievedUsers = result.data.users;
@@ -97,13 +85,29 @@ export default function SearchMenu() {
     } else {
       setUsers([]);
     }
-  }
+  }, [searchValue, client, notifyError]);
+
+  useEffect(() => {
+    searchForGroups();
+    searchForUsers();
+  }, [searchValue, searchForGroups, searchForUsers]);
+
+  const handleSearchMenu = (event) => {
+    setSearchMenuAnchorEl(event.currentTarget);
+  };
+
+  const handleUserMenuClose = () => {
+    setSearchMenuAnchorEl(null);
+  };
 
   return (
     <>
-      <IconButton size="large" color="primary" onClick={handleSearchMenu}>
-        <SearchIcon />
-      </IconButton>
+      <Tooltip title="Search">
+        <IconButton size="large" color="primary" onClick={handleSearchMenu}>
+          <SearchIcon />
+        </IconButton>
+      </Tooltip>
+
       <Menu
         id="menu-appbar"
         anchorEl={searchMenuAnchorEl}
