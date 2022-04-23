@@ -14,14 +14,18 @@ import {
 } from '@mui/material';
 import React, { useState } from 'react';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
-
+import { Navigate } from 'react-router-dom';
 import AvatarPicker from '../components/AvatarPicker';
 import StyledLink from '../components/StyledLink';
 import validator from 'validator';
-import { useSignUp } from '../providers/AuthProvider';
+import { useAuthUser, useSignUp } from '../providers/AuthProvider';
 import { FormControlLabel } from '@mui/material';
 import { Checkbox } from '@mui/material';
 import { Divider } from '@mui/material';
+import {
+  useNotifyError,
+  useNotifySuccess,
+} from '../providers/NotificationProvider';
 
 function SignUp() {
   const [username, setUsername] = useState('');
@@ -45,6 +49,9 @@ function SignUp() {
   const [rememberMe, setRememberMe] = useState(true);
 
   const signUp = useSignUp();
+
+  const notifySuccess = useNotifySuccess();
+  const notifyError = useNotifyError();
 
   function toggleShowPassword() {
     setShowPassword(!showPassword);
@@ -118,9 +125,15 @@ function SignUp() {
       username,
     };
 
-    console.log(data);
+    signUp(data)
+      .then(() => notifySuccess('Signed up successfully.'))
+      .catch(() => notifyError('Sign up failed'));
+  }
 
-    signUp(data);
+  const authUser = useAuthUser();
+
+  if (authUser) {
+    return <Navigate to="/" />;
   }
 
   return (
@@ -271,7 +284,7 @@ function SignUp() {
               </Grid>
               <Grid item xs={12}>
                 <FormControl fullWidth>
-                  <InputLabel htmlFor="email-input">First Name</InputLabel>
+                  <InputLabel htmlFor="firstname-input">First Name</InputLabel>
                   <OutlinedInput
                     id="firstname-input"
                     name="firstname"
@@ -285,9 +298,9 @@ function SignUp() {
               </Grid>
               <Grid item xs={12}>
                 <FormControl fullWidth>
-                  <InputLabel htmlFor="email-input">Last Name</InputLabel>
+                  <InputLabel htmlFor="lastname-input">Last Name</InputLabel>
                   <OutlinedInput
-                    id="firstname-input"
+                    id="lastname-input"
                     name="firstname"
                     value={lastName}
                     onChange={(event) => {

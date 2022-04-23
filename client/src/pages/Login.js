@@ -19,6 +19,10 @@ import { useAuthUser, useLogIn } from '../providers/AuthProvider';
 import { Navigate } from 'react-router-dom';
 import { FormControlLabel } from '@mui/material';
 import { Checkbox } from '@mui/material';
+import {
+  useNotifyError,
+  useNotifySuccess,
+} from '../providers/NotificationProvider';
 
 function Login() {
   const [email, setEmail] = useState('');
@@ -30,13 +34,17 @@ function Login() {
   const authUser = useAuthUser();
   const login = useLogIn();
 
+  const notifySuccess = useNotifySuccess();
+  const notifyError = useNotifyError();
+
   function toggleShowPassword() {
     setShowPassword(!showPassword);
   }
 
   function handleLogIn() {
-    // Todo: update backend and authprovider for Remember Me functionality
-    login(email, password);
+    login(email, password)
+      .then(() => notifySuccess('Logged in successfully.'))
+      .catch(() => notifyError('Log in failed.'));
   }
 
   if (authUser) {

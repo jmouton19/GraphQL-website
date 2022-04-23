@@ -1,7 +1,6 @@
 import React, { useEffect, useContext, createContext, useState } from 'react';
 
 import { gql, useApolloClient } from '@apollo/client';
-import { useNotifyError, useNotifySuccess } from './NotificationProvider';
 
 const AuthUserContext = createContext();
 const SignUpContext = createContext();
@@ -41,13 +40,9 @@ function AuthProvider({ children }) {
     window.localStorage.setItem(localStorageItemName, JSON.stringify(authUser));
   }, [authUser]);
 
-
   const client = useApolloClient();
 
-  const notifySuccess = useNotifySuccess();
-  const notifyError = useNotifyError();
-
-  const signUp = (data) => {
+  async function signUp(data) {
     // Todo: Update backend to handle rememberMe
 
     const {
@@ -60,9 +55,10 @@ function AuthProvider({ children }) {
       username,
     } = data;
 
-    client
-      .mutate({
-        mutation: gql`
+    return new Promise((resolve, reject) => {
+      client
+        .mutate({
+          mutation: gql`
           mutation {
             addUser(
               input: {
@@ -76,38 +72,39 @@ function AuthProvider({ children }) {
             )
           }
         `,
-      })
-      .then((result) => {
-        console.log(result);
-        if (result.data.addUser) {
-          notifySuccess('Signed up successfully.');
-        } else {
-          notifyError('Sign up failed.');
-          // Todo: Need more descriptive messages here from backend
-        }
-      });
-  };
+        })
+        .then((result) => {
+          if (result.data.addUser === 'false') {
+            reject();
+          } else {
+            logIn(email, password);
+            resolve();
+          }
+        });
+    });
+  }
 
-  const logIn = (email, password) => {
-    client
-      .mutate({
-        mutation: gql`
+  async function logIn(email, password) {
+    return new Promise((resolve, reject) => {
+      client
+        .mutate({
+          mutation: gql`
           mutation {
             userLogin(input: { email: "${email}", password: "${password}" })
           }
         `,
-      })
-      .then((result) => {
-        if (result.data.userLogin) {
-          notifySuccess('Logged in successfully.');
-          const jwt = result.data.userLogin;
-          loadUserProfile(email, jwt);
-        } else {
-          notifyError('Log in failed.');
-          // Todo: Need more descriptive messages here from backend
-        }
-      });
-  };
+        })
+        .then((result) => {
+          if (result.data.userLogin === 'false') {
+            reject();
+          } else {
+            const jwt = result.data.userLogin;
+            loadUserProfile(email, jwt);
+            resolve();
+          }
+        });
+    });
+  }
 
   const loadUserProfile = (email, jwt) => {
     client
@@ -130,7 +127,7 @@ function AuthProvider({ children }) {
         if (retrievedProfile) {
           setAuthUser({ ...retrievedProfile, jwt });
         } else {
-          notifyError('Could not load user profile from server.');
+          //notifyError('Could not load user profile from server.');
         }
       });
   };
