@@ -31,9 +31,12 @@ function CommentViewer() {
 
   return (
     <Stack spacing={2}>
+      <Typography paragraph>
+        {commentsData.length === 0 ? 'No comments yet.' : 'Comments:'}
+      </Typography>
       {commentsData.map((comment) => (
         <Stack key={comment.id} spacing={2} direction="row">
-          <Avatar src={comment.avatarURL} />
+          <Avatar src={comment.creator.user.avatar} />
           <Paper
             style={{
               backgroundColor: '#222222',
@@ -42,10 +45,10 @@ function CommentViewer() {
             }}
           >
             <Typography variant="caption">
-              <strong>{comment.name}</strong>
+              <strong>{`${comment.creator.user.firstName} ${comment.creator.user.lastName}`}</strong>
             </Typography>
             <br></br>
-            <Typography variant="caption">{comment.text}</Typography>
+            <Typography variant="caption">{comment.body}</Typography>
           </Paper>
           <IconButton
             style={{ marginLeft: 'auto' }}

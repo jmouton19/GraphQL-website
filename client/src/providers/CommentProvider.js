@@ -1,4 +1,5 @@
-import React, { createContext, useContext, useState } from 'react';
+import { gql, useApolloClient } from '@apollo/client';
+import React, { createContext, useContext, useEffect, useState } from 'react';
 
 const CommentsContext = createContext();
 const CommentAddContext = createContext();
@@ -38,8 +39,35 @@ const sampleComments = [
   },
 ];
 
-function CommentProvider({ children }) {
-  const [comments, setComments] = useState(sampleComments);
+function CommentProvider({ children, postId }) {
+  const [comments, setComments] = useState([]);
+
+  const client = useApolloClient();
+
+  useEffect(() => {
+    client
+      .query({
+        query: gql`
+          query {
+            comments(where: { postId: { eq: ${postId} } }) {
+              body
+              creator {
+                user {
+                  firstName
+                  lastName
+                  avatar
+                }
+              }
+              dateCreated
+            }
+          }
+        `,
+      })
+      .then((result) => {
+        console.log(result.data);
+        setComments(result.data.comments);
+      });
+  }, [client, postId]);
 
   const addComment = (newComment) => {
     const { id, name, avatarURL, text } = newComment;

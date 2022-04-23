@@ -72,8 +72,7 @@ function PostCard({ postData }) {
       </CardActions>
       <Collapse in={expanded} timeout="auto" unmountOnExit>
         <CardContent>
-          <Typography paragraph>Comments:</Typography>
-          <CommentProvider>
+          <CommentProvider postId={postData.id}>
             <CommentViewer />
           </CommentProvider>
         </CardContent>
