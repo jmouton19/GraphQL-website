@@ -9,7 +9,6 @@ import Collapse from '@mui/material/Collapse';
 import Avatar from '@mui/material/Avatar';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
-import { red } from '@mui/material/colors';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import CommentIcon from '@mui/icons-material/Comment';
 import ThumbUpIcon from '@mui/icons-material/ThumbUp';
@@ -38,32 +37,26 @@ function PostCard({ postData }) {
   return (
     <Card>
       <CardHeader
-        avatar={
-          <Avatar sx={{ bgcolor: red[500] }} aria-label="recipe">
-            {postData.name.charAt(0)}
-          </Avatar>
-        }
+        avatar={<Avatar src={postData.creator.user.avatar} />}
         action={
           <IconButton aria-label="settings">
             <MoreVertIcon />
           </IconButton>
         }
-        title={postData.name}
-        subheader={`Posted in ${postData.group}`}
+        title={`${postData.creator.user.firstName} ${postData.creator.user.lastName}`}
+        subheader={`Posted in ${postData.creator.group.name}`}
       />
-      {postData.videoPublicID && (
+      {postData.video ? (
         <CardMedia>
-          <VideoPlayer
-            cloudName="de7amnbmo"
-            publicId={postData.videoPublicID}
-          />
+          <VideoPlayer cloudName="de7amnbmo" publicId={postData.body} />
         </CardMedia>
+      ) : (
+        <CardContent>
+          <Typography variant="body2" color="text.secondary">
+            {postData.body}
+          </Typography>
+        </CardContent>
       )}
-      <CardContent>
-        <Typography variant="body2" color="text.secondary">
-          {postData.caption}
-        </Typography>
-      </CardContent>
       <CardActions disableSpacing>
         <IconButton aria-label="add to favorites">
           <ThumbUpIcon />
