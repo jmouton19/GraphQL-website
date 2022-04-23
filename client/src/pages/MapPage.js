@@ -100,16 +100,16 @@ function MapPage() {
         {posts.map((post) => (
           <Marker
             key={shortid.generate()}
-            position={post.location}
+            position={[post.latitude, post.longitude]}
             icon={cheeseIcon}
             eventHandlers={{
               click: () => {
                 setFocusedPost(post);
-                setCenterLocation(post.location);
+                setCenterLocation([post.latitude, post.longitude]);
               },
             }}
           >
-            <Popup>{post.caption}</Popup>
+            <Popup>{post.video ? 'Video' : post.body}</Popup>
           </Marker>
         ))}
       </MapContainer>
