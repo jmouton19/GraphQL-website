@@ -14,17 +14,8 @@ import {
 import SendIcon from '@mui/icons-material/Send';
 import ClearIcon from '@mui/icons-material/Clear';
 
-import shortid from 'shortid';
-
-const emptyComment = {
-  id: shortid.generate(),
-  name: 'This User',
-  avatarURL: null,
-  text: '',
-};
-
 function CommentViewer() {
-  const [newCommentData, setNewCommentData] = useState(emptyComment);
+  const [newCommentBody, setNewCommentBody] = useState('');
   const commentsData = useComments();
   const removeComment = useCommentRemove();
   const addComment = useCommentAdd();
@@ -65,16 +56,18 @@ function CommentViewer() {
           fullWidth
           id="outlined-basic"
           label="Write a comment..."
-          value={newCommentData.text}
+          value={newCommentBody}
           variant="outlined"
           onChange={(event) => {
-            setNewCommentData({ ...newCommentData, text: event.target.value });
+            setNewCommentBody(event.target.value);
           }}
         />
         <IconButton
           onClick={() => {
-            addComment(newCommentData);
-            setNewCommentData(emptyComment);
+            if (newCommentBody !== '') {
+              addComment(newCommentBody);
+              setNewCommentBody('');
+            }
           }}
         >
           <SendIcon />

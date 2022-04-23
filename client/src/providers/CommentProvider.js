@@ -1,5 +1,8 @@
 import { gql, useApolloClient } from '@apollo/client';
 import React, { createContext, useContext, useEffect, useState } from 'react';
+import { useAuthUser } from './AuthProvider';
+
+import { stringToObject } from '../utils/utils';
 
 const CommentsContext = createContext();
 const CommentAddContext = createContext();
@@ -17,65 +20,65 @@ export function useCommentRemove() {
   return useContext(CommentRemoveContext);
 }
 
-const sampleComments = [
-  {
-    id: 1,
-    name: 'Lizé Steyn',
-    avatarURL: 'https://i.ibb.co/k8p8KDr/0184708f25a9.jpg',
-    text: 'Go to sleep, JC.',
-  },
-
-  {
-    id: 2,
-    name: 'Harry Potter',
-    avatarURL: 'https://i.ibb.co/hm99dG4/20d9de001ebe.png',
-    text: 'Avada Kedavra!',
-  },
-  {
-    id: 3,
-    name: 'Steve Jobs',
-    avatarURL: 'https://i.ibb.co/nQ95htC/c7cca859106c.png',
-    text: 'How much wood would a woodchuck chuck if a woodchuck could chuck wood?',
-  },
-];
-
 function CommentProvider({ children, postId }) {
   const [comments, setComments] = useState([]);
-
   const client = useApolloClient();
+  const authUser = useAuthUser();
 
   useEffect(() => {
     client
       .query({
         query: gql`
-          query {
-            comments(where: { postId: { eq: ${postId} } }) {
-              body
-              creator {
-                user {
-                  firstName
-                  lastName
-                  avatar
+            query {
+              comments(where: { postId: { eq: ${postId} } }) {
+                id
+                body
+                creator {
+                  user {
+                    firstName
+                    lastName
+                    avatar
+                  }
                 }
+                dateCreated
               }
-              dateCreated
             }
-          }
-        `,
+          `,
       })
       .then((result) => {
-        console.log(result.data);
         setComments(result.data.comments);
       });
   }, [client, postId]);
 
-  const addComment = (newComment) => {
-    const { id, name, avatarURL, text } = newComment;
-    const newComments = comments.concat([{ id, name, avatarURL, text }]);
-    setComments(newComments);
+  const addComment = async (body) => {
+    const date = new Date();
+    client
+      .mutate({
+        mutation: gql`
+          mutation {
+            addCommment(
+              input: {
+                body: "${body}"
+                creatorId: ${authUser.id}
+                dateCreated: "${date.toUTCString()}"
+                postId: ${postId}
+              }
+            )
+          }
+        `,
+      })
+      .then((result) => {
+        const resultData = stringToObject(result.data.addCommment);
+        if (resultData.success) {
+          // Todo: I still need to reload the existing comments after the add
+        } else {
+          console.log('error in creating comment');
+        }
+      });
   };
 
   const removeComment = (commentToDelete) => {
+    // Todo: Implement this with backend api
     const newComments = comments.filter(
       (comment) => comment !== commentToDelete
     );
