@@ -153,17 +153,8 @@ function PrimaryAppBar() {
                 to={`/groups`}
                 onClick={handleUserMenuClose}
               >
-                Groups
+                Find Groups
               </MenuItem>
-            )}
-            {authUser && (
-              <MenuItem onClick={handleUserMenuClose}>Find Groups</MenuItem>
-            )}
-            {authUser && (
-              <MenuItem onClick={handleUserMenuClose}>My Groups</MenuItem>
-            )}
-            {authUser && (
-              <MenuItem onClick={handleUserMenuClose}>My Friends</MenuItem>
             )}
             {authUser && (
               <MenuItem
