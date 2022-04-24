@@ -159,11 +159,12 @@ function Group() {
                 <Badge
                   overlap="circular"
                   anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-                  badgeContent={<ManageAccountsIcon />}
+                  badgeContent={<ManageAccountsIcon color='primary' />}
                 >
                   <Avatar src={groupData.owner.avatar} />
                 </Badge>
-                <Typography>{`${groupData.owner.firstName} ${groupData.owner.lastName} (owner)`}</Typography>
+                <Typography>{`${groupData.owner.firstName} ${groupData.owner.lastName}`}</Typography>
+                <Typography color="primary">(owner)</Typography>
               </Stack>
               {groupData.memberships.map((membership) => {
                 if (groupData.owner.username === membership.user.username)
