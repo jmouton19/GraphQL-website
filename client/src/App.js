@@ -9,6 +9,7 @@ import CssBaseline from '@mui/material/CssBaseline';
 import Home from './pages/Home';
 import Profile from './pages/Profile';
 import Group from './pages/Group';
+import Groups from './pages/Groups';
 import MapPage from './pages/MapPage';
 import PrimaryAppBar from './components/AppBar';
 import PostProvider from './providers/PostProvider';
@@ -83,6 +84,24 @@ function App() {
                   <PrivateRoute>
                     <PostProvider>
                       <Profile />
+                    </PostProvider>
+                  </PrivateRoute>
+                }
+              />
+              <Route
+                path="/groups"
+                element={
+                  <PrivateRoute>
+                    <Groups />
+                  </PrivateRoute>
+                }
+              />
+              <Route
+                path="/group/:groupname"
+                element={
+                  <PrivateRoute>
+                    <PostProvider>
+                      <Group />
                     </PostProvider>
                   </PrivateRoute>
                 }

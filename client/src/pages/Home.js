@@ -7,8 +7,6 @@ import { usePosts } from '../providers/PostProvider';
 
 import shortid from 'shortid';
 
-import AddPostCard from '../components/AddPostCard';
-
 function Feed() {
   const data = usePosts();
   return (
@@ -20,7 +18,6 @@ function Feed() {
           }}
         >
           <Stack spacing={2}>
-            <AddPostCard />
             {data.map((postData) => (
               <PostCard key={shortid.generate()} postData={postData} />
             ))}

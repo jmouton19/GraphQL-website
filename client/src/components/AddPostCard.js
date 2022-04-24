@@ -19,7 +19,7 @@ const emptyPostData = {
   videoPublicID: '',
 };
 
-function AddPostCard() {
+function AddPostCard({ creatorId }) {
   const [newPostData, setNewPostData] = useState(emptyPostData);
 
   const handleUploadSuccess = (publicID) => {
@@ -37,7 +37,7 @@ function AddPostCard() {
       <CardContent>
         <Stack direction="row" spacing={2} alignItems="center">
           <Avatar />
-          <TextField
+          {!hasVideoData && <TextField
             fullWidth
             id="outlined-basic"
             label="Say Something..."
@@ -49,7 +49,7 @@ function AddPostCard() {
                 description: event.target.value,
               });
             }}
-          />
+          />}
         </Stack>
       </CardContent>
       {hasVideoData && (
@@ -61,10 +61,10 @@ function AddPostCard() {
         </CardMedia>
       )}
       <CardActions>
-        <Tooltip title="Add Video">
+        <Tooltip title="Add Video Instead">
           <IconButton
             color="primary"
-            disabled={hasVideoData}
+            disabled={hasVideoData || hasTextData}
             onClick={() => {
               showUploadWidget(handleUploadSuccess);
             }}

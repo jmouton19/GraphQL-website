@@ -150,10 +150,10 @@ function PrimaryAppBar() {
             {authUser && (
               <MenuItem
                 component={Link}
-                to={`/group`}
+                to={`/groups`}
                 onClick={handleUserMenuClose}
               >
-                Group
+                Groups
               </MenuItem>
             )}
             {authUser && (
