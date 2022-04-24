@@ -12,7 +12,7 @@ namespace webAPI.Models
         [GraphQLDescription("Group the member is part of.")]
         public Group? group { get; set; }
         [Required]
-        public int groupId { get; set; }
+        public int? groupId { get; set; }
 
 
         [Required]

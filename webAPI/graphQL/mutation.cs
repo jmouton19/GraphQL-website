@@ -31,7 +31,16 @@ namespace webAPI.graphQL
             {
                 context.Users.Add(user);
                 await context.SaveChangesAsync();
-                return "true";
+
+                var addedUser = context.Users.Where(u => u.email == user.email).FirstOrDefault();
+                if (addedUser != null)
+                {
+                    var memberInput = new AddMemberInput(null, addedUser.Id, null);
+                    await AddMemberAsync(memberInput, context);
+                    return "true";
+                }
+                return "false";
+
             }
             else
                 return "false";
@@ -42,78 +51,72 @@ namespace webAPI.graphQL
         public async Task<string> UpdateUserAsync(UpdateUserInput input, [ScopedService] AppDbContext context, [Service] IHttpContextAccessor contextAccessor)
         {
 
-            if (contextAccessor.HttpContext != null)
+            var currentUser = context.Users.Where(u => u.Id == input.userId).FirstOrDefault();
+            if (currentUser != null)
             {
-                if (contextAccessor.HttpContext.User != null)
+                var identity = contextAccessor.HttpContext.User.Identity as ClaimsIdentity;
+
+                if (identity != null)
                 {
-                    var identity = contextAccessor.HttpContext.User.Identity as ClaimsIdentity;
-                    if (identity != null)
+                    string idendityId = identity.Claims.FirstOrDefault(u => u.Type == ClaimTypes.Sid).Value;
+                    if (idendityId != null && idendityId == input.userId.ToString())
                     {
-                        var currentUser = context.Users.Where(u => u.Id == input.userId).FirstOrDefault();
-                        if (currentUser != null)
+                        if (input.firstName != null)
+                            currentUser.firstName = input.firstName;
+                        if (input.lastName != null)
+                            currentUser.lastName = input.lastName;
+                        if (input.avatar != null)
+                            currentUser.avatar = input.avatar;
+                        if (input.DOB != null)
+                            currentUser.DOB = input.DOB;
+
+
+                        if (input.username != null && input.username != currentUser.username)
                         {
-                            string idendityId = identity.Claims.FirstOrDefault(u => u.Type == ClaimTypes.Sid).Value;
-                            if (idendityId != null && idendityId == input.userId.ToString())
-                            {
-                                if (input.firstName != null)
-                                    currentUser.firstName = input.firstName;
-                                if (input.lastName != null)
-                                    currentUser.lastName = input.lastName;
-                                if (input.avatar != null)
-                                    currentUser.avatar = input.avatar;
-                                if (input.DOB != null)
-                                    currentUser.DOB = input.DOB;
+                            var checker = context.Users.Where(u => u.username == input.username).FirstOrDefault();
+                            if (checker == null)
+                                currentUser.username = input.username;
+                            else
+                                return "success:false,message:Username already taken.";
 
-
-                                if (input.username != null && input.username != currentUser.username)
-                                {
-                                    var checker = context.Users.Where(u => u.username == input.username).FirstOrDefault();
-                                    if (checker == null)
-                                        currentUser.username = input.username;
-                                    else
-                                        return "success:false,message:Username already taken.";
-
-                                }
-
-                                if (input.email != null && input.email != currentUser.email)
-                                {
-                                    var checker = context.Users.Where(u => u.email == input.email).FirstOrDefault();
-                                    if (checker == null)
-                                        currentUser.email = input.email;
-                                    else
-                                        return "success:false,message:Email already taken.";
-
-                                }
-
-                                if (input.newPassword != null)
-                                {
-                                    if (input.oldPassword != null)
-                                    {
-                                        bool verified = BCrypt.Net.BCrypt.Verify(input.oldPassword, currentUser.password);
-                                        if (verified)
-                                            currentUser.password = BCrypt.Net.BCrypt.HashPassword(input.newPassword);
-                                        else
-                                            return "success:false,message:Incorrect password.";
-                                    }
-                                    else
-                                        return "success:false,message:Please provide old password.";
-
-                                }
-
-                                context.Users.Update(currentUser);
-                                await context.SaveChangesAsync();
-                                return "success:true,message:User profile has been updated.";
-                            }
-                            else return "success:false,message:ACCESS DENIED!";
                         }
-                        else
-                            return "success:false,message:This user does not exist.";
+
+                        if (input.email != null && input.email != currentUser.email)
+                        {
+                            var checker = context.Users.Where(u => u.email == input.email).FirstOrDefault();
+                            if (checker == null)
+                                currentUser.email = input.email;
+                            else
+                                return "success:false,message:Email already taken.";
+
+                        }
+
+                        if (input.newPassword != null)
+                        {
+                            if (input.oldPassword != null)
+                            {
+                                bool verified = BCrypt.Net.BCrypt.Verify(input.oldPassword, currentUser.password);
+                                if (verified)
+                                    currentUser.password = BCrypt.Net.BCrypt.HashPassword(input.newPassword);
+                                else
+                                    return "success:false,message:Incorrect password.";
+                            }
+                            else
+                                return "success:false,message:Please provide old password.";
+
+                        }
+
+                        context.Users.Update(currentUser);
+                        await context.SaveChangesAsync();
+                        return "success:true,message:User profile has been updated.";
                     }
-                    return "success:false,message:Null identity.";
+                    else return "success:false,message:You shall now pass!";
                 }
-                return "success:false,message:No Http context user.";
+                else
+                    return "success:false,message:Null identity.";
             }
-            return "success:false,message:No Http context.";
+            else
+                return "success:false,message:This user does not exist.";
         }
 
 
@@ -137,7 +140,7 @@ namespace webAPI.graphQL
                         return "success:true,message:User profile deleted.";
                     }
                     else
-                        return "success:false,message:ACCESS DENIED!";
+                        return "success:false,message:You must construct additional pylons.";
 
                 }
                 else
