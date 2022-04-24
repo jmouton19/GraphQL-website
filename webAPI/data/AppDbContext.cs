@@ -65,7 +65,7 @@ namespace webAPI.data
                         email = "jcmouton@protonmail.com",
                         password = Hasher("Mouton"),
                         username = "JaySea",
-                        avatar = "https://i.ibb.co/mtRH6q9/Screenshot-2022-04-24-at-14-50-41.png"
+                        avatar = "https://i.ibb.co/SBLGDZW/jc.png"
                     },
                     new User
                     {
@@ -88,6 +88,17 @@ namespace webAPI.data
                         password = Hasher("Steyn"),
                         username = "MorneSteyn",
                         avatar = "https://i.ibb.co/VYbZ60Q/38816802529d.jpg"
+                    },
+                    new User
+                    {
+                        Id = 5,
+                        lastName = "Uys",
+                        firstName = "Eduan",
+                        DOB = DateOnly.ParseExact("01/03/2000", @"M/d/yyyy"),
+                        email = "eduanuys@gmail.com",
+                        password = Hasher("Uys"),
+                        username = "uysbeer",
+                        avatar = "https://i.ibb.co/3cfRt6n/Image.png"
                     });
             modelBuilder.Entity<Group>().HasData(new Group
             {
