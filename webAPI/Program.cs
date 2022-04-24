@@ -44,6 +44,11 @@ builder.Services.AddSpaStaticFiles(configuration =>
 
 var app = builder.Build();
 app.UseCors(o => o.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
+app.MapGraphQL();
+app.UseGraphQLVoyager(new VoyagerOptions()
+{
+    GraphQLEndPoint = "/graphql"
+}, "/graphql-voyager");
 
 app.UseStaticFiles();
 app.UseSpaStaticFiles();
@@ -58,10 +63,5 @@ app.UseSpa(spa =>
 
 app.UseAuthentication();
 app.UseAuthorization();
-app.MapGraphQL();
-app.UseGraphQLVoyager(new VoyagerOptions()
-{
-    GraphQLEndPoint = "/graphql"
-}, "/graphql-voyager");
 
 app.Run();
