@@ -57,7 +57,7 @@ namespace webAPI.Migrations
                             Id = 1,
                             body = "i also like pengins",
                             creatorId = 2,
-                            dateCreated = new DateTime(2022, 4, 24, 17, 41, 18, 450, DateTimeKind.Utc).AddTicks(8262),
+                            dateCreated = new DateTime(2022, 4, 24, 18, 13, 54, 454, DateTimeKind.Utc).AddTicks(1030),
                             postId = 1
                         });
                 });
@@ -261,7 +261,7 @@ namespace webAPI.Migrations
                             Id = 1,
                             body = "I like penguins",
                             creatorId = 4,
-                            dateCreated = new DateTime(2022, 4, 24, 17, 41, 18, 450, DateTimeKind.Utc).AddTicks(8245),
+                            dateCreated = new DateTime(2022, 4, 24, 18, 13, 54, 454, DateTimeKind.Utc).AddTicks(1010),
                             latitude = 29.653700000000001,
                             longitude = 79.948599999999999,
                             video = false
@@ -269,9 +269,9 @@ namespace webAPI.Migrations
                         new
                         {
                             Id = 2,
-                            body = "insert some penguin video link here",
+                            body = "u4vuh4i7wb9atdvj11rs",
                             creatorId = 1,
-                            dateCreated = new DateTime(2022, 4, 24, 17, 41, 18, 450, DateTimeKind.Utc).AddTicks(8246),
+                            dateCreated = new DateTime(2022, 4, 24, 18, 13, 54, 454, DateTimeKind.Utc).AddTicks(1010),
                             latitude = 82.862799999999993,
                             longitude = 135.0,
                             video = true
@@ -328,17 +328,18 @@ namespace webAPI.Migrations
                             email = "nicolvisser@yahoo.com",
                             firstName = "Nicol",
                             lastName = "Visser",
-                            password = "$2a$11$VbWbRU.RtzUW0gcj/sOK3.N5ulMfeViEzXolMjruhqN7s4VflbWjC",
+                            password = "$2a$11$zZkmoq1zC5xZ4DCVyZCcpukO4oQgZajJVjgRgRilv.LOv.4676UoW",
                             username = "VisserMan"
                         },
                         new
                         {
                             Id = 2,
                             DOB = new DateOnly(2000, 6, 3),
+                            avatar = "https://i.ibb.co/mtRH6q9/Screenshot-2022-04-24-at-14-50-41.png",
                             email = "jcmouton@protonmail.com",
                             firstName = "Jacques",
                             lastName = "Mouton",
-                            password = "$2a$11$0VxBpll3EEB5z5RrQfIqhO2rquVuv/aTbbOtfotl0VWPTqhncQmpC",
+                            password = "$2a$11$0YadUh1zvbFOf31LC.REkOg12pECwJUGqzFlQajiIV1xcsrtpobZW",
                             username = "JaySea"
                         },
                         new
@@ -348,7 +349,7 @@ namespace webAPI.Migrations
                             email = "philler@gmail.com",
                             firstName = "Philip",
                             lastName = "Schommarz",
-                            password = "$2a$11$gOZIbyHkeSZ.OeIwAsSZguU0VmkFjrZotnVZODK12pd1AR7gDcsrm",
+                            password = "$2a$11$Kj01PljJnUrMEXbZ3Rs/TOTvmeL3o.94WASo/P6dwqaAYPvSC1OaC",
                             username = "Fillet"
                         },
                         new
@@ -358,7 +359,7 @@ namespace webAPI.Migrations
                             email = "mssteyn@rocketmail.com",
                             firstName = "Lize",
                             lastName = "Steyn",
-                            password = "$2a$11$aEUv32F.e.z.uUZWUQp8yOh5Ld00f0u7vDOOfJHvH6WPhSRGb6pSC",
+                            password = "$2a$11$viuIkzeob/Bqu0NzATYLhex9Sr7RxfR5pF/8eFis.z.XqjvkLoJFi",
                             username = "MorneSteyn"
                         });
                 });

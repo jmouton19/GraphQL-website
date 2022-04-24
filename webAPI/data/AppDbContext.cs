@@ -63,7 +63,8 @@ namespace webAPI.data
                         firstName = "Jacques",
                         email = "jcmouton@protonmail.com",
                         password = Hasher("Mouton"),
-                        username = "JaySea"
+                        username = "JaySea",
+                        avatar = "https://i.ibb.co/mtRH6q9/Screenshot-2022-04-24-at-14-50-41.png"
                     },
                     new User
                     {

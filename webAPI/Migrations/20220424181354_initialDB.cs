@@ -6,7 +6,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace webAPI.Migrations
 {
-    public partial class AddDb : Migration
+    public partial class initialDB : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -162,10 +162,10 @@ namespace webAPI.Migrations
                 columns: new[] { "Id", "DOB", "avatar", "email", "firstName", "lastName", "password", "username" },
                 values: new object[,]
                 {
-                    { 1, new DateOnly(1943, 11, 23), null, "nicolvisser@yahoo.com", "Nicol", "Visser", "$2a$11$6XORnBVc.2RcL9087E1t/.qdI8TOkNpiE/3KxqMM0bJLgaAEEq82S", "VisserMan" },
-                    { 2, new DateOnly(2000, 6, 3), null, "jcmouton@protonmail.com", "JC", "Mouton", "$2a$11$ONadLrWuCT1RwBJxqPjgR.Fn7MWWYt1YwIZAakhoAC5wFQAk8B35W", "JaySea" },
-                    { 3, new DateOnly(2000, 11, 23), null, "philler@gmail.com", "Philip", "Schommarz", "$2a$11$dXlQ/HrlRcIFaTf.9jF3se1CpUZ8r5lHfrbJ4mQ9hFKyWa497Sn82", "Fillet" },
-                    { 4, new DateOnly(200, 3, 11), null, "mssteyn@rocketmail.com", "Lize", "Steyn", "$2a$11$of2TYY2ED4mfhhB0AZfHW.YosQdCNwaJf/Di/DJYgiT/RX5TNLdw2", "MorneSteyn" }
+                    { 1, new DateOnly(1943, 11, 23), null, "nicolvisser@yahoo.com", "Nicol", "Visser", "$2a$11$zZkmoq1zC5xZ4DCVyZCcpukO4oQgZajJVjgRgRilv.LOv.4676UoW", "VisserMan" },
+                    { 2, new DateOnly(2000, 6, 3), "https://i.ibb.co/mtRH6q9/Screenshot-2022-04-24-at-14-50-41.png", "jcmouton@protonmail.com", "Jacques", "Mouton", "$2a$11$0YadUh1zvbFOf31LC.REkOg12pECwJUGqzFlQajiIV1xcsrtpobZW", "JaySea" },
+                    { 3, new DateOnly(2000, 11, 23), null, "philler@gmail.com", "Philip", "Schommarz", "$2a$11$Kj01PljJnUrMEXbZ3Rs/TOTvmeL3o.94WASo/P6dwqaAYPvSC1OaC", "Fillet" },
+                    { 4, new DateOnly(2000, 3, 11), null, "mssteyn@rocketmail.com", "Lize", "Steyn", "$2a$11$viuIkzeob/Bqu0NzATYLhex9Sr7RxfR5pF/8eFis.z.XqjvkLoJFi", "MorneSteyn" }
                 });
 
             migrationBuilder.InsertData(
@@ -210,17 +210,17 @@ namespace webAPI.Migrations
             migrationBuilder.InsertData(
                 table: "Posts",
                 columns: new[] { "Id", "body", "creatorId", "dateCreated", "latitude", "longitude", "video" },
-                values: new object[] { 1, "I like penguins", 4, new DateTime(2022, 4, 24, 15, 4, 49, 936, DateTimeKind.Utc).AddTicks(8257), 29.653700000000001, 79.948599999999999, false });
+                values: new object[] { 1, "I like penguins", 4, new DateTime(2022, 4, 24, 18, 13, 54, 454, DateTimeKind.Utc).AddTicks(1010), 29.653700000000001, 79.948599999999999, false });
 
             migrationBuilder.InsertData(
                 table: "Comments",
                 columns: new[] { "Id", "body", "creatorId", "dateCreated", "postId" },
-                values: new object[] { 1, "i also like pengins", 2, new DateTime(2022, 4, 24, 15, 4, 49, 936, DateTimeKind.Utc).AddTicks(8274), 1 });
+                values: new object[] { 1, "i also like pengins", 2, new DateTime(2022, 4, 24, 18, 13, 54, 454, DateTimeKind.Utc).AddTicks(1030), 1 });
 
             migrationBuilder.InsertData(
                 table: "Posts",
                 columns: new[] { "Id", "body", "creatorId", "dateCreated", "latitude", "longitude", "video" },
-                values: new object[] { 2, "insert some penguin video link here", 1, new DateTime(2022, 4, 24, 15, 4, 49, 936, DateTimeKind.Utc).AddTicks(8259), 82.862799999999993, 135.0, true });
+                values: new object[] { 2, "u4vuh4i7wb9atdvj11rs", 1, new DateTime(2022, 4, 24, 18, 13, 54, 454, DateTimeKind.Utc).AddTicks(1010), 82.862799999999993, 135.0, true });
 
             migrationBuilder.CreateIndex(
                 name: "IX_Comments_creatorId",
