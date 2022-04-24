@@ -15,8 +15,10 @@ import SearchIcon from '@mui/icons-material/Search';
 import { gql, useApolloClient } from '@apollo/client';
 import { useNotifyError } from '../providers/NotificationProvider';
 import { Link } from 'react-router-dom';
+import { useAuthUser } from '../providers/AuthProvider';
 
 export default function SearchMenu() {
+  const authUser = useAuthUser();
   const client = useApolloClient();
   const notifyError = useNotifyError();
   const [groups, setGroups] = useState([]);

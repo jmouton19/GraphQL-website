@@ -1,7 +1,23 @@
 import React, { useEffect, useContext, createContext, useState } from 'react';
 
-import { gql, useApolloClient } from '@apollo/client';
+import { gql } from '@apollo/client';
 import { useNotifyError, useNotifySuccess } from './NotificationProvider';
+import {
+  ApolloClient,
+  InMemoryCache,
+  ApolloProvider,
+  createHttpLink,
+} from '@apollo/client';
+import { setContext } from '@apollo/client/link/context';
+
+const httpLink = createHttpLink({
+  uri: 'http://cs334proj2group8.herokuapp.com/graphql/',
+});
+
+const initialClient = new ApolloClient({
+  link: httpLink,
+  cache: new InMemoryCache(),
+});
 
 const AuthUserContext = createContext();
 const SignUpContext = createContext();
@@ -27,6 +43,8 @@ export function useLogOut() {
 const localStorageItemName = 'kasie-auth-user';
 
 function AuthProvider({ children }) {
+  const [client, setClient] = useState(initialClient);
+  const [jwt, setJwt] = useState(null);
   const [authUser, setAuthUser] = useState(
     JSON.parse(window.localStorage.getItem(localStorageItemName))
   );
@@ -41,8 +59,22 @@ function AuthProvider({ children }) {
     window.localStorage.setItem(localStorageItemName, JSON.stringify(authUser));
   }, [authUser]);
 
+  useEffect(() => {
+    const authLink = setContext(() => {
+      return {
+        headers: {
+          authorization: jwt ? `Bearer ${jwt}` : '',
+        },
+      };
+    });
 
-  const client = useApolloClient();
+    const newClient = new ApolloClient({
+      link: authLink.concat(httpLink),
+      cache: new InMemoryCache(),
+    });
+
+    setClient(newClient);
+  }, [jwt]);
 
   const notifySuccess = useNotifySuccess();
   const notifyError = useNotifyError();
@@ -100,8 +132,9 @@ function AuthProvider({ children }) {
       .then((result) => {
         if (result.data.userLogin) {
           notifySuccess('Logged in successfully.');
-          const jwt = result.data.userLogin;
-          loadUserProfile(email, jwt);
+          const jwt_temp = result.data.userLogin;
+          setJwt(jwt_temp);
+          setTimeout(() => loadUserProfile(email, jwt), 100);
         } else {
           notifyError('Log in failed.');
           // Todo: Need more descriptive messages here from backend
@@ -132,7 +165,8 @@ function AuthProvider({ children }) {
         } else {
           notifyError('Could not load user profile from server.');
         }
-      });
+      })
+      .catch(() => console.log('HIII'));
   };
 
   const logOut = () => {
@@ -140,15 +174,17 @@ function AuthProvider({ children }) {
   };
 
   return (
-    <AuthUserContext.Provider value={authUser}>
-      <SignUpContext.Provider value={signUp}>
-        <LogInContext.Provider value={logIn}>
-          <LogOutContext.Provider value={logOut}>
-            {children}
-          </LogOutContext.Provider>
-        </LogInContext.Provider>
-      </SignUpContext.Provider>
-    </AuthUserContext.Provider>
+    <ApolloProvider client={client}>
+      <AuthUserContext.Provider value={authUser}>
+        <SignUpContext.Provider value={signUp}>
+          <LogInContext.Provider value={logIn}>
+            <LogOutContext.Provider value={logOut}>
+              {children}
+            </LogOutContext.Provider>
+          </LogInContext.Provider>
+        </SignUpContext.Provider>
+      </AuthUserContext.Provider>
+    </ApolloProvider>
   );
 }
 
