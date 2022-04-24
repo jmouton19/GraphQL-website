@@ -12,8 +12,8 @@ using webAPI.data;
 namespace webAPI.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20220422114747_addInitialDb")]
-    partial class addInitialDb
+    [Migration("20220424150450_AddDb")]
+    partial class AddDb
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -59,7 +59,7 @@ namespace webAPI.Migrations
                             Id = 1,
                             body = "i also like pengins",
                             creatorId = 2,
-                            dateCreated = new DateTime(2022, 4, 22, 11, 47, 47, 411, DateTimeKind.Utc).AddTicks(829),
+                            dateCreated = new DateTime(2022, 4, 24, 15, 4, 49, 936, DateTimeKind.Utc).AddTicks(8274),
                             postId = 1
                         });
                 });
@@ -166,7 +166,7 @@ namespace webAPI.Migrations
                     b.Property<bool?>("admin")
                         .HasColumnType("boolean");
 
-                    b.Property<int>("groupId")
+                    b.Property<int?>("groupId")
                         .HasColumnType("integer");
 
                     b.Property<int>("userId")
@@ -181,6 +181,26 @@ namespace webAPI.Migrations
                     b.ToTable("Memberships");
 
                     b.HasData(
+                        new
+                        {
+                            Id = 4,
+                            userId = 1
+                        },
+                        new
+                        {
+                            Id = 5,
+                            userId = 2
+                        },
+                        new
+                        {
+                            Id = 6,
+                            userId = 3
+                        },
+                        new
+                        {
+                            Id = 7,
+                            userId = 4
+                        },
                         new
                         {
                             Id = 1,
@@ -242,8 +262,8 @@ namespace webAPI.Migrations
                         {
                             Id = 1,
                             body = "I like penguins",
-                            creatorId = 1,
-                            dateCreated = new DateTime(2022, 4, 22, 11, 47, 47, 411, DateTimeKind.Utc).AddTicks(809),
+                            creatorId = 4,
+                            dateCreated = new DateTime(2022, 4, 24, 15, 4, 49, 936, DateTimeKind.Utc).AddTicks(8257),
                             latitude = 29.653700000000001,
                             longitude = 79.948599999999999,
                             video = false
@@ -252,8 +272,8 @@ namespace webAPI.Migrations
                         {
                             Id = 2,
                             body = "insert some penguin video link here",
-                            creatorId = 2,
-                            dateCreated = new DateTime(2022, 4, 22, 11, 47, 47, 411, DateTimeKind.Utc).AddTicks(810),
+                            creatorId = 1,
+                            dateCreated = new DateTime(2022, 4, 24, 15, 4, 49, 936, DateTimeKind.Utc).AddTicks(8259),
                             latitude = 82.862799999999993,
                             longitude = 135.0,
                             video = true
@@ -310,7 +330,7 @@ namespace webAPI.Migrations
                             email = "nicolvisser@yahoo.com",
                             firstName = "Nicol",
                             lastName = "Visser",
-                            password = "$2a$11$gmXQtlGx2OXCl26d6moNuOse//4iDPEwYT3DuIzzqb6Zg9eh5wUwC",
+                            password = "$2a$11$6XORnBVc.2RcL9087E1t/.qdI8TOkNpiE/3KxqMM0bJLgaAEEq82S",
                             username = "VisserMan"
                         },
                         new
@@ -320,7 +340,7 @@ namespace webAPI.Migrations
                             email = "jcmouton@protonmail.com",
                             firstName = "JC",
                             lastName = "Mouton",
-                            password = "$2a$11$05h8Dvo458WAv7EvSzcJvOoFEJAGFkX6O7xf5OlWyw4IRW6Y/1DKy",
+                            password = "$2a$11$ONadLrWuCT1RwBJxqPjgR.Fn7MWWYt1YwIZAakhoAC5wFQAk8B35W",
                             username = "JaySea"
                         },
                         new
@@ -330,7 +350,7 @@ namespace webAPI.Migrations
                             email = "philler@gmail.com",
                             firstName = "Philip",
                             lastName = "Schommarz",
-                            password = "$2a$11$ibyqVYtXL7xG9j7rp7PWN.d8NyZt7oHFa.QTJ6msT3gAJ/noZMvuW",
+                            password = "$2a$11$dXlQ/HrlRcIFaTf.9jF3se1CpUZ8r5lHfrbJ4mQ9hFKyWa497Sn82",
                             username = "Fillet"
                         },
                         new
@@ -340,7 +360,7 @@ namespace webAPI.Migrations
                             email = "mssteyn@rocketmail.com",
                             firstName = "Lize",
                             lastName = "Steyn",
-                            password = "$2a$11$aeZbq/HJDmY6217JDVsgfOY9aoO1rMLo/x7zdNY06WVkihjm5uzrC",
+                            password = "$2a$11$of2TYY2ED4mfhhB0AZfHW.YosQdCNwaJf/Di/DJYgiT/RX5TNLdw2",
                             username = "MorneSteyn"
                         });
                 });
@@ -398,9 +418,7 @@ namespace webAPI.Migrations
                 {
                     b.HasOne("webAPI.Models.Group", "group")
                         .WithMany("memberships")
-                        .HasForeignKey("groupId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("groupId");
 
                     b.HasOne("webAPI.Models.User", "user")
                         .WithMany("memberships")

@@ -8,10 +8,8 @@ namespace webAPI.Models
         [Key]
         public int Id { get; set; }
 
-        [Required]
         [GraphQLDescription("Group the member is part of.")]
         public Group? group { get; set; }
-        [Required]
         public int? groupId { get; set; }
 
 

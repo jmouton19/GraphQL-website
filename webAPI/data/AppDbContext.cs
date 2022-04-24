@@ -103,6 +103,26 @@ namespace webAPI.data
             });
             modelBuilder.Entity<Membership>().HasData(new Membership
             {
+                Id = 4,
+                userId = 1,
+            },
+            new Membership
+            {
+                Id = 5,
+                userId = 2,
+            },
+            new Membership
+            {
+                Id = 6,
+                userId = 3,
+            },
+            new Membership
+            {
+                Id = 7,
+                userId = 4,
+            },
+            new Membership
+            {
                 Id = 1,
                 admin = true,
                 groupId = 1,
@@ -127,7 +147,7 @@ namespace webAPI.data
                 Id = 1,
                 body = "I like penguins",
                 video = false,
-                creatorId = 1,
+                creatorId = 4,
                 latitude = 29.6537,
                 longitude = 79.9486,
                 dateCreated = DateTime.UtcNow
@@ -136,7 +156,7 @@ namespace webAPI.data
                 Id = 2,
                 body = "insert some penguin video link here",
                 video = true,
-                creatorId = 2,
+                creatorId = 1,
                 latitude = 82.8628,
                 longitude = 135.0000,
                 dateCreated = DateTime.UtcNow
