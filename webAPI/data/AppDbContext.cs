@@ -59,7 +59,7 @@ namespace webAPI.data
                     {
                         Id = 2,
                         lastName = "Mouton",
-                        firstName = "JC",
+                        firstName = "Jacques",
                         DOB = DateOnly.Parse("06/03/2000"),
                         email = "jcmouton@protonmail.com",
                         password = Hasher("Mouton"),
