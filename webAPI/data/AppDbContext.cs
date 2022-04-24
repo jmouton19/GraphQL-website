@@ -53,7 +53,8 @@ namespace webAPI.data
                 DOB = DateOnly.ParseExact("11/23/1943", @"M/d/yyyy"),
                 email = "nicolvisser@yahoo.com",
                 password = Hasher("Visser"),
-                username = "VisserMan"
+                username = "VisserMan",
+                avatar = "https://i.ibb.co/hm99dG4/20d9de001ebe.png"
             },
                     new User
                     {
@@ -74,7 +75,8 @@ namespace webAPI.data
                         DOB = DateOnly.ParseExact("11/23/2000", @"M/d/yyyy"),
                         email = "philler@gmail.com",
                         password = Hasher("Schommarz"),
-                        username = "Fillet"
+                        username = "Fillet",
+                        avatar = "https://i.ibb.co/jg3970L/76cb8121601e.png"
                     },
                     new User
                     {
