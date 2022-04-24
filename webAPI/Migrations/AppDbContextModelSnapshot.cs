@@ -57,7 +57,7 @@ namespace webAPI.Migrations
                             Id = 1,
                             body = "i also like pengins",
                             creatorId = 2,
-                            dateCreated = new DateTime(2022, 4, 19, 22, 9, 25, 109, DateTimeKind.Utc).AddTicks(3340),
+                            dateCreated = new DateTime(2022, 4, 22, 11, 47, 47, 411, DateTimeKind.Utc).AddTicks(829),
                             postId = 1
                         });
                 });
@@ -241,7 +241,7 @@ namespace webAPI.Migrations
                             Id = 1,
                             body = "I like penguins",
                             creatorId = 1,
-                            dateCreated = new DateTime(2022, 4, 19, 22, 9, 25, 109, DateTimeKind.Utc).AddTicks(3317),
+                            dateCreated = new DateTime(2022, 4, 22, 11, 47, 47, 411, DateTimeKind.Utc).AddTicks(809),
                             latitude = 29.653700000000001,
                             longitude = 79.948599999999999,
                             video = false
@@ -251,7 +251,7 @@ namespace webAPI.Migrations
                             Id = 2,
                             body = "insert some penguin video link here",
                             creatorId = 2,
-                            dateCreated = new DateTime(2022, 4, 19, 22, 9, 25, 109, DateTimeKind.Utc).AddTicks(3319),
+                            dateCreated = new DateTime(2022, 4, 22, 11, 47, 47, 411, DateTimeKind.Utc).AddTicks(810),
                             latitude = 82.862799999999993,
                             longitude = 135.0,
                             video = true
@@ -308,7 +308,7 @@ namespace webAPI.Migrations
                             email = "nicolvisser@yahoo.com",
                             firstName = "Nicol",
                             lastName = "Visser",
-                            password = "$2a$11$HasxdUQ6dQwamlSzkcQC6.HOvCSQa5GgC0i7G64bCQNFHbjL41V/S",
+                            password = "$2a$11$gmXQtlGx2OXCl26d6moNuOse//4iDPEwYT3DuIzzqb6Zg9eh5wUwC",
                             username = "VisserMan"
                         },
                         new
@@ -318,7 +318,7 @@ namespace webAPI.Migrations
                             email = "jcmouton@protonmail.com",
                             firstName = "JC",
                             lastName = "Mouton",
-                            password = "$2a$11$8V6yAvXy9krx8w4gLQZobe9cDpKez/zPztnN.UygyToPnuEXOVvje",
+                            password = "$2a$11$05h8Dvo458WAv7EvSzcJvOoFEJAGFkX6O7xf5OlWyw4IRW6Y/1DKy",
                             username = "JaySea"
                         },
                         new
@@ -328,7 +328,7 @@ namespace webAPI.Migrations
                             email = "philler@gmail.com",
                             firstName = "Philip",
                             lastName = "Schommarz",
-                            password = "$2a$11$Cs8N28ioUWJNMY8v33ztHem8rCU5ysaY/rvnA.BX8taF4XduzIVAK",
+                            password = "$2a$11$ibyqVYtXL7xG9j7rp7PWN.d8NyZt7oHFa.QTJ6msT3gAJ/noZMvuW",
                             username = "Fillet"
                         },
                         new
@@ -338,7 +338,7 @@ namespace webAPI.Migrations
                             email = "mssteyn@rocketmail.com",
                             firstName = "Lize",
                             lastName = "Steyn",
-                            password = "$2a$11$VL29tc65BEcsE4A7EUcYIuOzbiMZTXMZJ4lvFGMf9BrbP6MJcUmei",
+                            password = "$2a$11$aeZbq/HJDmY6217JDVsgfOY9aoO1rMLo/x7zdNY06WVkihjm5uzrC",
                             username = "MorneSteyn"
                         });
                 });
@@ -365,13 +365,13 @@ namespace webAPI.Migrations
             modelBuilder.Entity("webAPI.Models.Friendship", b =>
                 {
                     b.HasOne("webAPI.Models.User", "receiver")
-                        .WithMany("FriendshipsReceived")
+                        .WithMany()
                         .HasForeignKey("receiverId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("webAPI.Models.User", "sender")
-                        .WithMany("FriendshipsSent")
+                        .WithMany()
                         .HasForeignKey("senderId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -441,10 +441,6 @@ namespace webAPI.Migrations
 
             modelBuilder.Entity("webAPI.Models.User", b =>
                 {
-                    b.Navigation("FriendshipsReceived");
-
-                    b.Navigation("FriendshipsSent");
-
                     b.Navigation("OwnedGroups");
 
                     b.Navigation("memberships");

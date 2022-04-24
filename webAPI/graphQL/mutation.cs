@@ -5,6 +5,8 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using webAPI.Models.other;
 using System.IdentityModel.Tokens.Jwt;
+using HotChocolate.AspNetCore.Authorization;
+using System.Security.Claims;
 
 namespace webAPI.graphQL
 {
@@ -36,66 +38,88 @@ namespace webAPI.graphQL
         }
 
         [UseDbContext(typeof(AppDbContext))]
-        public async Task<string> UpdateUserAsync(UpdateUserInput input, [ScopedService] AppDbContext context)
+        [Authorize]
+        public async Task<string> UpdateUserAsync(UpdateUserInput input, [ScopedService] AppDbContext context, [Service] IHttpContextAccessor contextAccessor)
         {
-            var currentUser = context.Users.Where(u => u.Id == input.userId).FirstOrDefault();
-            if (currentUser != null)
+
+            if (contextAccessor.HttpContext != null)
             {
-                if (input.firstName != null)
-                    currentUser.firstName = input.firstName;
-                if (input.lastName != null)
-                    currentUser.lastName = input.lastName;
-                if (input.avatar != null)
-                    currentUser.avatar = input.avatar;
-                if (input.DOB != null)
-                    currentUser.DOB = input.DOB;
-
-
-                if (input.username != null && input.username != currentUser.username)
+                if (contextAccessor.HttpContext.User != null)
                 {
-                    var checker = context.Users.Where(u => u.username == input.username).FirstOrDefault();
-                    if (checker == null)
-                        currentUser.username = input.username;
-                    else
-                        return "success:false,message:Username already taken.";
-
-                }
-
-                if (input.email != null && input.email != currentUser.email)
-                {
-                    var checker = context.Users.Where(u => u.email == input.email).FirstOrDefault();
-                    if (checker == null)
-                        currentUser.email = input.email;
-                    else
-                        return "success:false,message:Email already taken.";
-
-                }
-
-                if (input.newPassword != null)
-                {
-                    if (input.oldPassword != null)
+                    var identity = contextAccessor.HttpContext.User.Identity as ClaimsIdentity;
+                    if (identity != null)
                     {
-                        bool verified = BCrypt.Net.BCrypt.Verify(input.oldPassword, currentUser.password);
-                        if (verified)
-                            currentUser.password = BCrypt.Net.BCrypt.HashPassword(input.newPassword);
+                        var currentUser = context.Users.Where(u => u.Id == input.userId).FirstOrDefault();
+                        if (currentUser != null)
+                        {
+                            string idendityId = identity.Claims.FirstOrDefault(u => u.Type == ClaimTypes.Sid).Value;
+                            if (idendityId != null && idendityId == input.userId.ToString())
+                            {
+                                if (input.firstName != null)
+                                    currentUser.firstName = input.firstName;
+                                if (input.lastName != null)
+                                    currentUser.lastName = input.lastName;
+                                if (input.avatar != null)
+                                    currentUser.avatar = input.avatar;
+                                if (input.DOB != null)
+                                    currentUser.DOB = input.DOB;
+
+
+                                if (input.username != null && input.username != currentUser.username)
+                                {
+                                    var checker = context.Users.Where(u => u.username == input.username).FirstOrDefault();
+                                    if (checker == null)
+                                        currentUser.username = input.username;
+                                    else
+                                        return "success:false,message:Username already taken.";
+
+                                }
+
+                                if (input.email != null && input.email != currentUser.email)
+                                {
+                                    var checker = context.Users.Where(u => u.email == input.email).FirstOrDefault();
+                                    if (checker == null)
+                                        currentUser.email = input.email;
+                                    else
+                                        return "success:false,message:Email already taken.";
+
+                                }
+
+                                if (input.newPassword != null)
+                                {
+                                    if (input.oldPassword != null)
+                                    {
+                                        bool verified = BCrypt.Net.BCrypt.Verify(input.oldPassword, currentUser.password);
+                                        if (verified)
+                                            currentUser.password = BCrypt.Net.BCrypt.HashPassword(input.newPassword);
+                                        else
+                                            return "success:false,message:Incorrect password.";
+                                    }
+                                    else
+                                        return "success:false,message:Please provide old password.";
+
+                                }
+
+                                context.Users.Update(currentUser);
+                                await context.SaveChangesAsync();
+                                return "success:true,message:User profile has been updated.";
+                            }
+                            else return "success:false,message:ACCESS DENIED";
+                        }
                         else
-                            return "success:false,message:Incorrect password.";
+                            return "success:false,message:This user does not exist.";
                     }
-                    else
-                        return "success:false,message:Please provide old password.";
-
+                    return "success:false,message:Null identity.";
                 }
-
-                context.Users.Update(currentUser);
-                await context.SaveChangesAsync();
-                return "success:true,message:User profile has been updated.";
+                return "success:false,message:No Http context user.";
             }
-            else
-                return "success:false,message:This user does not exist.";
+            return "success:false,message:No Http context.";
         }
 
 
+
         [UseDbContext(typeof(AppDbContext))]
+        [Authorize]
         public async Task<string> DeleteUserAsync(int userId, [ScopedService] AppDbContext context)
         {
             var currentUser = context.Users.Where(u => u.Id == userId).FirstOrDefault();
@@ -110,6 +134,7 @@ namespace webAPI.graphQL
         }
 
         [UseDbContext(typeof(AppDbContext))]
+        [Authorize]
         public async Task<string> DeleteGroupAsync(int groupId, [ScopedService] AppDbContext context)
         {
             var currentGroup = context.Groups.Where(u => u.Id == groupId).FirstOrDefault();
@@ -126,6 +151,7 @@ namespace webAPI.graphQL
 
 
         [UseDbContext(typeof(AppDbContext))]
+        [Authorize]
         public async Task<string> AddGroupAsync(AddGroupInput input, [ScopedService] AppDbContext context)
         {
             var group = new Group
@@ -146,6 +172,7 @@ namespace webAPI.graphQL
         }
 
         [UseDbContext(typeof(AppDbContext))]
+        [Authorize]
         public async Task<string> AddMemberAsync(AddMemberInput input, [ScopedService] AppDbContext context)
         {
             var member = new Membership
@@ -179,11 +206,15 @@ namespace webAPI.graphQL
                 {
                     var symmetricSecurityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["tokenSettings:Key"]));
                     var credentials = new SigningCredentials(symmetricSecurityKey, SecurityAlgorithms.HmacSha256);
+                    var claims = new[]{
+                        new Claim(ClaimTypes.Sid,currentUser.Id.ToString())
+                    };
 
                     var jwtToken = new JwtSecurityToken(
                         issuer: config["tokenSettings:Issuer"],
                         audience: config["tokenSettings:Audience"],
-                        expires: DateTime.Now.AddMinutes(2),
+                        claims,
+                        expires: DateTime.Now.AddMinutes(15),
                         signingCredentials: credentials
                     );
                     string token = new JwtSecurityTokenHandler().WriteToken(jwtToken);
@@ -196,6 +227,7 @@ namespace webAPI.graphQL
         }
 
         [UseDbContext(typeof(AppDbContext))]
+        [Authorize]
         public async Task<string> AddPostAsync(AddPostInput input, [ScopedService] AppDbContext context)
         {
             var post = new Post
@@ -224,6 +256,7 @@ namespace webAPI.graphQL
         }
 
         [UseDbContext(typeof(AppDbContext))]
+        [Authorize]
         public async Task<string> AddCommmentAsync(AddCommentInput input, [ScopedService] AppDbContext context)
         {
             var comment = new Comment
@@ -248,6 +281,7 @@ namespace webAPI.graphQL
         }
 
         [UseDbContext(typeof(AppDbContext))]
+        [Authorize]
         public async Task<string> AddFriendAsync(AddFriendInput input, [ScopedService] AppDbContext context)
         {
 

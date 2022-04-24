@@ -15,6 +15,8 @@ builder.Services.AddPooledDbContextFactory<AppDbContext>(opts =>
     var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
     opts.UseNpgsql(connectionString);
 });
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddAuthorization();
 
 builder.Services.AddGraphQLServer().AddAuthorization().AddQueryType<Query>().AddMutationType<Mutation>().AddProjections()
 .AddFiltering().AddSorting();
@@ -26,12 +28,12 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         {
             options.TokenValidationParameters = new TokenValidationParameters
             {
-                ValidateIssuer = true,
-                ValidateAudience = true,
                 ValidIssuer = builder.Configuration["tokenSettings:Issuer"],
+                ValidateIssuer = true,
                 ValidAudience = builder.Configuration["tokenSettings:Audience"],
-                ValidateIssuerSigningKey = true,
-                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["tokenSettings:Key"])) //hide this lol
+                ValidateAudience = true,
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["tokenSettings:Key"])), //hide this lol
+                ValidateIssuerSigningKey = true
             };
         });
 
@@ -55,6 +57,7 @@ app.UseSpa(spa =>
 });
 
 app.UseAuthentication();
+app.UseAuthorization();
 app.MapGraphQL();
 app.UseGraphQLVoyager(new VoyagerOptions()
 {

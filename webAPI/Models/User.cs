@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+
 namespace webAPI.Models
 {
     [GraphQLDescription("Represents a user on Kasie.")]

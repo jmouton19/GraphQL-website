@@ -1,3 +1,4 @@
+using HotChocolate.AspNetCore.Authorization;
 using webAPI.data;
 using webAPI.Models;
 using UseFilteringAttribute = HotChocolate.Data.UseFilteringAttribute;
@@ -11,6 +12,7 @@ namespace webAPI.graphQL
         [UseProjection]
         [UseFiltering]
         [UseSorting]
+        [Authorize]
 
         public IQueryable<User> GetUsers([ScopedService] AppDbContext context)
         {
@@ -20,6 +22,7 @@ namespace webAPI.graphQL
         [UseProjection]
         [UseFiltering]
         [UseSorting]
+        [Authorize]
 
         public IQueryable<Group> GetGroups([ScopedService] AppDbContext context)
         {
@@ -29,6 +32,7 @@ namespace webAPI.graphQL
         [UseProjection]
         [UseFiltering]
         [UseSorting]
+        [Authorize]
 
         public IQueryable<Membership> GetMemberships([ScopedService] AppDbContext context)
         {
@@ -38,6 +42,7 @@ namespace webAPI.graphQL
         [UseProjection]
         [UseFiltering]
         [UseSorting]
+        [Authorize]
 
         public IQueryable<Post> GetPosts([ScopedService] AppDbContext context)
         {
@@ -47,6 +52,7 @@ namespace webAPI.graphQL
         [UseProjection]
         [UseFiltering]
         [UseSorting]
+        [Authorize]
         public IQueryable<Comment> GetComments([ScopedService] AppDbContext context)
         {
             return context.Comments;
@@ -55,6 +61,7 @@ namespace webAPI.graphQL
         [UseProjection]
         [UseFiltering]
         [UseSorting]
+        [Authorize]
 
         public IQueryable<Friendship> GetFriendships([ScopedService] AppDbContext context)
         {
