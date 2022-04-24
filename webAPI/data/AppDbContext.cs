@@ -158,6 +158,11 @@ namespace webAPI.data
                 admin = false,
                 groupId = 1,
                 userId = 2,
+            },
+            new Membership
+            {
+                Id = 8,
+                userId = 5,
             });
             modelBuilder.Entity<Post>().HasData(new Post
             {
