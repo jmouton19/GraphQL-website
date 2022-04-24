@@ -44,7 +44,7 @@ function PostCard({ postData }) {
           </IconButton>
         }
         title={`${postData.creator.user.firstName} ${postData.creator.user.lastName}`}
-        subheader={`Posted in ${postData.creator.group.name}`}
+        subheader={ postData.creator.group ? `Posted in ${postData.creator.group.name}`: undefined}
       />
       {postData.video ? (
         <CardMedia>
