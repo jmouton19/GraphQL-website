@@ -104,7 +104,7 @@ namespace webAPI.graphQL
                                 await context.SaveChangesAsync();
                                 return "success:true,message:User profile has been updated.";
                             }
-                            else return "success:false,message:ACCESS DENIED";
+                            else return "success:false,message:ACCESS DENIED!";
                         }
                         else
                             return "success:false,message:This user does not exist.";
@@ -120,14 +120,28 @@ namespace webAPI.graphQL
 
         [UseDbContext(typeof(AppDbContext))]
         [Authorize]
-        public async Task<string> DeleteUserAsync(int userId, [ScopedService] AppDbContext context)
+        public async Task<string> DeleteUserAsync(int userId, [ScopedService] AppDbContext context, [Service] IHttpContextAccessor contextAccessor)
         {
+
             var currentUser = context.Users.Where(u => u.Id == userId).FirstOrDefault();
             if (currentUser != null)
             {
-                context.Users.Remove(currentUser);
-                await context.SaveChangesAsync();
-                return "success:true,message:User profile deleted.";
+                var identity = contextAccessor.HttpContext.User.Identity as ClaimsIdentity;
+                if (identity != null)
+                {
+                    string idendityId = identity.Claims.FirstOrDefault(u => u.Type == ClaimTypes.Sid).Value;
+                    if (idendityId != null && idendityId == userId.ToString())
+                    {
+                        context.Users.Remove(currentUser);
+                        await context.SaveChangesAsync();
+                        return "success:true,message:User profile deleted.";
+                    }
+                    else
+                        return "success:false,message:ACCESS DENIED!";
+
+                }
+                else
+                    return "success:false,message:Null identity.";
             }
             else
                 return "success:false,message:This user does not exist.";
