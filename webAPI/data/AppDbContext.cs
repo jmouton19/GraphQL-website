@@ -50,7 +50,7 @@ namespace webAPI.data
                 Id = 1,
                 lastName = "Visser",
                 firstName = "Nicol",
-                DOB = DateOnly.ParseExact("11/23/1943",@"M/d/yyyy"),
+                DOB = DateOnly.ParseExact("11/23/1943", @"M/d/yyyy"),
                 email = "nicolvisser@yahoo.com",
                 password = Hasher("Visser"),
                 username = "VisserMan"
@@ -59,7 +59,7 @@ namespace webAPI.data
                     {
                         Id = 2,
                         lastName = "Mouton",
-                        DOB = DateOnly.ParseExact("06/03/2000",@"M/d/yyyy"),
+                        DOB = DateOnly.ParseExact("06/03/2000", @"M/d/yyyy"),
                         firstName = "Jacques",
                         email = "jcmouton@protonmail.com",
                         password = Hasher("Mouton"),
@@ -71,7 +71,7 @@ namespace webAPI.data
                         Id = 3,
                         lastName = "Schommarz",
                         firstName = "Philip",
-                        DOB = DateOnly.ParseExact("11/23/2000",@"M/d/yyyy"),
+                        DOB = DateOnly.ParseExact("11/23/2000", @"M/d/yyyy"),
                         email = "philler@gmail.com",
                         password = Hasher("Schommarz"),
                         username = "Fillet"
@@ -81,17 +81,18 @@ namespace webAPI.data
                         Id = 4,
                         lastName = "Steyn",
                         firstName = "Lize",
-                        DOB = DateOnly.ParseExact("03/11/2000",@"M/d/yyyy"),
+                        DOB = DateOnly.ParseExact("03/11/2000", @"M/d/yyyy"),
                         email = "mssteyn@rocketmail.com",
                         password = Hasher("Steyn"),
-                        username = "MorneSteyn"
+                        username = "MorneSteyn",
+                        avatar = "https://i.ibb.co/VYbZ60Q/38816802529d.jpg"
                     });
             modelBuilder.Entity<Group>().HasData(new Group
             {
                 Id = 1,
                 description = "Chess group for nerds",
                 name = "Nicol's Chess Club",
-                dateCreated = DateOnly.ParseExact("11/03/1947",@"M/d/yyyy"),
+                dateCreated = DateOnly.ParseExact("11/03/1947", @"M/d/yyyy"),
                 ownerId = 1,
             },
             new Group
@@ -99,7 +100,7 @@ namespace webAPI.data
                 Id = 2,
                 description = "Hit ball with stick",
                 name = "Maties Hockey",
-                dateCreated = DateOnly.ParseExact("11/03/1969",@"M/d/yyyy"),
+                dateCreated = DateOnly.ParseExact("11/03/1969", @"M/d/yyyy"),
                 ownerId = 4,
             });
             modelBuilder.Entity<Membership>().HasData(new Membership
