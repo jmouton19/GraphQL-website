@@ -10,7 +10,6 @@ export function usePosts() {
 function PostProvider({ children }) {
   // state:
   const [postData, setPostData] = useState([]);
-  console.log(postData);
 
   // hooks:
   const client = useApolloClient();

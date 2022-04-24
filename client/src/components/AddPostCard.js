@@ -91,7 +91,6 @@ function AddPostCard({ creatorId }) {
           style={{ marginLeft: 'auto', marginRight: 10 }}
           onClick={() => {
             alert(JSON.stringify(newPostData));
-            console.log(newPostData);
           }}
         >
           Post

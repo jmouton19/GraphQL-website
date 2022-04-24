@@ -35,6 +35,10 @@ function Group() {
 
   const client = useApolloClient();
 
+  console.log(authUser.jwt);
+
+  console.log(client)
+
   useEffect(() => {
     client
       .query({
@@ -66,6 +70,7 @@ function Group() {
         `,
       })
       .then((result) => {
+        console.log(result)
         const newGroupData = result.data.groups[0];
         setGroupData(newGroupData);
 
@@ -76,10 +81,11 @@ function Group() {
             setAuthUserMembershipId(membership.id);
           }
         });
+      })
+      .catch((e) => {
+        console.error(e);
       });
   }, [client, params, authUser]);
-
-  console.log(authUserMembershipId);
 
   const handleTabChange = (event, newValue) => {
     setActiveTabNumber(newValue);

@@ -72,7 +72,7 @@ function CommentProvider({ children, postId }) {
         if (resultData.success) {
           // Todo: I still need to reload the existing comments after the add
         } else {
-          console.log('error in creating comment');
+          console.error('error in creating comment');
         }
       });
   };

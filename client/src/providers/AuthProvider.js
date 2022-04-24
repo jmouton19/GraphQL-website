@@ -119,7 +119,7 @@ function AuthProvider({ children }) {
           }
         });
     });
-  }
+  };
 
   async function logIn(email, password) {
     return new Promise((resolve, reject) => {
@@ -130,19 +130,20 @@ function AuthProvider({ children }) {
             userLogin(input: { email: "${email}", password: "${password}" })
           }
         `,
-      })
-      .then((result) => {
-        if (result.data.userLogin) {
-          notifySuccess('Logged in successfully.');
-          const jwt_temp = result.data.userLogin;
-          setJwt(jwt_temp);
-          setTimeout(() => loadUserProfile(email, jwt), 100);
-        } else {
-          notifyError('Log in failed.');
-          // Todo: Need more descriptive messages here from backend
-        }
-      });
-    })};
+        })
+        .then((result) => {
+          if (result.data.userLogin) {
+            notifySuccess('Logged in successfully.');
+            const jwt_temp = result.data.userLogin;
+            setJwt(jwt_temp);
+            setTimeout(() => loadUserProfile(email, jwt), 750);
+          } else {
+            notifyError('Log in failed.');
+            // Todo: Need more descriptive messages here from backend
+          }
+        });
+    });
+  }
 
   const loadUserProfile = (email, jwt) => {
     client
@@ -168,7 +169,7 @@ function AuthProvider({ children }) {
           //notifyError('Could not load user profile from server.');
         }
       })
-      .catch(() => console.log('HIII'));
+      .catch((e) => console.error(e));
   };
 
   const logOut = () => {

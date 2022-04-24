@@ -11,7 +11,6 @@ export default class PostSlider extends Component {
   }
   componentDidUpdate(prevProps) {
     if (prevProps.focusedPost !== this.props.focusedPost) {
-      console.log(this.slider.current.props);
       this.slider.current.slickGoTo(
         this.props.posts.indexOf(this.props.focusedPost) -
           (window.innerWidth > 1024 ? 1 : 0)
