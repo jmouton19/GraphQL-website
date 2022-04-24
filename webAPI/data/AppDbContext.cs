@@ -50,7 +50,7 @@ namespace webAPI.data
                 Id = 1,
                 lastName = "Visser",
                 firstName = "Nicol",
-                DOB = DateOnly.Parse("11/23/1943"),
+                DOB = DateOnly.ParseExact("11/23/1943",@"M/d/yyyy"),
                 email = "nicolvisser@yahoo.com",
                 password = Hasher("Visser"),
                 username = "VisserMan"
@@ -59,8 +59,8 @@ namespace webAPI.data
                     {
                         Id = 2,
                         lastName = "Mouton",
+                        DOB = DateOnly.ParseExact("06/03/2000",@"M/d/yyyy"),
                         firstName = "Jacques",
-                        DOB = DateOnly.Parse("06/03/2000"),
                         email = "jcmouton@protonmail.com",
                         password = Hasher("Mouton"),
                         username = "JaySea"
@@ -70,7 +70,7 @@ namespace webAPI.data
                         Id = 3,
                         lastName = "Schommarz",
                         firstName = "Philip",
-                        DOB = DateOnly.Parse("11/23/2000"),
+                        DOB = DateOnly.ParseExact("11/23/2000",@"M/d/yyyy"),
                         email = "philler@gmail.com",
                         password = Hasher("Schommarz"),
                         username = "Fillet"
@@ -80,7 +80,7 @@ namespace webAPI.data
                         Id = 4,
                         lastName = "Steyn",
                         firstName = "Lize",
-                        DOB = DateOnly.Parse("03/11/200"),
+                        DOB = DateOnly.ParseExact("03/11/2000",@"M/d/yyyy"),
                         email = "mssteyn@rocketmail.com",
                         password = Hasher("Steyn"),
                         username = "MorneSteyn"
@@ -90,7 +90,7 @@ namespace webAPI.data
                 Id = 1,
                 description = "Chess group for nerds",
                 name = "Nicol's Chess Club",
-                dateCreated = DateOnly.Parse("11/03/1947"),
+                dateCreated = DateOnly.ParseExact("11/03/1947",@"M/d/yyyy"),
                 ownerId = 1,
             },
             new Group
@@ -98,7 +98,7 @@ namespace webAPI.data
                 Id = 2,
                 description = "Hit ball with stick",
                 name = "Maties Hockey",
-                dateCreated = DateOnly.Parse("11/03/1969"),
+                dateCreated = DateOnly.ParseExact("11/03/1969",@"M/d/yyyy"),
                 ownerId = 4,
             });
             modelBuilder.Entity<Membership>().HasData(new Membership
@@ -154,7 +154,7 @@ namespace webAPI.data
             }, new Post
             {
                 Id = 2,
-                body = "insert some penguin video link here",
+                body = "u4vuh4i7wb9atdvj11rs",
                 video = true,
                 creatorId = 1,
                 latitude = 82.8628,
