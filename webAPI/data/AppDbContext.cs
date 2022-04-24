@@ -96,6 +96,7 @@ namespace webAPI.data
                 name = "Nicol's Chess Club",
                 dateCreated = DateOnly.ParseExact("11/03/1947", @"M/d/yyyy"),
                 ownerId = 1,
+                avatar = "https://i.ibb.co/C61C35f/Screenshot-2022-04-24-at-20-49-25.png"
             },
             new Group
             {
@@ -104,6 +105,7 @@ namespace webAPI.data
                 name = "Maties Hockey",
                 dateCreated = DateOnly.ParseExact("11/03/1969", @"M/d/yyyy"),
                 ownerId = 4,
+                avatar = "https://i.ibb.co/TLCthzM/Screenshot-2022-04-24-at-20-52-57.png"
             });
             modelBuilder.Entity<Membership>().HasData(new Membership
             {
