@@ -50,7 +50,7 @@ function Groups() {
                   variant="outlined"
                   color="primary"
                   onClick={() => {
-                    navigate(`/group/${group.name}`);
+                    navigate(`/group/${group.id}`);
                   }}
                 >
                   Visit group

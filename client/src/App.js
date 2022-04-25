@@ -97,7 +97,7 @@ function App() {
                 }
               />
               <Route
-                path="/group/:groupname"
+                path="/group/:groupId"
                 element={
                   <PrivateRoute>
                     <PostProvider>

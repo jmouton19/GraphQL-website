@@ -19,17 +19,17 @@ import { Badge } from '@mui/material';
 import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
 import { useAuthUser } from '../providers/AuthProvider';
 import Button from '@mui/material/Button';
+import LoadingPage from './LoadingPage';
 
 function Group() {
   const data = usePosts();
-  const [activeTabNumber, setActiveTabNumber] = React.useState('1');
+  const [activeTabNumber, setActiveTabNumber] = useState('1');
 
   const [groupData, setGroupData] = useState(undefined);
 
   const authUser = useAuthUser();
-  const [authUserIsMember, setAuthUserIsMember] = React.useState(false); // true if auth use is actually a member
-  const [authUserMembershipId, setAuthUserMembershipId] =
-    React.useState(undefined);
+  const [authUserIsMember, setAuthUserIsMember] = useState(false); // true if auth use is actually a member
+  const [authUserMembershipId, setAuthUserMembershipId] = useState(undefined);
 
   const params = useParams();
 
@@ -44,7 +44,7 @@ function Group() {
       .query({
         query: gql`
           query {
-            groups(where: { name: { eq: "${params.groupname}" } }) {
+            groups(where: { id: { eq: ${params.groupId} } }) {
               id
               avatar
               dateCreated
@@ -183,7 +183,7 @@ function Group() {
       </Container>
     );
   } else {
-    return <div>Loading</div>;
+    return <LoadingPage/>;
   }
 }
 export default Group;
