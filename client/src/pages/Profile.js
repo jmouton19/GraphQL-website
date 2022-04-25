@@ -3,8 +3,10 @@ import {
   Box,
   Divider,
   IconButton,
+  List,
   ListItem,
   ListItemAvatar,
+  ListItemButton,
   ListItemText,
 } from '@mui/material';
 import { Stack } from '@mui/material';
@@ -27,6 +29,7 @@ import LoadingPage from './LoadingPage';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import { stringToObject } from '../utils/utils';
 import DoneIcon from '@mui/icons-material/Done';
+import ChatIcon from '@mui/icons-material/Chat';
 import { useNavigate } from 'react-router-dom';
 
 function Profile() {
@@ -79,7 +82,7 @@ function Profile() {
           notifyError('Could not load user profile from server.');
         }
       });
-  }
+  };
 
   const addFriend = () => {
     client
@@ -98,7 +101,7 @@ function Profile() {
           notifyError(resultData.message);
         }
       });
-  }
+  };
 
   const acceptFriend = (senderId) => {
     client
@@ -113,17 +116,17 @@ function Profile() {
         let resultData = stringToObject(result.data.addFriend);
         if (resultData.success == 'true') {
           notifySuccess(resultData.message);
-          setTimeout(() => getFriends, 1000)
+          setTimeout(() => getFriends, 1000);
         } else {
           notifyError(resultData.message);
         }
       });
-  }
+  };
 
   const getFriends = () => {
     client
       .query({
-        fetchPolicy: "no-cache",
+        fetchPolicy: 'no-cache',
         query: gql`
         query{
           sent:friendships(where: {and:[{ accepted: { eq: true } },{sender:{id:{eq:${authUser.id}}}}]})
@@ -175,7 +178,7 @@ function Profile() {
       .then((result) => {
         setPendingFriends([...result.data.received.map((a) => a.sender)]);
       });
-  }
+  };
 
   if (!viewUser) {
     return <LoadingPage />;
@@ -236,23 +239,33 @@ function Profile() {
             <Typography>Add groups</Typography>
           </TabPanel>
           <TabPanel value="3">
-            <Stack>
-              {acceptedFriends.length !== 0 && (
-                <>
-                  <Divider>Your Friends</Divider>
-                </>
-              )}
+            <List>
               {acceptedFriends.map((friend) => (
-                <ListItem key={friend.id}>
-                  <ListItemAvatar>
-                    <Avatar src={friend.avatar} />
-                  </ListItemAvatar>
+                <ListItemButton>
+                  <ListItem
+                    key={friend.id}
+                    onClick={() => navigate(`/profile/${friend.username}`)}
+                    secondaryAction={
+                      <IconButton
+                        color="primary"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                        }}
+                      >
+                        <ChatIcon />
+                      </IconButton>
+                    }
+                  >
+                    <ListItemAvatar>
+                      <Avatar src={friend.avatar} />
+                    </ListItemAvatar>
 
-                  <ListItemText
-                    primary={friend.username}
-                    secondary={`${friend.firstName} ${friend.lastName}`}
-                  />
-                </ListItem>
+                    <ListItemText
+                      primary={friend.username}
+                      secondary={`${friend.firstName} ${friend.lastName}`}
+                    />
+                  </ListItem>
+                </ListItemButton>
               ))}
               {pendingFriends.length !== 0 && (
                 <>
@@ -260,29 +273,34 @@ function Profile() {
                 </>
               )}
               {pendingFriends.map((friend) => (
-                <ListItem
-                  key={friend.id}
-                  onClick={() => navigate(`/profile/${friend.username}`)}
-                  secondaryAction={
-                    <IconButton color = "success" onClick={(e) => {
-                      e.stopPropagation();
-                      acceptFriend(friend.id)}
-                      }>
-                      <DoneIcon />
-                    </IconButton>
-                  }
-                >
-                  <ListItemAvatar>
-                    <Avatar src={friend.avatar} />
-                  </ListItemAvatar>
+                <ListItemButton>
+                  <ListItem
+                    key={friend.id}
+                    onClick={() => navigate(`/profile/${friend.username}`)}
+                    secondaryAction={
+                      <IconButton
+                        color="success"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          acceptFriend(friend.id);
+                        }}
+                      >
+                        <DoneIcon />
+                      </IconButton>
+                    }
+                  >
+                    <ListItemAvatar>
+                      <Avatar src={friend.avatar} />
+                    </ListItemAvatar>
 
-                  <ListItemText
-                    primary={friend.username}
-                    secondary={`${friend.firstName} ${friend.lastName}`}
-                  />
-                </ListItem>
+                    <ListItemText
+                      primary={friend.username}
+                      secondary={`${friend.firstName} ${friend.lastName}`}
+                    />
+                  </ListItem>
+                </ListItemButton>
               ))}
-            </Stack>
+            </List>
           </TabPanel>
         </TabContext>
       )}

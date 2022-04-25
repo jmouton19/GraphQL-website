@@ -42,10 +42,18 @@ function Groups() {
       >
         <Stack spacing={2}>
           {groupList.map((group) => (
-            <Paper sx={{padding: 2}}>
-              <Stack key={group.id} direction="row" spacing={2} alignItems="center">
-                <Avatar src={group.avatar} />
-                <Typography variant="body">{group.name}</Typography>
+            <Paper sx={{ padding: 2 }}>
+              <Stack
+                key={group.id}
+                direction="row"
+                spacing={2}
+                alignItems="center"
+                justifyContent="space-between"
+              >
+                <Stack direction="row" spacing={2} alignItems="center">
+                  <Avatar src={group.avatar} />
+                  <Typography variant="body">{group.name}</Typography>
+                </Stack>
                 <Button
                   variant="outlined"
                   color="primary"
