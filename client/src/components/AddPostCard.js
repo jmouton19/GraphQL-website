@@ -13,6 +13,11 @@ import Button from '@mui/material/Button';
 import { showUploadWidget } from './cloudindary/upload';
 import { CardMedia } from '@mui/material';
 import VideoPlayer from './cloudindary/VideoPlayer';
+import { useAddPost } from '../providers/PostProvider';
+import {
+  useNotifyError,
+  useNotifySuccess,
+} from '../providers/NotificationProvider';
 
 const emptyPostData = {
   description: '',
@@ -29,27 +34,34 @@ function AddPostCard({ creatorId }) {
     });
   };
 
+  const addPost = useAddPost();
+
   const hasVideoData = newPostData.videoPublicID !== '';
   const hasTextData = newPostData.description !== '';
+
+  const notifySuccess = useNotifySuccess();
+  const notifyError = useNotifyError();
 
   return (
     <Card>
       <CardContent>
         <Stack direction="row" spacing={2} alignItems="center">
           <Avatar />
-          {!hasVideoData && <TextField
-            fullWidth
-            id="outlined-basic"
-            label="Say Something..."
-            value={newPostData.description}
-            variant="outlined"
-            onChange={(event) => {
-              setNewPostData({
-                ...newPostData,
-                description: event.target.value,
-              });
-            }}
-          />}
+          {!hasVideoData && (
+            <TextField
+              fullWidth
+              id="outlined-basic"
+              label="Say Something..."
+              value={newPostData.description}
+              variant="outlined"
+              onChange={(event) => {
+                setNewPostData({
+                  ...newPostData,
+                  description: event.target.value,
+                });
+              }}
+            />
+          )}
         </Stack>
       </CardContent>
       {hasVideoData && (
@@ -90,7 +102,17 @@ function AddPostCard({ creatorId }) {
           disabled={!(hasVideoData || hasTextData)}
           style={{ marginLeft: 'auto', marginRight: 10 }}
           onClick={() => {
-            alert(JSON.stringify(newPostData));
+            let video, body;
+            if (hasVideoData) {
+              video = true;
+              body = newPostData.videoPublicID;
+            } else if (hasTextData) {
+              video = false;
+              body = newPostData.description;
+            }
+            addPost(video, body, creatorId)
+              .then((message) => notifySuccess(message))
+              .catch((message) => notifyError(message));
           }}
         >
           Post
