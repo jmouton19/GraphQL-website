@@ -37,6 +37,7 @@ function Profile() {
   const [viewUser, setViewUser] = useState(null);
   const [acceptedFriends, setAcceptedFriends] = useState([]);
   const [pendingFriends, setPendingFriends] = useState([]);
+  const [groups, setGroups] = useState([]);
   const client = useApolloClient();
   const params = useParams();
   const data = usePosts();
@@ -53,6 +54,7 @@ function Profile() {
     if (params.username === authUser.username) {
       setViewUser(authUser);
       getFriends();
+      getGroups();
     } else {
       loadViewUser();
     }
@@ -104,6 +106,8 @@ function Profile() {
   };
 
   const acceptFriend = (senderId) => {
+    setAcceptedFriends([]);
+    setPendingFriends([]);
     client
       .mutate({
         mutation: gql`
@@ -116,10 +120,10 @@ function Profile() {
         let resultData = stringToObject(result.data.addFriend);
         if (resultData.success == 'true') {
           notifySuccess(resultData.message);
-          setTimeout(() => getFriends, 1000);
         } else {
           notifyError(resultData.message);
         }
+        getFriends();
       });
   };
 
@@ -160,6 +164,7 @@ function Profile() {
       });
     client
       .query({
+        fetchPolicy: 'no-cache',
         query: gql`
         query{
           received:   friendships(where: {and:[{ accepted: { eq: false } },{receiver:{id:{eq: ${authUser.id}}}}]})
@@ -177,6 +182,27 @@ function Profile() {
       })
       .then((result) => {
         setPendingFriends([...result.data.received.map((a) => a.sender)]);
+      });
+  };
+
+  const getGroups = () => {
+    client
+      .query({
+        query: gql`
+        query{
+            memberships(where: {userId: {eq:${authUser.id}}}) {
+              group{
+                  ownerId
+                  id
+                  name
+                  avatar
+              }
+          }
+        }
+    `,
+      })
+      .then((result) => {
+        setGroups([...result.data.memberships.filter(a => a.group !== null).map((a) =>  a.group)]);
       });
   };
 
@@ -236,7 +262,22 @@ function Profile() {
             </Stack>
           </TabPanel>
           <TabPanel value="2">
-            <Typography>Add groups</Typography>
+            <List>
+              {groups.map((group) => (
+                <ListItemButton>
+                  <ListItem
+                    key={group.id}
+                    onClick={() => navigate(`/group/${group.id}`)}
+                  >
+                    <ListItemAvatar>
+                      <Avatar src={group.avatar} />
+                    </ListItemAvatar>
+
+                    <ListItemText primary={group.name} />
+                  </ListItem>
+                </ListItemButton>
+              ))}
+            </List>
           </TabPanel>
           <TabPanel value="3">
             <List>
