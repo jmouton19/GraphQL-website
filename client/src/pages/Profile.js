@@ -60,6 +60,7 @@ function Profile() {
     } else {
       loadViewUser();
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [params]);
 
   const loadViewUser = () => {
@@ -99,7 +100,7 @@ function Profile() {
       })
       .then((result) => {
         let resultData = stringToObject(result.data.addFriend);
-        if (resultData.success == 'true') {
+        if (resultData.success === 'true') {
           notifySuccess(resultData.message);
         } else {
           notifyError(resultData.message);
@@ -120,7 +121,7 @@ function Profile() {
       })
       .then((result) => {
         let resultData = stringToObject(result.data.addFriend);
-        if (resultData.success == 'true') {
+        if (resultData.success === 'true') {
           notifySuccess(resultData.message);
         } else {
           notifyError(resultData.message);

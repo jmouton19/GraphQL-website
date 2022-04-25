@@ -79,6 +79,7 @@ function AuthProvider({ children }) {
 
   useEffect(() => {
     loadUserProfile(loginEmail, jwt);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [client])
   
   const notifySuccess = useNotifySuccess();
