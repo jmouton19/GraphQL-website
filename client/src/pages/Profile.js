@@ -8,6 +8,7 @@ import {
   ListItemAvatar,
   ListItemButton,
   ListItemText,
+  Badge,
 } from '@mui/material';
 import { Stack } from '@mui/material';
 import { Container } from '@mui/material';
@@ -30,6 +31,7 @@ import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import { stringToObject } from '../utils/utils';
 import DoneIcon from '@mui/icons-material/Done';
 import ChatIcon from '@mui/icons-material/Chat';
+import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
 import { useNavigate } from 'react-router-dom';
 
 function Profile() {
@@ -202,7 +204,11 @@ function Profile() {
     `,
       })
       .then((result) => {
-        setGroups([...result.data.memberships.filter(a => a.group !== null).map((a) =>  a.group)]);
+        setGroups([
+          ...result.data.memberships
+            .filter((a) => a.group !== null)
+            .map((a) => a.group),
+        ]);
       });
   };
 
@@ -270,7 +276,20 @@ function Profile() {
                     onClick={() => navigate(`/group/${group.id}`)}
                   >
                     <ListItemAvatar>
-                      <Avatar src={group.avatar} />
+                      {group.ownerId === authUser.id ? (
+                        <Badge
+                          overlap="circular"
+                          anchorOrigin={{
+                            vertical: 'bottom',
+                            horizontal: 'right',
+                          }}
+                          badgeContent={<ManageAccountsIcon color="primary" />}
+                        >
+                          <Avatar src={group.avatar} />
+                        </Badge>
+                      ) : (
+                        <Avatar src={group.avatar} />
+                      )}
                     </ListItemAvatar>
 
                     <ListItemText primary={group.name} />
