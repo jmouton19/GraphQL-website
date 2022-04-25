@@ -55,7 +55,7 @@ function Profile() {
     }
   }, [params]);
 
-  function loadViewUser() {
+  const loadViewUser = () => {
     client
       .query({
         query: gql`
@@ -81,7 +81,7 @@ function Profile() {
       });
   }
 
-  function addFriend() {
+  const addFriend = () => {
     client
       .mutate({
         mutation: gql`
@@ -100,7 +100,7 @@ function Profile() {
       });
   }
 
-  function acceptFriend(senderId) {
+  const acceptFriend = (senderId) => {
     client
       .mutate({
         mutation: gql`
@@ -113,16 +113,17 @@ function Profile() {
         let resultData = stringToObject(result.data.addFriend);
         if (resultData.success == 'true') {
           notifySuccess(resultData.message);
-          getFriends();
+          setTimeout(() => getFriends, 1000)
         } else {
           notifyError(resultData.message);
         }
       });
   }
 
-  function getFriends() {
+  const getFriends = () => {
     client
       .query({
+        fetchPolicy: "no-cache",
         query: gql`
         query{
           sent:friendships(where: {and:[{ accepted: { eq: true } },{sender:{id:{eq:${authUser.id}}}}]})

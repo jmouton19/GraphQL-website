@@ -45,6 +45,7 @@ const localStorageItemName = 'kasie-auth-user';
 function AuthProvider({ children }) {
   const [client, setClient] = useState(initialClient);
   const [jwt, setJwt] = useState(null);
+  const [loginEmail, setLoginEmail] = useState(null);
   const [authUser, setAuthUser] = useState(
     JSON.parse(window.localStorage.getItem(localStorageItemName))
   );
@@ -76,6 +77,10 @@ function AuthProvider({ children }) {
     setClient(newClient);
   }, [jwt]);
 
+  useEffect(() => {
+    loadUserProfile(loginEmail, jwt);
+  }, [client])
+  
   const notifySuccess = useNotifySuccess();
   const notifyError = useNotifyError();
 
@@ -122,6 +127,7 @@ function AuthProvider({ children }) {
   };
 
   async function logIn(email, password) {
+    setLoginEmail(email);
     return new Promise((resolve, reject) => {
       client
         .mutate({
@@ -136,7 +142,6 @@ function AuthProvider({ children }) {
             notifySuccess('Logged in successfully.');
             const jwt_temp = result.data.userLogin;
             setJwt(jwt_temp);
-            setTimeout(() => loadUserProfile(email, jwt), 750);
           } else {
             notifyError('Log in failed.');
             // Todo: Need more descriptive messages here from backend
