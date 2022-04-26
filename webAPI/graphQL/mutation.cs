@@ -110,7 +110,7 @@ namespace webAPI.graphQL
                         await context.SaveChangesAsync();
                         return "success:true,message:User profile has been updated.";
                     }
-                    else return "success:false,message:You shall now pass!";
+                    else return "success:false,message:You shall not pass!";
                 }
                 else
                     return "success:false,message:Null identity.";
@@ -152,20 +152,31 @@ namespace webAPI.graphQL
 
         [UseDbContext(typeof(AppDbContext))]
         [Authorize]
-        public async Task<string> DeleteGroupAsync(int groupId, [ScopedService] AppDbContext context)
+        public async Task<string> DeleteGroupAsync(int groupId, [ScopedService] AppDbContext context, [Service] IHttpContextAccessor contextAccessor)
         {
             var currentGroup = context.Groups.Where(u => u.Id == groupId).FirstOrDefault();
             if (currentGroup != null)
             {
-                context.Groups.Remove(currentGroup);
-                await context.SaveChangesAsync();
-                return "success:true,message:Group deleted.";
+                var identity = contextAccessor.HttpContext.User.Identity as ClaimsIdentity;
+                if (identity != null)
+                {
+                    string idendityId = identity.Claims.FirstOrDefault(u => u.Type == ClaimTypes.Sid).Value;
+                    if (idendityId != null && idendityId == currentGroup.ownerId.ToString())
+                    {
+                        context.Groups.Remove(currentGroup);
+                        await context.SaveChangesAsync();
+                        return "success:true,message:Group deleted.";
+                    }
+                    else
+                        return "success:false,message:You have no power here!";
+
+                }
+                else
+                    return "success:false,message:Null identity.";
             }
             else
                 return "success:false,message:This group does not exist.";
         }
-
-
 
         [UseDbContext(typeof(AppDbContext))]
         [Authorize]
