@@ -361,51 +361,55 @@ namespace webAPI.graphQL
 
         [UseDbContext(typeof(AppDbContext))]
         [Authorize]
-        public async Task<string> AddFriendAsync(AddFriendInput input, [ScopedService] AppDbContext context)
+        public async Task<string> AddFriendAsync(AddFriendInput input, [ScopedService] AppDbContext context, [Service] IHttpContextAccessor contextAccessor)
         {
-
-            var currentFriendship = context.Friendships.Where(u => u.senderId == input.senderId && u.receiverId == input.receiverId).FirstOrDefault();
-            if (currentFriendship != null)
+            var identity = contextAccessor.HttpContext.User.Identity as ClaimsIdentity;
+            string idendityId = identity.Claims.FirstOrDefault(u => u.Type == ClaimTypes.Sid).Value;
+            if (idendityId == input.senderId.ToString())
             {
-                if (currentFriendship.accepted != true)
-                    return "success:false,message:Friend request already sent.";
-                else
-                    return "success:false,message:You are already friends";
-
-            }
-            else
-            {
-                var friendship = new Friendship
-                {
-                    senderId = input.senderId,
-                    receiverId = input.receiverId,
-                    accepted = false
-                };
-
-                currentFriendship = context.Friendships.Where(u => u.senderId == input.receiverId && u.receiverId == input.senderId).FirstOrDefault();
+                var currentFriendship = context.Friendships.Where(u => u.senderId == input.senderId && u.receiverId == input.receiverId).FirstOrDefault();
                 if (currentFriendship != null)
                 {
                     if (currentFriendship.accepted != true)
-                    {
-                        currentFriendship.accepted = true;
-                        context.Friendships.Update(currentFriendship);
-                        await context.SaveChangesAsync();
-                        return "success:true,message:Friend added";
-                    }
+                        return "success:false,message:Friend request already sent.";
                     else
                         return "success:false,message:You are already friends";
 
                 }
                 else
                 {
-                    context.Friendships.Add(friendship);
-                    await context.SaveChangesAsync();
-                    return "success:true,message:friend requested";
+                    var friendship = new Friendship
+                    {
+                        senderId = input.senderId,
+                        receiverId = input.receiverId,
+                        accepted = false
+                    };
+
+                    currentFriendship = context.Friendships.Where(u => u.senderId == input.receiverId && u.receiverId == input.senderId).FirstOrDefault();
+                    if (currentFriendship != null)
+                    {
+                        if (currentFriendship.accepted != true)
+                        {
+                            currentFriendship.accepted = true;
+                            context.Friendships.Update(currentFriendship);
+                            await context.SaveChangesAsync();
+                            return "success:true,message:Friend added";
+                        }
+                        else
+                            return "success:false,message:You are already friends";
+
+                    }
+                    else
+                    {
+                        context.Friendships.Add(friendship);
+                        await context.SaveChangesAsync();
+                        return "success:true,message:friend requested";
+                    }
+
+
                 }
-
-
             }
-
+            return "success:false,message:Mission Failed, we'll get em next time.";
         }
 
     }
