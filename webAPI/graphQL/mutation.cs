@@ -277,31 +277,45 @@ namespace webAPI.graphQL
 
         [UseDbContext(typeof(AppDbContext))]
         [Authorize]
-        public async Task<string> AddPostAsync(AddPostInput input, [ScopedService] AppDbContext context)
+        public async Task<string> AddPostAsync(AddPostInput input, [ScopedService] AppDbContext context, [Service] IHttpContextAccessor contextAccessor)
         {
-            var post = new Post
+            var identity = contextAccessor.HttpContext.User.Identity as ClaimsIdentity;
+            string idendityId = identity.Claims.FirstOrDefault(u => u.Type == ClaimTypes.Sid).Value;
+            if (idendityId != null)
             {
-                body = input.body,
-                dateCreated = input.dateCreated,
-                video = input.video,
-                latitude = input.latitude,
-                longitude = input.longitude,
-                creatorId = input.creatorId
-            };
+                var currentmember = context.Memberships.Where(u => u.Id == input.creatorId).FirstOrDefault();
+                if (currentmember != null)
+                {
+                    if (idendityId == currentmember.userId.ToString())
+                    {
+                        var post = new Post
+                        {
+                            body = input.body,
+                            dateCreated = input.dateCreated,
+                            video = input.video,
+                            latitude = input.latitude,
+                            longitude = input.longitude,
+                            creatorId = input.creatorId
+                        };
 
-            try
-            {
-                context.Posts.Add(post);
-                await context.SaveChangesAsync();
+                        try
+                        {
+                            context.Posts.Add(post);
+                            await context.SaveChangesAsync();
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine(ex);
+                            return "success:false,message:Post could not be created.";
+                        }
+                        return "success:true,message:Post created.";
+                    }
+                    else
+                        return "success:false,message:I used to be an adventurer like you, but then I took an arrow in the knee.";
+                }
+                return "success:false,message:Member does not exist.";
             }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex);
-                return "success:false,message:Post could not be created.";
-            }
-
-
-            return "success:true,message:Post created.";
+            return "success:false,message:Null identity.";
         }
 
         [UseDbContext(typeof(AppDbContext))]
