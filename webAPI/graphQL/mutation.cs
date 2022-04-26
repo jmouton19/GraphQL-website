@@ -35,8 +35,14 @@ namespace webAPI.graphQL
                 var addedUser = context.Users.Where(u => u.email == user.email).FirstOrDefault();
                 if (addedUser != null)
                 {
-                    var memberInput = new AddMemberInput(null, addedUser.Id, null);
-                    await AddMemberAsync(memberInput, context);
+                    var member = new Membership
+                    {
+                        userId = addedUser.Id,
+                        groupId = null,
+                        admin = null
+                    };
+                    context.Memberships.Add(member);
+                    await context.SaveChangesAsync();
                     return "true";
                 }
                 return "false";
@@ -180,44 +186,59 @@ namespace webAPI.graphQL
 
         [UseDbContext(typeof(AppDbContext))]
         [Authorize]
-        public async Task<string> AddGroupAsync(AddGroupInput input, [ScopedService] AppDbContext context)
+        public async Task<string> AddGroupAsync(AddGroupInput input, [ScopedService] AppDbContext context, [Service] IHttpContextAccessor contextAccessor)
         {
-            var group = new Group
+            var identity = contextAccessor.HttpContext.User.Identity as ClaimsIdentity;
+            string idendityId = identity.Claims.FirstOrDefault(u => u.Type == ClaimTypes.Sid).Value;
+            if (idendityId != null)
             {
-                name = input.name,
-                description = input.description,
-                dateCreated = input.dateCreated,
-                ownerId = input.ownerId,
-                avatar = input.avatar,
-            };
+                var group = new Group
+                {
+                    name = input.name,
+                    description = input.description,
+                    dateCreated = input.dateCreated,
+                    ownerId = Int32.Parse(idendityId),
+                    avatar = input.avatar,
+                };
 
-            context.Groups.Add(group);
-            await context.SaveChangesAsync();
+                context.Groups.Add(group);
+                await context.SaveChangesAsync();
 
-            var memberInput = new AddMemberInput(group.Id, input.ownerId, true);
-            await AddMemberAsync(memberInput, context);
-            return "true";
+                var memberInput = new AddMemberInput(group.Id, true);
+                await AddMemberAsync(memberInput, context, contextAccessor);
+                return "true";
+            }
+            else
+                return "false";
+
         }
 
         [UseDbContext(typeof(AppDbContext))]
         [Authorize]
-        public async Task<string> AddMemberAsync(AddMemberInput input, [ScopedService] AppDbContext context)
+        public async Task<string> AddMemberAsync(AddMemberInput input, [ScopedService] AppDbContext context, [Service] IHttpContextAccessor contextAccessor)
         {
-            var member = new Membership
+            var identity = contextAccessor.HttpContext.User.Identity as ClaimsIdentity;
+            string idendityId = identity.Claims.FirstOrDefault(u => u.Type == ClaimTypes.Sid).Value;
+            if (idendityId != null)
             {
-                userId = input.userId,
-                groupId = input.groupId,
-                admin = input.admin
-            };
-            var currentMember = context.Memberships.Where(u => u.groupId == input.groupId && u.userId == input.userId).FirstOrDefault();
-            if (currentMember == null)
-            {
-                context.Memberships.Add(member);
-                await context.SaveChangesAsync();
-                return "true";
+                var member = new Membership
+                {
+                    userId = Int32.Parse(idendityId),
+                    groupId = input.groupId,
+                    admin = input.admin
+                };
+                var currentMember = context.Memberships.Where(u => u.groupId == input.groupId && u.userId == member.userId).FirstOrDefault();
+                if (currentMember == null)
+                {
+                    context.Memberships.Add(member);
+                    await context.SaveChangesAsync();
+                    return "true";
+                }
+                else
+
+                    return "false";
             }
             else
-
                 return "false";
         }
 
