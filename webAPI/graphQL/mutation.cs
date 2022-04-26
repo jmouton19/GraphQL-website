@@ -320,27 +320,43 @@ namespace webAPI.graphQL
 
         [UseDbContext(typeof(AppDbContext))]
         [Authorize]
-        public async Task<string> AddCommmentAsync(AddCommentInput input, [ScopedService] AppDbContext context)
+        public async Task<string> AddCommmentAsync(AddCommentInput input, [ScopedService] AppDbContext context, [Service] IHttpContextAccessor contextAccessor)
         {
-            var comment = new Comment
+            var identity = contextAccessor.HttpContext.User.Identity as ClaimsIdentity;
+            string idendityId = identity.Claims.FirstOrDefault(u => u.Type == ClaimTypes.Sid).Value;
+            if (idendityId != null)
             {
-                body = input.body,
-                dateCreated = input.dateCreated,
-                creatorId = input.creatorId,
-                postId = input.postId
-            };
-            try
-            {
-                context.Comments.Add(comment);
-                await context.SaveChangesAsync();
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex);
-                return "success:false,message:Comment could not be created.";
-            }
+                var currentmember = context.Memberships.Where(u => u.Id == input.creatorId).FirstOrDefault();
+                if (currentmember != null)
+                {
+                    if (idendityId == currentmember.userId.ToString())
+                    {
+                        var comment = new Comment
+                        {
+                            body = input.body,
+                            dateCreated = input.dateCreated,
+                            creatorId = input.creatorId,
+                            postId = input.postId
+                        };
+                        try
+                        {
+                            context.Comments.Add(comment);
+                            await context.SaveChangesAsync();
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine(ex);
+                            return "success:false,message:Comment could not be created.";
+                        }
 
-            return "success:true,message:Comment created.";
+                        return "success:true,message:Comment created.";
+                    }
+                    else
+                        return "success:false,message:I used to be an adventurer like you, but then I took an arrow in the knee.";
+                }
+                return "success:false,message:Member does not exist.";
+            }
+            return "success:false,message:Null identity.";
         }
 
         [UseDbContext(typeof(AppDbContext))]
