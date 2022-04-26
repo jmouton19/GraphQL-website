@@ -13,15 +13,41 @@ export function useAddPost() {
   return useContext(AddPostContext);
 }
 
-function PostProvider({ children }) {
-  // state:
-  const [postData, setPostData] = useState([]);
+async function loadGroupPosts(client, groupId) {
+  return new Promise((resolve) => {
+    client
+      .query({
+        query: gql`
+          query {
+            posts(where: { creator: { groupId: { eq: ${groupId} } } }) {
+              id
+              body
+              creator {
+                user {
+                  firstName
+                  lastName
+                  avatar
+                }
+                group {
+                  name
+                }
+              }
+              dateCreated
+              latitude
+              longitude
+              video
+            }
+          }
+        `,
+      })
+      .then((result) => {
+        resolve(result.data.posts);
+      });
+  });
+}
 
-  // hooks:
-  const client = useApolloClient();
-
-  // load posts initially
-  useEffect(() => {
+async function loadAllPosts(client) {
+  return new Promise((resolve) => {
     client
       .query({
         query: gql`
@@ -48,9 +74,54 @@ function PostProvider({ children }) {
         `,
       })
       .then((result) => {
-        setPostData(result.data.posts);
+        resolve(result.data.posts);
       });
-  }, [client]);
+  });
+}
+
+const config = {
+  type: 'all',
+};
+
+function PostProvider(props) {
+  // props:
+  const { children } = props;
+  // Todo: Add config to props
+  /*
+  Examples of config prop
+
+  const config = {
+    type: 'group',
+    groupId: 1,
+  };
+
+  const config = {
+    type: 'all',
+  };
+  */
+
+  // state:
+  const [postData, setPostData] = useState([]);
+
+  // hooks:
+  const client = useApolloClient();
+
+  // load posts initially
+  useEffect(() => {
+    if (config.type == 'all')
+      loadAllPosts(client)
+        .then((data) => {
+          setPostData(data);
+        })
+        .catch((e) => console.error(e));
+
+    if (config.type == 'group')
+      loadGroupPosts(client, config.groupId)
+        .then((data) => {
+          setPostData(data);
+        })
+        .catch((e) => console.error(e));
+  }, [client, config]);
 
   async function addPost(video, body, creatorId) {
     // if video is true, then the body is the Cloudinary Public ID of the uploaded video
