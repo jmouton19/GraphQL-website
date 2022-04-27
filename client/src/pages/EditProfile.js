@@ -6,12 +6,12 @@ import {
 	//Divider,
 	Fab,
 	FormControl,
-	//FormHelperText,
+	FormHelperText,
 	Grid,
 	//IconButton,
 	//InputAdornment,
-	//InputLabel,
-	//OutlinedInput,
+	InputLabel,
+	OutlinedInput,
 	Stack,
 	TextField,
 } from "@mui/material";
@@ -194,21 +194,38 @@ function EditProfile() {
                                 </Grid>
                                 <Grid item xs={12}>
                                     <Stack spacing={2}>
-                                        <TextField
-                                            variant="outlined"
-                                            defaultValue={viewUser.username}
-                                            onChange={(event) => {
-												setUsername(event.target.value);
-											}}                            
-                                            label="Username"                        
+                                        <FormControl fullWidth>
+                                            <InputLabel htmlFor="username-input">Username</InputLabel>
+                                            <OutlinedInput
+                                                //variant="outlined"
+                                                type="text"
+                                                defaultValue={viewUser.username}
+                                                onChange={(event) => {
+												    setUsername(event.target.value);
+											    }}
+                                                onBlur={validateUsername}                            
+                                                label="Username" 
+                                                error={usernameError.status}                       
                                         />
+                                        </FormControl>
+                                        {usernameError.status ? (
+                                            <FormHelperText
+                                                id="username-helper-text"
+                                                sx={{
+                                                    color: 'red',
+                                                }}
+                                            >
+                                                {usernameError.msg}
+                                            </FormHelperText>
+                                        ) : null}                              
                                         <TextField
                                             variant="outlined"
                                             defaultValue={viewUser.firstName}
                                             onChange={(event) => {
 												setFirstName(event.target.value);
 											}}
-                                            label="First Name"                       
+                                            
+                                            label="First Name"                         
                                         />
                                         <TextField
                                             variant="outlined"
