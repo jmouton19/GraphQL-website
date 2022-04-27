@@ -8,6 +8,7 @@ import Button from '@mui/material/Button';
 import { Container } from '@mui/material';
 import { Box } from '@mui/system';
 import { Paper } from '@mui/material';
+import GroupDetails from '../components/GroupDetails';
 
 function Groups() {
   const client = useApolloClient();
@@ -40,6 +41,7 @@ function Groups() {
         }}
       >
         <Stack spacing={2}>
+          <GroupDetails/>
           {groupList.map((group) => (
             <Paper sx={{ padding: 2 }}>
               <Stack
