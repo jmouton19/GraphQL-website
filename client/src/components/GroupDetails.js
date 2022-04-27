@@ -17,12 +17,21 @@ import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
 import AvatarPicker from './AvatarPicker';
 import SettingsIcon from '@mui/icons-material/Settings';
+import {
+	useNotifyError,
+	useNotifySuccess,
+  } from '../providers/NotificationProvider';
+  import { gql, useApolloClient } from '@apollo/client';
 
 function GroupDetails({ details }) {
   const [openDialog, setOpenDialog] = useState(false);
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [avatarUrl, setAvatarUrl] = useState(null);
+
+  const notifyError = useNotifyError();
+  const notifySuccess = useNotifySuccess();
+  const client = useApolloClient();
 
   useEffect(() => {
     if (details) {
@@ -31,6 +40,29 @@ function GroupDetails({ details }) {
       setAvatarUrl(details.avatarUrl);
     }
   }, []);
+
+  const createGroup = () => {
+	  //TODO: Use actual date
+	client
+	.mutate({
+	  mutation: gql`
+	  mutation{
+		addGroup(input:{
+			name: "${name}"
+			description: "${description}"
+			avatar:"${avatarUrl}"
+			dateCreated: "2022-02-03"
+		})
+	}
+	`,
+	}).then((result) => {
+		if(result.data.addGroup === "true") {
+			notifySuccess("Group has been created.")
+		} else {
+			notifyError("Unable to create group.")
+		}
+	})
+  }
 
   return (
     <>
@@ -94,7 +126,7 @@ function GroupDetails({ details }) {
                 <DeleteIcon/>
               </IconButton>
             )}
-            <Button variant="outlined">
+            <Button variant="outlined" onClick={createGroup}>
               {details ? 'Save Details' : 'Create Group'}
             </Button>
           </Stack>
