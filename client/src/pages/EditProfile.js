@@ -1,5 +1,5 @@
 import {
-	//Button,
+	Button,
 	Dialog,
 	//DialogActions,
 	DialogTitle,
@@ -17,7 +17,7 @@ import {
 } from "@mui/material";
 import AvatarPicker from '../components/AvatarPicker';
 import EditIcon from "@mui/icons-material/Edit";
-//import SaveIcon from "@mui/icons-material/Save";
+import SaveIcon from "@mui/icons-material/Save";
 import Typography from "@mui/material/Typography";
 import React, { useEffect, useState } from "react";
 import { gql, useApolloClient } from '@apollo/client';
@@ -29,6 +29,7 @@ import {
     useNotifySuccess,
 } from '../providers/NotificationProvider';
 import LoadingPage from './LoadingPage';
+import { stringToObject } from '../utils/utils';
 
 const fabStyle = {
 	margin: 0,
@@ -48,6 +49,10 @@ function EditProfile() {
     const notifyError = useNotifyError();
     const notifySuccess = useNotifySuccess();
     const [username, setUsername] = useState('');
+    const [avatarUrl, setAvatarUrl] = useState(null);
+    const [firstName, setFirstName] = useState('');
+    const [lastName, setLastName] = useState('');
+    const [email, setEmail] = useState('');
 
     useEffect(() => {
         if (params.username === authUser.username) {
@@ -84,17 +89,17 @@ function EditProfile() {
             });
     };
 
-    const editUser = (data) => {
+    const editUser = async (data) => {
         const {
-            avatar,
-            email,
-            firstName,
-            lastName,
-            password,
-            //rememberMe,
+            //avatar,
+            //email,
+            //firstName,
+            //lastName,
+            //oldPassword,
+            //newPassword,
             username,
         } = data;
-
+        console.log(viewUser.id);
         client
         .mutate({
             mutation: gql`
@@ -102,30 +107,36 @@ function EditProfile() {
                 updateUser(
                     input: { 
                         userId:"${viewUser.id}",
-                        firstName:"${firstName}",
-                        lastName:"${lastName}",
-                        avatar: "${avatar}"
-                        email: "${email}"
-                        firstName: "${firstName}"
-                        lastName: "${lastName}"
-                        password: "${password}"
-                        username: "${username}"                        
-                        newPassword: "${password}",
-                        oldPassword: "${password}" }
+                        username: "${username}",
+                    }
                 )
             }
         `,
         })
         .then((result) => {
-            if (result.data.addUser === 'false') {
-              //reject();
+            console.log('here')
+            const resultData = stringToObject(result.data.updateUser);
+            if (resultData.success) {
+            // Todo: I still need to reload the existing comments after the add
             } else {
-              //logIn(email, password);
-              //resolve();
+            console.error('error');
             }
-          });
-    }
+        });
+    };
 
+
+    function completeEditUser() {
+        const data = {
+          //avatar: avatarUrl,
+          //email,
+          //firstName,
+          //lastName,
+            username,
+        };
+        editUser(data)
+            //.then(() => notifySuccess('Updated successfully.'))
+            //.catch(() => notifyError('Update up failed'));
+    }
 
     if (!viewUser) {
         return <LoadingPage />;
@@ -152,9 +163,9 @@ function EditProfile() {
                     <Grid container padding={1} rowSpacing={3} alignItems="center">
                         <Grid item xs={12}>
                             <Grid container alignItems="center" padding={1} spacing={2}>
-						        <Grid item xs={12}>
+                                <Grid item xs={12}>
                                     <Stack>
-									    <AvatarPicker/>
+                                        <AvatarPicker setAvatarUrl={(imageUrl) => setAvatarUrl(imageUrl)}/>
                                     </Stack>
                                 </Grid>
                                 <Grid item xs={12}>
@@ -162,27 +173,39 @@ function EditProfile() {
                                         <TextField
                                             variant="outlined"
                                             defaultValue={viewUser.username}
-                            
-                                            label="Username"
-                        
+                                            onChange={(event) => {
+												setUsername(event.target.value);
+											}}                            
+                                            label="Username"                        
                                         />
                                         <TextField
                                             variant="outlined"
                                             defaultValue={viewUser.firstName}
-
-                                            label="First Name"                            
-                        
+                                            onChange={(event) => {
+												setFirstName(event.target.value);
+											}}
+                                            label="First Name"                       
                                         />
                                         <TextField
                                             variant="outlined"
                                             defaultValue={viewUser.lastName}
-
+                                            onChange={(event) => {
+												setLastName(event.target.value);
+											}}
                                             label="Last Name"                         
                                         />                        
                                     </Stack>
 
                                 </Grid>
                                 <Grid item xs={12}>
+                                    <Button
+										onClick={() => completeEditUser()}
+										variant="contained"
+										sx={{ borderRadius: "50%" }}
+										//disabled={saveEditDisableChecks()}
+									>
+										<SaveIcon />
+									</Button>
 
                                 </Grid>
                                 <Grid item xs={12}>
