@@ -20,6 +20,7 @@ import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
 import { useAuthUser } from '../providers/AuthProvider';
 import Button from '@mui/material/Button';
 import LoadingPage from './LoadingPage';
+import GroupDetails from '../components/GroupDetails';
 
 function Group() {
   const data = usePosts();
@@ -35,10 +36,6 @@ function Group() {
 
   const client = useApolloClient();
 
-  console.log(authUser.jwt);
-
-  console.log(client)
-
   useEffect(() => {
     client
       .query({
@@ -51,6 +48,7 @@ function Group() {
               description
               name
               owner {
+                id
                 username
                 firstName
                 lastName
@@ -70,7 +68,6 @@ function Group() {
         `,
       })
       .then((result) => {
-        console.log(result)
         const newGroupData = result.data.groups[0];
         setGroupData(newGroupData);
 
@@ -110,13 +107,16 @@ function Group() {
             ))}
           </AvatarGroup>
           <Typography variant="h4">{`${groupData.name}`}</Typography>
-          <Stack direction="row" spacing={0.2}>
+          <Stack direction="row" spacing={0.2} alignItems="center">
             <img
               alt="Location Icon"
               src={cheeseMarker}
               style={{ width: 25, height: 35, marginRight: 10 }}
             />
             <Typography variant="h6">Cape Town, South Africa</Typography>
+            {authUser.id === groupData.owner.id && (
+              <GroupDetails details={groupData} />
+            )}
           </Stack>
           <Typography>{groupData.description}</Typography>
           {authUserIsMember ? (
@@ -159,7 +159,7 @@ function Group() {
                 <Badge
                   overlap="circular"
                   anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-                  badgeContent={<ManageAccountsIcon color='primary' />}
+                  badgeContent={<ManageAccountsIcon color="primary" />}
                 >
                   <Avatar src={groupData.owner.avatar} />
                 </Badge>
@@ -183,7 +183,7 @@ function Group() {
       </Container>
     );
   } else {
-    return <LoadingPage/>;
+    return <LoadingPage />;
   }
 }
 export default Group;

@@ -5,29 +5,39 @@ import {
   Stack,
   Dialog,
   DialogTitle,
-  Grid,
-  Container,
   FormControl,
   InputLabel,
   OutlinedInput,
   DialogContent,
-  TextField,
   DialogContentText,
+  DialogActions,
+  Button,
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
+import DeleteIcon from '@mui/icons-material/Delete';
 import AvatarPicker from './AvatarPicker';
+import SettingsIcon from '@mui/icons-material/Settings';
 
-function GroupDetails({ edit, details }) {
+function GroupDetails({ details }) {
   const [openDialog, setOpenDialog] = useState(false);
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
-  const [location, setLocation] = useState('');
   const [avatarUrl, setAvatarUrl] = useState(null);
+
+  useEffect(() => {
+    if (details) {
+      setName(details.name);
+      setDescription(details.description);
+      setAvatarUrl(details.avatarUrl);
+    }
+  }, []);
 
   return (
     <>
-      {edit ? (
-        <></>
+      {details ? (
+        <IconButton color="primary" onClick={() => setOpenDialog(true)}>
+          <SettingsIcon fontSize="large" />
+        </IconButton>
       ) : (
         <Paper>
           <Stack justifyContent="space-around">
@@ -43,12 +53,12 @@ function GroupDetails({ edit, details }) {
 
       <Dialog onClose={() => setOpenDialog(false)} open={openDialog}>
         <DialogTitle color="primary">
-          {edit ? 'Edit Group Details' : 'Create Group'}
+          {details ? 'Edit Group Details' : 'Create Group'}
         </DialogTitle>
         <DialogContent>
           <Stack spacing={1}>
             <DialogContentText>
-              {edit
+              {details
                 ? 'Please edit your group details.'
                 : 'Please enter your group details here.'}
             </DialogContentText>
@@ -73,9 +83,22 @@ function GroupDetails({ edit, details }) {
                 value={description}
               />
             </FormControl>
+            <DialogContentText>Pick your group avatar.</DialogContentText>
             <AvatarPicker setAvatarUrl={(imageUrl) => setAvatarUrl(imageUrl)} />
           </Stack>
         </DialogContent>
+        <DialogActions>
+          <Stack padding={1} spacing={1} direction="row">
+            {details && (
+              <IconButton color='error'>
+                <DeleteIcon/>
+              </IconButton>
+            )}
+            <Button variant="outlined">
+              {details ? 'Save Details' : 'Create Group'}
+            </Button>
+          </Stack>
+        </DialogActions>
       </Dialog>
     </>
   );
