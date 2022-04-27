@@ -47,7 +47,6 @@ const fabStyle = {
 function EditProfile() {
     const authUser = useAuthUser();
     const [edit, setEdit] = useState(false);
-    //const [viewUser, setViewUser] = useState(null);
     const client = useApolloClient();
     const params = useParams();
     const notifyError = useNotifyError();
@@ -71,6 +70,8 @@ function EditProfile() {
     useEffect(() => {
         setFirstName(authUser.firstName);
         setLastName(authUser.lastName);
+        setAvatarUrl(authUser.avatar);
+        setPassword(authUser.password);
       // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [params]);
 
@@ -95,10 +96,10 @@ function EditProfile() {
 
     const editUser = (data) => {
         const {
-            //avatar,
-            //email,
-            //firstName,
-            //lastName,
+            avatar,
+            email,
+            firstName,
+            lastName,
             //oldPassword,
             //newPassword,
             username,
@@ -118,28 +119,30 @@ function EditProfile() {
         `,
         })
         .then((result) => {
-            console.log('here')
-            const resultData = stringToObject(result.data.updateUser);
-            if (resultData.success) {
-            
+            const userUpdated = result.data.userUpdated;
+            if (userUpdated) {
+                console.log("updated");
+                notifySuccess('Updated successfully.');
             } else {
-            console.error('error');
+                notifyError('Update failed')
             }
-        });
+        })
+        .catch((e) => console.error(e));
     };
 
 
     function completeEditUser() {
         const data = {
-          //avatar: avatarUrl,
-          //email,
-          //firstName,
-          //lastName,
+            avatar: avatarUrl,
+            //email,
+            firstName,
+            lastName,
             username,
         };
+        console.log(data);
         editUser(data)
-            //.then(() => notifySuccess('Updated successfully.'))
-            //.catch(() => notifyError('Update up failed'));
+            .then(() => notifySuccess('Updated successfully.'))
+            .catch(() => notifyError('Update up failed'));
     }
 
     return (
