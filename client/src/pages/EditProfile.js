@@ -1,7 +1,7 @@
 import {
 	Button,
 	Dialog,
-	//DialogActions,
+	DialogActions,
 	DialogTitle,
 	//Divider,
 	Fab,
@@ -180,8 +180,7 @@ function EditProfile() {
 				<DialogTitle>
 					<Typography sx={{ fontSize: 30 }} color="primary">
 						<b>Edit Profile</b>
-					</Typography>
-                    
+					</Typography>     
 				</DialogTitle>
                 <FormControl fullWidth>
                     <Grid container padding={1} rowSpacing={3} alignItems="center">
@@ -236,23 +235,45 @@ function EditProfile() {
                                             label="Last Name"                         
                                         />                        
                                     </Stack>
-
                                 </Grid>
                                 <Grid item xs={12}>
-                                    <Button
-										onClick={() => completeEditUser()}
-										variant="contained"
-										sx={{ borderRadius: "50%" }}
-										//disabled={saveEditDisableChecks()}
-									>
-										<SaveIcon />
-									</Button>
 
                                 </Grid>
                                 <Grid item xs={12}>
 
                                 </Grid>
                             </Grid>
+                            <DialogActions>
+                                <FormControl fullWidth>
+                                    <Stack direction="row" justifyContent="space-between">
+                                        <Stack>
+                                            <Button
+                                               // onClick={() => setChangePassword(true)}
+                                                variant="text"
+                                                size="small"
+                                            >
+                                                Change password
+                                            </Button>
+                                            <Button
+                                                //onClick={() => setConfirmDelete(true)}
+                                                variant="text"
+                                                size="small"
+                                                color="error"
+                                            >
+                                                Delete account
+                                            </Button>
+                                        </Stack>
+                                            <Button
+                                                onClick={() => completeEditUser()}
+                                                variant="contained"
+                                                sx={{ borderRadius: "50%" }}
+                                                //disabled={saveEditDisableChecks()}
+                                            >
+                                                <SaveIcon />
+                                            </Button>
+                                    </Stack>
+                                </FormControl>
+                            </DialogActions>
                         </Grid>
                     </Grid>
                 </FormControl>
