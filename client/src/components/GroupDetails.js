@@ -58,6 +58,7 @@ function GroupDetails({ details }) {
 	}).then((result) => {
 		if(result.data.addGroup === "true") {
 			notifySuccess("Group has been created.")
+			setOpenDialog(false);
 		} else {
 			notifyError("Unable to create group.")
 		}
