@@ -35,7 +35,7 @@ import ChatIcon from '@mui/icons-material/Chat';
 import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
 import { useNavigate } from 'react-router-dom';
 import EditProfile from "./EditProfile";
-//import EditIcon from "@mui/icons-material/Edit";
+
 
 function Profile() {
   const authUser = useAuthUser();
@@ -232,7 +232,6 @@ function Profile() {
             borderColor: '#ffc619',
           }}
         />
-        <EditProfile />
         <Typography variant="h4">{`${viewUser.firstName} ${viewUser.lastName}`}</Typography>
         <Stack direction="row" spacing={0.2} alignItems="center">
           <img
@@ -263,6 +262,7 @@ function Profile() {
                 <Tab label="Groups" value="2" />
                 <Tab label="Friends" value="3" />
               </TabList>
+              <EditProfile />
             </Stack>
           </Box>
           <TabPanel value="1">

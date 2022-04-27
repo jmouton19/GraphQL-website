@@ -47,7 +47,7 @@ const fabStyle = {
 function EditProfile() {
     const authUser = useAuthUser();
     const [edit, setEdit] = useState(false);
-    const [viewUser, setViewUser] = useState(null);
+    //const [viewUser, setViewUser] = useState(null);
     const client = useApolloClient();
     const params = useParams();
     const notifyError = useNotifyError();
@@ -69,39 +69,10 @@ function EditProfile() {
 
 
     useEffect(() => {
-        if (params.username === authUser.username) {
-            setViewUser(authUser);
-        } else {
-            loadViewUser();
-        }
+        setFirstName(authUser.firstName);
+        setLastName(authUser.lastName);
       // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [params]);
-    
-    const loadViewUser = () => {
-        client
-            .query({
-                query: gql`
-            query {
-                users(where: { username: { eq: "${params.username}" } }) {
-                    email
-                    id
-                    firstName
-                    lastName
-                    avatar
-                    username
-                }
-            }
-        `,
-            })
-            .then((result) => {
-                const retrievedProfile = result.data.users[0];
-                if (retrievedProfile) {
-                    setViewUser(retrievedProfile);
-                } else {
-                    notifyError('Could not load user profile from server.');
-                }
-            });
-    };
 
     const validateUsername = () => {
         if (username === '') {
@@ -132,14 +103,14 @@ function EditProfile() {
             //newPassword,
             username,
         } = data;
-        console.log(viewUser.id);
+        console.log(authUser.id);
         client
         .mutate({
             mutation: gql`
             mutation {
                 updateUser(
                     input: { 
-                        userId:"${viewUser.id}",
+                        userId:"${authUser.id}",
                         username: "${username}"
                     }
                 )
@@ -169,10 +140,6 @@ function EditProfile() {
         editUser(data)
             //.then(() => notifySuccess('Updated successfully.'))
             //.catch(() => notifyError('Update up failed'));
-    }
-
-    if (!viewUser) {
-        return <LoadingPage />;
     }
 
     return (
@@ -207,7 +174,7 @@ function EditProfile() {
                                             <OutlinedInput
                                                 //variant="outlined"
                                                 type="text"
-                                                defaultValue={viewUser.username}
+                                                defaultValue={authUser.username}
                                                 onChange={(event) => {
                                                     setUsername(event.target.value);
                                                 }}
@@ -228,7 +195,7 @@ function EditProfile() {
                                         ) : null}                              
                                         <TextField
                                             variant="outlined"
-                                            defaultValue={viewUser.firstName}
+                                            defaultValue={authUser.firstName}
                                             onChange={(event) => {
 												setFirstName(event.target.value);
 											}}
@@ -237,7 +204,7 @@ function EditProfile() {
                                         />
                                         <TextField
                                             variant="outlined"
-                                            defaultValue={viewUser.lastName}
+                                            defaultValue={authUser.lastName}
                                             onChange={(event) => {
 												setLastName(event.target.value);
 											}}
@@ -347,6 +314,24 @@ function EditProfile() {
                         </FormControl>
                     </Stack>
                 </FormControl>
+				<DialogActions>
+					<FormControl fullWidth>
+						<Stack direction="row" justifyContent="space-between">
+							<Button type="text" onClick={() => setChangePassword(false)}>
+								Cancel
+							</Button>
+							<Button
+								//onClick={() => saveChangedDetails(true)}
+								variant="contained"
+								sx={{ borderRadius: "50%", height: 60, width: 60 }}
+								//disabled={saveChangePasswordChecks()}
+								//TODO:Add server communication and updating
+							>
+								<SaveIcon />
+							</Button>
+						</Stack>
+					</FormControl>
+				</DialogActions>
 			</Dialog>
         </>
     );
