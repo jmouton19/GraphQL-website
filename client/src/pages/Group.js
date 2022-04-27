@@ -7,11 +7,7 @@ import { Tab } from '@mui/material';
 import cheeseMarker from '../assets/cheese-pin.png';
 
 import { Avatar, Typography, AvatarGroup } from '@mui/material';
-import { usePosts } from '../providers/PostProvider';
-import PostCard from '../components/PostCard';
-
-import shortid from 'shortid';
-import AddPostCard from '../components/AddPostCard';
+import PostProvider from '../providers/PostProvider';
 import { gql, useApolloClient } from '@apollo/client';
 import { useParams } from 'react-router-dom';
 import { Badge } from '@mui/material';
@@ -20,9 +16,10 @@ import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
 import { useAuthUser } from '../providers/AuthProvider';
 import Button from '@mui/material/Button';
 import LoadingPage from './LoadingPage';
+import PostList from '../components/posts/PostList';
+import AddPostCard from '../components/posts/AddPostCard';
 
 function Group() {
-  const data = usePosts();
   const [activeTabNumber, setActiveTabNumber] = useState('1');
 
   const [groupData, setGroupData] = useState(undefined);
@@ -34,10 +31,6 @@ function Group() {
   const params = useParams();
 
   const client = useApolloClient();
-
-  console.log(authUser.jwt);
-
-  console.log(client)
 
   useEffect(() => {
     client
@@ -70,7 +63,6 @@ function Group() {
         `,
       })
       .then((result) => {
-        console.log(result)
         const newGroupData = result.data.groups[0];
         setGroupData(newGroupData);
 
@@ -144,14 +136,14 @@ function Group() {
             </Stack>
           </Box>
           <TabPanel value="1">
-            <Stack spacing={2}>
-              {authUserIsMember && (
-                <AddPostCard creatorId={authUserMembershipId} />
-              )}
-              {data.map((postData) => (
-                <PostCard key={shortid.generate()} postData={postData} />
-              ))}
-            </Stack>
+            <PostProvider>
+              <Stack spacing={2}>
+                {authUserIsMember && (
+                  <AddPostCard creatorId={authUserMembershipId} />
+                )}
+                <PostList />
+              </Stack>
+            </PostProvider>
           </TabPanel>
           <TabPanel value="2">
             <Stack spacing={2}>
@@ -159,7 +151,7 @@ function Group() {
                 <Badge
                   overlap="circular"
                   anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-                  badgeContent={<ManageAccountsIcon color='primary' />}
+                  badgeContent={<ManageAccountsIcon color="primary" />}
                 >
                   <Avatar src={groupData.owner.avatar} />
                 </Badge>
@@ -183,7 +175,7 @@ function Group() {
       </Container>
     );
   } else {
-    return <LoadingPage/>;
+    return <LoadingPage />;
   }
 }
 export default Group;

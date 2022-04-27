@@ -1,14 +1,27 @@
-import { Box } from '@mui/material';
 import { Stack } from '@mui/material';
+import { Box } from '@mui/material';
 import { Container } from '@mui/material';
-import React from 'react';
-import PostCard from '../components/PostCard';
-import { usePosts } from '../providers/PostProvider';
-
-import shortid from 'shortid';
+import React, { useEffect, useState } from 'react';
+import AddPostCard from '../components/posts/AddPostCard';
+import PostList from '../components/posts/PostList';
+import { useAuthUser } from '../providers/AuthProvider';
+import PostProvider from '../providers/PostProvider';
 
 function Feed() {
-  const data = usePosts();
+  const authUser = useAuthUser();
+
+  // find correct membership id to make individual posts
+  const [creatorId, setCreatorId] = useState(null);
+  useEffect(() => {
+    if (authUser) {
+      authUser.memberships.forEach((membership) => {
+        if (membership.groupId === null) {
+          setCreatorId(membership.id);
+        }
+      });
+    }
+  }, [authUser]);
+
   return (
     <React.Fragment>
       <Container maxWidth="md">
@@ -17,11 +30,12 @@ function Feed() {
             padding: 2,
           }}
         >
-          <Stack spacing={2}>
-            {data.map((postData) => (
-              <PostCard key={shortid.generate()} postData={postData} />
-            ))}
-          </Stack>
+          <PostProvider>
+            <Stack spacing={2}>
+              {creatorId && <AddPostCard creatorId={creatorId} />}
+              <PostList />
+            </Stack>
+          </PostProvider>
         </Box>
       </Container>
     </React.Fragment>

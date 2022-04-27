@@ -62,9 +62,7 @@ function App() {
                 path="/"
                 element={
                   <PrivateRoute>
-                    <PostProvider>
-                      <Home />
-                    </PostProvider>
+                    <Home />
                   </PrivateRoute>
                 }
               />

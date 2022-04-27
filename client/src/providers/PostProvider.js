@@ -17,6 +17,7 @@ async function loadGroupPosts(client, groupId) {
   return new Promise((resolve) => {
     client
       .query({
+        fetchPolicy: 'no-cache',
         query: gql`
           query {
             posts(where: { creator: { groupId: { eq: ${groupId} } } }) {
@@ -50,6 +51,7 @@ async function loadAllPosts(client) {
   return new Promise((resolve) => {
     client
       .query({
+        fetchPolicy: 'no-cache',
         query: gql`
           query {
             posts {
@@ -79,24 +81,15 @@ async function loadAllPosts(client) {
   });
 }
 
-const config = {
-  type: 'all',
-};
-
 function PostProvider(props) {
   // props:
-  const { children } = props;
-  // Todo: Add config to props
+  const { children, config } = props;
+
   /*
   Examples of config prop
-
   const config = {
     type: 'group',
     groupId: 1,
-  };
-
-  const config = {
-    type: 'all',
   };
   */
 
@@ -108,14 +101,14 @@ function PostProvider(props) {
 
   // load posts initially
   useEffect(() => {
-    if (config.type == 'all')
+    if (config === undefined)
       loadAllPosts(client)
         .then((data) => {
           setPostData(data);
         })
         .catch((e) => console.error(e));
 
-    if (config.type == 'group')
+    if (config && config.type === 'group')
       loadGroupPosts(client, config.groupId)
         .then((data) => {
           setPostData(data);

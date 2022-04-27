@@ -17,7 +17,7 @@ import { Tab } from '@mui/material';
 import cheeseMarker from '../assets/cheese-pin.png';
 import { Avatar, Typography } from '@mui/material';
 import { usePosts } from '../providers/PostProvider';
-import PostCard from '../components/PostCard';
+import PostCard from '../components/posts/PostCard';
 import { gql, useApolloClient } from '@apollo/client';
 import shortid from 'shortid';
 import { useAuthUser } from '../providers/AuthProvider';

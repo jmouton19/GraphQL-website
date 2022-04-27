@@ -12,8 +12,8 @@ import Typography from '@mui/material/Typography';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import CommentIcon from '@mui/icons-material/Comment';
 import ThumbUpIcon from '@mui/icons-material/ThumbUp';
-import VideoPlayer from './cloudindary/VideoPlayer';
-import CommentProvider from '../providers/CommentProvider';
+import VideoPlayer from '../cloudindary/VideoPlayer';
+import CommentProvider from '../../providers/CommentProvider';
 import CommentViewer from './CommentViewer';
 
 const ExpandMore = styled((props) => {
