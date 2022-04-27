@@ -8,8 +8,8 @@ import {
 	FormControl,
 	FormHelperText,
 	Grid,
-	//IconButton,
-	//InputAdornment,
+	IconButton,
+	InputAdornment,
 	InputLabel,
 	OutlinedInput,
 	Stack,
@@ -31,6 +31,9 @@ import {
 import LoadingPage from './LoadingPage';
 import { stringToObject } from '../utils/utils';
 import validator from 'validator';
+import Visibility from "@mui/icons-material/Visibility";
+import VisibilityOff from "@mui/icons-material/VisibilityOff";
+
 
 const fabStyle = {
 	margin: 0,
@@ -58,6 +61,12 @@ function EditProfile() {
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
     const [email, setEmail] = useState('');
+    const [changePassword, setChangePassword] = useState(false);
+    const [showPassword, setShowPassword] = useState(false);
+    const [password, setPassword] = useState("");
+	const [passwordRepeated, setPasswordRepeated] = useState("");
+	const [oldPassword, setOldPassword] = useState("");
+
 
     useEffect(() => {
         if (params.username === authUser.username) {
@@ -248,7 +257,7 @@ function EditProfile() {
                                     <Stack direction="row" justifyContent="space-between">
                                         <Stack>
                                             <Button
-                                               // onClick={() => setChangePassword(true)}
+                                                onClick={() => setChangePassword(true)}
                                                 variant="text"
                                                 size="small"
                                             >
@@ -278,6 +287,67 @@ function EditProfile() {
                     </Grid>
                 </FormControl>
             </Dialog>
+            <Dialog
+				open={changePassword}
+				onClose={() => setChangePassword(false)}
+				fullWidth
+			>
+                <DialogTitle>Change Password</DialogTitle>
+                <FormControl fullWidth>
+                    <Stack padding={1} spacing={1}>
+                        <FormControl fullWidth>
+                            <InputLabel htmlFor="password-input">New Password</InputLabel>
+                            <OutlinedInput
+								id="password-input"
+								type={showPassword ? "text" : "password"}
+								name="password"
+								autoComplete="new-password"
+								onBlur={(event) => {
+									setPassword(event.target.value);
+								}}
+								label="New Password"
+								endAdornment={
+                                    <InputAdornment position="end">
+                                    <IconButton
+                                        onClick={() => setShowPassword(!showPassword)}
+                                        onMouseDown={() => setShowPassword(!showPassword)}
+                                    >
+                                        {showPassword ? <VisibilityOff /> : <Visibility />}
+                                    </IconButton>
+                                    </InputAdornment>
+                                }
+                            />
+                        </FormControl>
+                        <FormControl fullWidth>
+                            <InputLabel htmlFor="password-repeat-input">
+                                Repeat New Password
+                                </InputLabel>
+                                <OutlinedInput
+                                    id="password-repeat-input"
+                                    type={showPassword ? "text" : "password"}
+                                    value={passwordRepeated}
+                                    name="password"
+                                    autoComplete="new-password"
+                                    onChange={(event) => {
+                                        setPasswordRepeated(event.target.value);
+                                    }}
+                                    label="Repeat New Password"
+                                    error={password !== passwordRepeated}
+                                />
+                                {password !== passwordRepeated ? (
+                                    <FormHelperText
+                                        id="password-match-helper-text"
+                                        sx={{
+                                            color: "red",
+                                        }}
+                                    >
+                                        Passwords do not match
+                                    </FormHelperText>
+                                ) : null}
+                        </FormControl>
+                    </Stack>
+                </FormControl>
+			</Dialog>
         </>
     );
 }
