@@ -200,8 +200,8 @@ function EditProfile() {
                                                 type="text"
                                                 defaultValue={viewUser.username}
                                                 onChange={(event) => {
-												    setUsername(event.target.value);
-											    }}
+                                                    setUsername(event.target.value);
+                                                }}
                                                 onBlur={validateUsername}                            
                                                 label="Username" 
                                                 error={usernameError.status}                       
