@@ -30,6 +30,7 @@ import {
 } from '../providers/NotificationProvider';
 import LoadingPage from './LoadingPage';
 import { stringToObject } from '../utils/utils';
+import validator from 'validator';
 
 const fabStyle = {
 	margin: 0,
@@ -49,6 +50,10 @@ function EditProfile() {
     const notifyError = useNotifyError();
     const notifySuccess = useNotifySuccess();
     const [username, setUsername] = useState('');
+    const [usernameError, setUsernameError] = useState({
+        status: false,
+        msg: '',
+    });
     const [avatarUrl, setAvatarUrl] = useState(null);
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
@@ -89,7 +94,26 @@ function EditProfile() {
             });
     };
 
-    const editUser = async (data) => {
+    const validateUsername = () => {
+        if (username === '') {
+            setUsernameError({
+                status: true,
+                msg: 'Please enter a username',
+            });
+        return;
+        }
+        if (!validator.isAlphanumeric(username)) {
+            setUsernameError({
+                status: true,
+                msg: 'No special characters allowed.',
+        });
+        return;
+        }
+        // on no error:
+        setUsernameError({ status: false, msg: '' });
+    };
+
+    const editUser = (data) => {
         const {
             //avatar,
             //email,
@@ -107,7 +131,7 @@ function EditProfile() {
                 updateUser(
                     input: { 
                         userId:"${viewUser.id}",
-                        username: "${username}",
+                        username: "${username}"
                     }
                 )
             }
@@ -117,7 +141,7 @@ function EditProfile() {
             console.log('here')
             const resultData = stringToObject(result.data.updateUser);
             if (resultData.success) {
-            // Todo: I still need to reload the existing comments after the add
+            
             } else {
             console.error('error');
             }
