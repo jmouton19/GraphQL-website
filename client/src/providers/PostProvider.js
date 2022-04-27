@@ -13,14 +13,14 @@ export function useAddPost() {
   return useContext(AddPostContext);
 }
 
-async function loadGroupPosts(client, groupId) {
+async function loadGroupPosts(client, groupId, order) {
   return new Promise((resolve) => {
     client
       .query({
         fetchPolicy: 'no-cache',
         query: gql`
           query {
-            posts(where: { creator: { groupId: { eq: ${groupId} } } }) {
+            posts(where: { creator: { groupId: { eq: ${groupId} } } }, order: { dateCreated: ${order} }) {
               id
               body
               creator {
@@ -47,14 +47,14 @@ async function loadGroupPosts(client, groupId) {
   });
 }
 
-async function loadAllPosts(client) {
+async function loadAllPosts(client, order) {
   return new Promise((resolve) => {
     client
       .query({
         fetchPolicy: 'no-cache',
         query: gql`
           query {
-            posts {
+            posts(order: { dateCreated: ${order} }) {
               id
               body
               creator {
@@ -84,6 +84,8 @@ async function loadAllPosts(client) {
 function PostProvider(props) {
   // props:
   const { children, config } = props;
+  
+  const order = 'DESC'
 
   /*
   Examples of config prop
@@ -92,6 +94,7 @@ function PostProvider(props) {
     groupId: 1,
   };
   */
+  // order can be "DESC" or "ASC"
 
   // state:
   const [postData, setPostData] = useState([]);
@@ -102,19 +105,19 @@ function PostProvider(props) {
   // load posts initially
   useEffect(() => {
     if (config === undefined)
-      loadAllPosts(client)
+      loadAllPosts(client, order)
         .then((data) => {
           setPostData(data);
         })
         .catch((e) => console.error(e));
 
     if (config && config.type === 'group')
-      loadGroupPosts(client, config.groupId)
+      loadGroupPosts(client, config.groupId, order)
         .then((data) => {
           setPostData(data);
         })
         .catch((e) => console.error(e));
-  }, [client, config]);
+  }, [client, config, order]);
 
   async function addPost(video, body, creatorId) {
     // if video is true, then the body is the Cloudinary Public ID of the uploaded video

@@ -16,8 +16,8 @@ import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
 import { useAuthUser } from '../providers/AuthProvider';
 import Button from '@mui/material/Button';
 import LoadingPage from './LoadingPage';
-import PostList from '../components/posts/PostList';
-import AddPostCard from '../components/posts/AddPostCard';
+import PostList from '../components/PostComponents/PostList';
+import AddPostCard from '../components/PostComponents/AddPostCard';
 
 function Group() {
   const [activeTabNumber, setActiveTabNumber] = useState('1');

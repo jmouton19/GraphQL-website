@@ -2,8 +2,8 @@ import { Stack } from '@mui/material';
 import { Box } from '@mui/material';
 import { Container } from '@mui/material';
 import React, { useEffect, useState } from 'react';
-import AddPostCard from '../components/posts/AddPostCard';
-import PostList from '../components/posts/PostList';
+import AddPostCard from '../components/PostComponents/AddPostCard';
+import PostList from '../components/PostComponents/PostList';
 import { useAuthUser } from '../providers/AuthProvider';
 import PostProvider from '../providers/PostProvider';
 

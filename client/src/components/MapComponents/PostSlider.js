@@ -1,7 +1,7 @@
 import { Stack, Box } from '@mui/material';
 import React, { Component } from 'react';
 import Slider from 'react-slick';
-import PostCard from '../posts/PostCard';
+import PostCard from '../PostComponents/PostCard';
 
 import shortid from 'shortid';
 export default class PostSlider extends Component {
