@@ -13,13 +13,13 @@ import {
 import React, { useEffect, useState, useCallback } from 'react';
 import SearchIcon from '@mui/icons-material/Search';
 import { gql, useApolloClient } from '@apollo/client';
-import { useNotifyError } from '../providers/NotificationProvider';
+import { useNotify } from '../providers/NotificationProvider';
 import { Link } from 'react-router-dom';
 import { Tooltip } from '@mui/material';
 
 export default function SearchMenu() {
   const client = useApolloClient();
-  const notifyError = useNotifyError();
+  const notify = useNotify();
   const [groups, setGroups] = useState([]);
   const [users, setUsers] = useState([]);
   const [searchValue, setSearchValue] = useState('');
@@ -47,13 +47,13 @@ export default function SearchMenu() {
           if (retrievedGroups) {
             setGroups(retrievedGroups);
           } else {
-            notifyError('Could not load groups from server.');
+            notify('error', 'Could not load groups from server.');
           }
         });
     } else {
       setGroups([]);
     }
-  }, [searchValue, client, notifyError]);
+  }, [searchValue, client, notify]);
 
   const searchForUsers = useCallback(() => {
     if (searchValue !== '') {
@@ -79,13 +79,13 @@ export default function SearchMenu() {
           if (retrievedUsers) {
             setUsers(retrievedUsers);
           } else {
-            notifyError('Could not load users from server.');
+            notify('error', 'Could not load users from server.');
           }
         });
     } else {
       setUsers([]);
     }
-  }, [searchValue, client, notifyError]);
+  }, [searchValue, client, notify]);
 
   useEffect(() => {
     searchForGroups();

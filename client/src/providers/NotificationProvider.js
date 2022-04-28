@@ -3,7 +3,7 @@ import React, { createContext, useContext, useState } from 'react';
 
 const NotificationContext = createContext();
 
-export function useNotifySuccess() {
+export function useNotify() {
   return useContext(NotificationContext);
 }
 
