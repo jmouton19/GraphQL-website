@@ -10,7 +10,7 @@ import {
   useCommentAdd,
   useCommentRemove,
   useComments,
-} from '../providers/CommentProvider';
+} from '../../providers/CommentProvider';
 import SendIcon from '@mui/icons-material/Send';
 import ClearIcon from '@mui/icons-material/Clear';
 

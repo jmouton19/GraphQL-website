@@ -62,9 +62,7 @@ function App() {
                 path="/"
                 element={
                   <PrivateRoute>
-                    <PostProvider>
-                      <Home />
-                    </PostProvider>
+                    <Home />
                   </PrivateRoute>
                 }
               />
@@ -82,9 +80,7 @@ function App() {
                 path="/profile/:username"
                 element={
                   <PrivateRoute>
-                    <PostProvider>
-                      <Profile />
-                    </PostProvider>
+                    <Profile />
                   </PrivateRoute>
                 }
               />
@@ -100,9 +96,7 @@ function App() {
                 path="/group/:groupId"
                 element={
                   <PrivateRoute>
-                    <PostProvider>
-                      <Group />
-                    </PostProvider>
+                    <Group />
                   </PrivateRoute>
                 }
               />

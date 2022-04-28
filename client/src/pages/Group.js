@@ -7,11 +7,7 @@ import { Tab } from '@mui/material';
 import cheeseMarker from '../assets/cheese-pin.png';
 
 import { Avatar, Typography, AvatarGroup } from '@mui/material';
-import { usePosts } from '../providers/PostProvider';
-import PostCard from '../components/PostCard';
-
-import shortid from 'shortid';
-import AddPostCard from '../components/AddPostCard';
+import PostProvider from '../providers/PostProvider';
 import { gql, useApolloClient } from '@apollo/client';
 import { useParams } from 'react-router-dom';
 import { Badge } from '@mui/material';
@@ -20,9 +16,11 @@ import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
 import { useAuthUser } from '../providers/AuthProvider';
 import Button from '@mui/material/Button';
 import LoadingPage from './LoadingPage';
+import GroupDetails from '../components/GroupDetails';
+import PostList from '../components/PostComponents/PostList';
+import AddPostCard from '../components/PostComponents/AddPostCard';
 
 function Group() {
-  const data = usePosts();
   const [activeTabNumber, setActiveTabNumber] = useState('1');
 
   const [groupData, setGroupData] = useState(undefined);
@@ -34,10 +32,6 @@ function Group() {
   const params = useParams();
 
   const client = useApolloClient();
-
-  console.log(authUser.jwt);
-
-  console.log(client)
 
   useEffect(() => {
     client
@@ -51,6 +45,7 @@ function Group() {
               description
               name
               owner {
+                id
                 username
                 firstName
                 lastName
@@ -70,7 +65,6 @@ function Group() {
         `,
       })
       .then((result) => {
-        console.log(result)
         const newGroupData = result.data.groups[0];
         setGroupData(newGroupData);
 
@@ -110,13 +104,16 @@ function Group() {
             ))}
           </AvatarGroup>
           <Typography variant="h4">{`${groupData.name}`}</Typography>
-          <Stack direction="row" spacing={0.2}>
+          <Stack direction="row" spacing={0.2} alignItems="center">
             <img
               alt="Location Icon"
               src={cheeseMarker}
               style={{ width: 25, height: 35, marginRight: 10 }}
             />
             <Typography variant="h6">Cape Town, South Africa</Typography>
+            {authUser.id === groupData.owner.id && (
+              <GroupDetails details={groupData} />
+            )}
           </Stack>
           <Typography>{groupData.description}</Typography>
           {authUserIsMember ? (
@@ -144,14 +141,19 @@ function Group() {
             </Stack>
           </Box>
           <TabPanel value="1">
-            <Stack spacing={2}>
-              {authUserIsMember && (
-                <AddPostCard creatorId={authUserMembershipId} />
-              )}
-              {data.map((postData) => (
-                <PostCard key={shortid.generate()} postData={postData} />
-              ))}
-            </Stack>
+            <PostProvider
+              config={{
+                type: 'group',
+                groupId: params.groupId,
+              }}
+            >
+              <Stack spacing={2}>
+                {authUserIsMember && (
+                  <AddPostCard creatorId={authUserMembershipId} />
+                )}
+                <PostList />
+              </Stack>
+            </PostProvider>
           </TabPanel>
           <TabPanel value="2">
             <Stack spacing={2}>
@@ -159,7 +161,7 @@ function Group() {
                 <Badge
                   overlap="circular"
                   anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-                  badgeContent={<ManageAccountsIcon color='primary' />}
+                  badgeContent={<ManageAccountsIcon color="primary" />}
                 >
                   <Avatar src={groupData.owner.avatar} />
                 </Badge>
@@ -183,7 +185,7 @@ function Group() {
       </Container>
     );
   } else {
-    return <LoadingPage/>;
+    return <LoadingPage />;
   }
 }
 export default Group;

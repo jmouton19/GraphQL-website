@@ -23,6 +23,7 @@ const AuthUserContext = createContext();
 const SignUpContext = createContext();
 const LogInContext = createContext();
 const LogOutContext = createContext();
+const LoadUserProfileContext = createContext();
 
 export function useAuthUser() {
   return useContext(AuthUserContext);
@@ -38,6 +39,9 @@ export function useLogIn() {
 
 export function useLogOut() {
   return useContext(LogOutContext);
+}
+export function useLoadUserProfile() {
+  return useContext(LoadUserProfileContext);
 }
 
 const localStorageItemName = 'kasie-auth-user';
@@ -152,9 +156,10 @@ function AuthProvider({ children }) {
   }
 
   const loadUserProfile = (email, jwt) => {
-    client
-      .query({
-        query: gql`
+    return new Promise((resolve, reject) => {
+      client
+        .query({
+          query: gql`
         query {
           users(where: { email: { eq: "${email}" } }) {
             email
@@ -163,23 +168,32 @@ function AuthProvider({ children }) {
             lastName
             avatar
             username
+            memberships {
+              id
+              groupId
+            }
           }
         }
       `,
-      })
-      .then((result) => {
-        const retrievedProfile = result.data.users[0];
-        if (retrievedProfile) {
-          setAuthUser({ ...retrievedProfile, jwt });
-        } else {
-          //notifyError('Could not load user profile from server.');
-        }
-      })
-      .catch((e) => console.error(e));
+        })
+        .then((result) => {
+          const retrievedProfile = result.data.users[0];
+          if (retrievedProfile) {
+            setAuthUser({ ...retrievedProfile, jwt });
+            resolve(true);
+          } else {
+            //notifyError('Could not load user profile from server.');
+            reject(false);
+          }
+        });
+    });
   };
 
   const logOut = () => {
-    setAuthUser(null);
+    return new Promise((resolve) => {
+      setAuthUser(null);
+      resolve(true);
+    });
   };
 
   return (
@@ -188,7 +202,9 @@ function AuthProvider({ children }) {
         <SignUpContext.Provider value={signUp}>
           <LogInContext.Provider value={logIn}>
             <LogOutContext.Provider value={logOut}>
-              {children}
+              <LoadUserProfileContext.Provider value={loadUserProfile}>
+                {children}
+              </LoadUserProfileContext.Provider>
             </LogOutContext.Provider>
           </LogInContext.Provider>
         </SignUpContext.Provider>
