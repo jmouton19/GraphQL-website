@@ -12,8 +12,8 @@ using webAPI.data;
 namespace webAPI.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20220424182458_addPhilletTest")]
-    partial class addPhilletTest
+    [Migration("20220428090933_initDb")]
+    partial class initDb
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -59,7 +59,7 @@ namespace webAPI.Migrations
                             Id = 1,
                             body = "i also like pengins",
                             creatorId = 2,
-                            dateCreated = new DateTime(2022, 4, 24, 18, 24, 58, 444, DateTimeKind.Utc).AddTicks(9084),
+                            dateCreated = new DateTime(2022, 4, 28, 9, 9, 33, 578, DateTimeKind.Utc).AddTicks(9650),
                             postId = 1
                         });
                 });
@@ -140,6 +140,7 @@ namespace webAPI.Migrations
                         new
                         {
                             Id = 1,
+                            avatar = "https://i.ibb.co/C61C35f/Screenshot-2022-04-24-at-20-49-25.png",
                             dateCreated = new DateOnly(1947, 11, 3),
                             description = "Chess group for nerds",
                             name = "Nicol's Chess Club",
@@ -148,6 +149,7 @@ namespace webAPI.Migrations
                         new
                         {
                             Id = 2,
+                            avatar = "https://i.ibb.co/TLCthzM/Screenshot-2022-04-24-at-20-52-57.png",
                             dateCreated = new DateOnly(1969, 11, 3),
                             description = "Hit ball with stick",
                             name = "Maties Hockey",
@@ -210,6 +212,13 @@ namespace webAPI.Migrations
                         },
                         new
                         {
+                            Id = 9,
+                            admin = false,
+                            groupId = 2,
+                            userId = 1
+                        },
+                        new
+                        {
                             Id = 2,
                             admin = true,
                             groupId = 2,
@@ -221,6 +230,11 @@ namespace webAPI.Migrations
                             admin = false,
                             groupId = 1,
                             userId = 2
+                        },
+                        new
+                        {
+                            Id = 8,
+                            userId = 5
                         });
                 });
 
@@ -263,7 +277,7 @@ namespace webAPI.Migrations
                             Id = 1,
                             body = "I like penguins",
                             creatorId = 4,
-                            dateCreated = new DateTime(2022, 4, 24, 18, 24, 58, 444, DateTimeKind.Utc).AddTicks(9061),
+                            dateCreated = new DateTime(2022, 4, 28, 9, 9, 33, 578, DateTimeKind.Utc).AddTicks(9630),
                             latitude = 29.653700000000001,
                             longitude = 79.948599999999999,
                             video = false
@@ -273,7 +287,7 @@ namespace webAPI.Migrations
                             Id = 2,
                             body = "u4vuh4i7wb9atdvj11rs",
                             creatorId = 1,
-                            dateCreated = new DateTime(2022, 4, 24, 18, 24, 58, 444, DateTimeKind.Utc).AddTicks(9064),
+                            dateCreated = new DateTime(2022, 4, 28, 9, 9, 33, 578, DateTimeKind.Utc).AddTicks(9630),
                             latitude = 82.862799999999993,
                             longitude = 135.0,
                             video = true
@@ -327,32 +341,34 @@ namespace webAPI.Migrations
                         {
                             Id = 1,
                             DOB = new DateOnly(1943, 11, 23),
+                            avatar = "https://i.ibb.co/hm99dG4/20d9de001ebe.png",
                             email = "nicolvisser@yahoo.com",
                             firstName = "Nicol",
                             lastName = "Visser",
-                            password = "$2a$11$tFfOTZrxjdxyWc8d1zuhl.DhDM9RNUv7kIkzZO6q5QrpUK/Ihg4d6",
+                            password = "$2a$11$aR8jTQPYBc89LQVOgbZjmuDVBDHzsI6oCvA4XD6Ixggs3qy1b2CaW",
                             username = "VisserMan"
                         },
                         new
                         {
                             Id = 2,
                             DOB = new DateOnly(2000, 6, 3),
-                            avatar = "https://i.ibb.co/mtRH6q9/Screenshot-2022-04-24-at-14-50-41.png",
+                            avatar = "https://i.ibb.co/SBLGDZW/jc.png",
                             email = "jcmouton@protonmail.com",
                             firstName = "Jacques",
                             lastName = "Mouton",
-                            password = "$2a$11$l97wlaE7vaic7QQdEiTkEe5h7hFkbWti7lPAsbbeBb2fVSXgrpYHy",
+                            password = "$2a$11$wte8OviPmsP8YRWMXhnx6OzILmLHcfC6xANygy9osmZE3j3oX5IrW",
                             username = "JaySea"
                         },
                         new
                         {
                             Id = 3,
                             DOB = new DateOnly(2000, 11, 23),
+                            avatar = "https://i.ibb.co/jg3970L/76cb8121601e.png",
                             email = "philler@gmail.com",
                             firstName = "Philip",
                             lastName = "Schommarz",
-                            password = "$2a$11$TY/6siBA7I5xW76v1C.lmO6o02zsx2u0UY6q4xK34Gdfg9sxtn9mO",
-                            username = "Filler"
+                            password = "$2a$11$rZhy00T96.ZyoBuQUeaEi.Mkq.USIY5hVs4/jhAMqPVLijQlLLP82",
+                            username = "Fillet"
                         },
                         new
                         {
@@ -362,8 +378,19 @@ namespace webAPI.Migrations
                             email = "mssteyn@rocketmail.com",
                             firstName = "Lize",
                             lastName = "Steyn",
-                            password = "$2a$11$wdcbq3RMXXs5insxkCdj3ey0EcOqzHl0lFQbc/x6JWQ7jZMAhoT0.",
+                            password = "$2a$11$DjYegT/QnDP.VNbxWn2P2e7w4l7gY/7gRsszDtbCut6QpcOkeIelO",
                             username = "MorneSteyn"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            DOB = new DateOnly(2000, 1, 3),
+                            avatar = "https://i.ibb.co/3cfRt6n/Image.png",
+                            email = "eduanuys@gmail.com",
+                            firstName = "Eduan",
+                            lastName = "Uys",
+                            password = "$2a$11$7vQF1mzXWexvBlWAwO9JNuYIRr.lTNQmog1ewks57DpglMYCsXvTC",
+                            username = "uysbeer"
                         });
                 });
 
