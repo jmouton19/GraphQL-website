@@ -19,7 +19,10 @@ import LoadingPage from './LoadingPage';
 import GroupDetails from '../components/GroupDetails';
 import PostList from '../components/PostComponents/PostList';
 import AddPostCard from '../components/PostComponents/AddPostCard';
-import { useNotifyError, useNotifySuccess } from '../providers/NotificationProvider';
+import {
+  useNotifyError,
+  useNotifySuccess,
+} from '../providers/NotificationProvider';
 
 function Group() {
   const [activeTabNumber, setActiveTabNumber] = useState('1');
@@ -40,7 +43,7 @@ function Group() {
   useEffect(() => {
     client
       .query({
-        fetchPolicy:'no-cache',
+        fetchPolicy: 'no-cache',
         query: gql`
           query {
             groups(where: { id: { eq: ${params.groupId} } }) {
@@ -98,11 +101,11 @@ function Group() {
         `,
       })
       .then((result) => {
-        if(result.data.addMember === "true"){
-          notifySuccess("Joined successfully.");
+        if (result.data.addMember === 'true') {
+          notifySuccess('Joined successfully.');
           navigate(`/group/${params.groupId}`);
         } else {
-          notifyError("Failed to join group.");
+          notifyError('Failed to join group.');
         }
       });
   };

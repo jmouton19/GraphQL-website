@@ -4,6 +4,7 @@ import { stringToObject } from '../utils/utils';
 
 const PostsContext = createContext();
 const AddPostContext = createContext();
+const RefreshPostsContext = createContext();
 
 export function usePosts() {
   return useContext(PostsContext);
@@ -11,6 +12,10 @@ export function usePosts() {
 
 export function useAddPost() {
   return useContext(AddPostContext);
+}
+
+export function useRefreshPosts() {
+  return useContext(RefreshPostsContext);
 }
 
 async function loadGroupPosts(client, groupId, order) {
@@ -132,6 +137,7 @@ function PostProvider(props) {
 
   // state:
   const [postData, setPostData] = useState([]);
+  const [needsRefresh, setNeedsRefresh] = useState(false);
 
   // hooks:
   const client = useApolloClient();
@@ -158,7 +164,9 @@ function PostProvider(props) {
           setPostData(data);
         })
         .catch((e) => console.error(e));
-  }, [client, config, order]);
+
+    setNeedsRefresh(false);
+  }, [client, config, order, needsRefresh]);
 
   async function addPost(video, body, creatorId) {
     // if video is true, then the body is the Cloudinary Public ID of the uploaded video
@@ -199,10 +207,16 @@ function PostProvider(props) {
     });
   }
 
+  function refreshPosts() {
+    setNeedsRefresh(true);
+  }
+
   return (
     <PostsContext.Provider value={postData}>
       <AddPostContext.Provider value={addPost}>
-        {children}
+        <RefreshPostsContext.Provider value={refreshPosts}>
+          {children}
+        </RefreshPostsContext.Provider>
       </AddPostContext.Provider>
     </PostsContext.Provider>
   );
