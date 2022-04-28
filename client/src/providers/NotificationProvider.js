@@ -1,59 +1,46 @@
-import { Alert, Snackbar } from "@mui/material";
-import React, { createContext, useContext, useState } from "react";
+import { Alert, Snackbar } from '@mui/material';
+import React, { createContext, useContext, useState } from 'react';
 
-const SuccessNotificationContext = createContext();
-const ErrorNotificationContext = createContext();
+const NotificationContext = createContext();
 
 export function useNotifySuccess() {
-	return useContext(SuccessNotificationContext);
-}
-
-export function useNotifyError() {
-	return useContext(ErrorNotificationContext);
+  return useContext(NotificationContext);
 }
 
 function NotificationProvider({ children }) {
-	const [open, setOpen] = React.useState(false);
-	const [severity, setSeverity] = useState("success");
-	const [message, setMessage] = useState("");
+  const [open, setOpen] = React.useState(false);
+  const [severity, setSeverity] = useState('success');
+  const [message, setMessage] = useState('');
 
-	function notifySuccess(msg) {
-		setMessage(msg);
-		setSeverity("success");
-		setOpen(true);
-	}
+  function notify(type, msg) {
+    setMessage(msg);
+    setSeverity(type);
+    setOpen(true);
+  }
 
-	function notifyError(msg) {
-		setMessage(msg);
-		setSeverity("error");
-		setOpen(true);
-	}
+  const handleClose = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+    setOpen(false);
+  };
 
-	const handleClose = (event, reason) => {
-		if (reason === "clickaway") {
-			return;
-		}
-		setOpen(false);
-	};
-
-	return (
-		<SuccessNotificationContext.Provider value={notifySuccess}>
-			<ErrorNotificationContext.Provider value={notifyError}>
-				{children}
-				{open && (
-					<Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
-						<Alert
-							onClose={handleClose}
-							severity={severity}
-							sx={{ maxWidth: 400 }}
-						>
-							{message}
-						</Alert>
-					</Snackbar>
-				)}
-			</ErrorNotificationContext.Provider>
-		</SuccessNotificationContext.Provider>
-	);
+  return (
+    <NotificationContext.Provider value={notify}>
+      {children}
+      {open && (
+        <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
+          <Alert
+            onClose={handleClose}
+            severity={severity}
+            sx={{ maxWidth: 400 }}
+          >
+            {message}
+          </Alert>
+        </Snackbar>
+      )}
+    </NotificationContext.Provider>
+  );
 }
 
 export default NotificationProvider;

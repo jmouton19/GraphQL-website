@@ -22,10 +22,7 @@ import { useAuthUser, useSignUp } from '../providers/AuthProvider';
 import { FormControlLabel } from '@mui/material';
 import { Checkbox } from '@mui/material';
 import { Divider } from '@mui/material';
-import {
-  useNotifyError,
-  useNotifySuccess,
-} from '../providers/NotificationProvider';
+import { useNotify } from '../providers/NotificationProvider';
 
 function SignUp() {
   const [username, setUsername] = useState('');
@@ -50,8 +47,7 @@ function SignUp() {
 
   const signUp = useSignUp();
 
-  const notifySuccess = useNotifySuccess();
-  const notifyError = useNotifyError();
+  const notify = useNotify();
 
   function toggleShowPassword() {
     setShowPassword(!showPassword);
@@ -126,8 +122,8 @@ function SignUp() {
     };
 
     signUp(data)
-      .then(() => notifySuccess('Signed up successfully.'))
-      .catch(() => notifyError('Sign up failed'));
+      .then(() => notify('success', 'Signed up successfully.'))
+      .catch(() => notify('error', 'Sign up failed'));
   }
 
   const authUser = useAuthUser();

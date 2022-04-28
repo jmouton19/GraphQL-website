@@ -19,16 +19,12 @@ import LoadingPage from './LoadingPage';
 import GroupDetails from '../components/GroupDetails';
 import PostList from '../components/PostComponents/PostList';
 import AddPostCard from '../components/PostComponents/AddPostCard';
-import {
-  useNotifyError,
-  useNotifySuccess,
-} from '../providers/NotificationProvider';
+import { useNotify } from '../providers/NotificationProvider';
 
 function Group() {
   const [activeTabNumber, setActiveTabNumber] = useState('1');
   const navigate = useNavigate();
-  const notifySuccess = useNotifySuccess();
-  const notifyError = useNotifyError();
+  const notify = useNotify();
 
   const [groupData, setGroupData] = useState(undefined);
 
@@ -102,10 +98,10 @@ function Group() {
       })
       .then((result) => {
         if (result.data.addMember === 'true') {
-          notifySuccess('Joined successfully.');
+          notify('success', 'Joined successfully.');
           navigate(`/group/${params.groupId}`);
         } else {
-          notifyError('Failed to join group.');
+          notify('error', 'Failed to join group.');
         }
       });
   };

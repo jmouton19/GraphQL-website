@@ -1,7 +1,7 @@
 import React, { useEffect, useContext, createContext, useState } from 'react';
 
 import { gql } from '@apollo/client';
-import { useNotifyError, useNotifySuccess } from './NotificationProvider';
+import { useNotify } from './NotificationProvider';
 import {
   ApolloClient,
   InMemoryCache,
@@ -86,8 +86,7 @@ function AuthProvider({ children }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [client]);
 
-  const notifySuccess = useNotifySuccess();
-  const notifyError = useNotifyError();
+  const notify = useNotify();
 
   const signUp = (data) => {
     // Todo: Update backend to handle rememberMe
@@ -144,11 +143,11 @@ function AuthProvider({ children }) {
         })
         .then((result) => {
           if (result.data.userLogin) {
-            notifySuccess('Logged in successfully.');
+            notify('success', 'Logged in successfully.');
             const jwt_temp = result.data.userLogin;
             setJwt(jwt_temp);
           } else {
-            notifyError('Log in failed.');
+            notify('error', 'Log in failed.');
             // Todo: Need more descriptive messages here from backend
           }
         });

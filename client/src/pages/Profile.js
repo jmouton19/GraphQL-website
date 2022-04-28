@@ -20,10 +20,7 @@ import { Avatar, Typography } from '@mui/material';
 import { gql, useApolloClient } from '@apollo/client';
 import { useAuthUser } from '../providers/AuthProvider';
 import { useParams } from 'react-router-dom';
-import {
-  useNotifyError,
-  useNotifySuccess,
-} from '../providers/NotificationProvider';
+import { useNotify } from '../providers/NotificationProvider';
 import LoadingPage from './LoadingPage';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import { stringToObject } from '../utils/utils';
@@ -44,8 +41,7 @@ function Profile() {
   const client = useApolloClient();
   const params = useParams();
   const [activeTabNumber, setActiveTabNumber] = useState('1');
-  const notifyError = useNotifyError();
-  const notifySuccess = useNotifySuccess();
+  const notify = useNotify();
   const navigate = useNavigate();
 
   const handleTabChange = (event, newValue) => {
@@ -84,7 +80,7 @@ function Profile() {
         if (retrievedProfile) {
           setViewUser(retrievedProfile);
         } else {
-          notifyError('Could not load user profile from server.');
+          notify('error','Could not load user profile from server.');
         }
       });
   };
@@ -101,9 +97,9 @@ function Profile() {
       .then((result) => {
         let resultData = stringToObject(result.data.addFriend);
         if (resultData.success === 'true') {
-          notifySuccess(resultData.message);
+          notify('success', resultData.message);
         } else {
-          notifyError(resultData.message);
+          notify('error', resultData.message);
         }
       });
   };
@@ -122,9 +118,9 @@ function Profile() {
       .then((result) => {
         let resultData = stringToObject(result.data.addFriend);
         if (resultData.success === 'true') {
-          notifySuccess(resultData.message);
+          notify('success', resultData.message);
         } else {
-          notifyError(resultData.message);
+          notify('error', resultData.message);
         }
         getFriends();
       });
@@ -278,9 +274,7 @@ function Profile() {
             <List>
               {groups.map((group) => (
                 <ListItemButton key={group.id}>
-                  <ListItem
-                    onClick={() => navigate(`/group/${group.id}`)}
-                  >
+                  <ListItem onClick={() => navigate(`/group/${group.id}`)}>
                     <ListItemAvatar>
                       {group.ownerId === authUser.id ? (
                         <Badge

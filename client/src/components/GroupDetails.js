@@ -17,10 +17,7 @@ import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
 import AvatarPicker from './AvatarPicker';
 import SettingsIcon from '@mui/icons-material/Settings';
-import {
-  useNotifyError,
-  useNotifySuccess,
-} from '../providers/NotificationProvider';
+import { useNotify } from '../providers/NotificationProvider';
 import { gql, useApolloClient } from '@apollo/client';
 import { useNavigate } from 'react-router-dom';
 
@@ -31,8 +28,7 @@ function GroupDetails({ details }) {
   const [description, setDescription] = useState('');
   const [avatarUrl, setAvatarUrl] = useState(null);
 
-  const notifyError = useNotifyError();
-  const notifySuccess = useNotifySuccess();
+  const notify = useNotify();
   const client = useApolloClient();
 
   useEffect(() => {
@@ -60,11 +56,11 @@ function GroupDetails({ details }) {
       })
       .then((result) => {
         if (result.data.addGroup === 'true') {
-          notifySuccess('Group has been created.');
+          notify('success', 'Group has been created.');
           setOpenDialog(false);
           navigate('/groups');
         } else {
-          notifyError('Unable to create group.');
+          notify('error', 'Unable to create group.');
         }
       });
   };

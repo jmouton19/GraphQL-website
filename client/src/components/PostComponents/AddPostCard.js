@@ -14,10 +14,7 @@ import { showUploadWidget } from '../cloudindary/upload';
 import { CardMedia } from '@mui/material';
 import VideoPlayer from '../cloudindary/VideoPlayer';
 import { useAddPost, useRefreshPosts } from '../../providers/PostProvider';
-import {
-  useNotifyError,
-  useNotifySuccess,
-} from '../../providers/NotificationProvider';
+import { useNotify } from '../../providers/NotificationProvider';
 
 const emptyPostData = {
   description: '',
@@ -40,8 +37,7 @@ function AddPostCard({ creatorId }) {
   const hasVideoData = newPostData.videoPublicID !== '';
   const hasTextData = newPostData.description !== '';
 
-  const notifySuccess = useNotifySuccess();
-  const notifyError = useNotifyError();
+  const notify = useNotify();
 
   return (
     <Card>
@@ -113,12 +109,12 @@ function AddPostCard({ creatorId }) {
             }
             addPost(video, body, creatorId)
               .then((message) => {
-                notifySuccess(message);
+                notify('success', message);
                 setNewPostData(emptyPostData);
                 refreshPosts();
               })
               .catch((message) => {
-                notifyError(message);
+                notify('error', message);
               });
           }}
         >
