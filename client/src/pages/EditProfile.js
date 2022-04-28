@@ -80,11 +80,9 @@ function EditProfile() {
 
     
     function saveChangePasswordChecks() {
-        setNewPassword(password);
         return (
             password === "" ||
             oldPassword === "" ||
-            newPassword === "" ||
             passwordRepeated === "" ||
             password !== passwordRepeated
         );
@@ -126,7 +124,7 @@ function EditProfile() {
         })
         .then((result) => {
             const userUpdated = stringToObject(result.data.updateUser);
-            console.log("result")
+            //console.log(newPassword)
             if (userUpdated.success === "true") {
                 logOut();
                 notifySuccess(`${userUpdated.message} Please log in again.`);
@@ -320,6 +318,7 @@ function EditProfile() {
                                     autoComplete="new-password"
                                     onChange={(event) => {
                                         setPasswordRepeated(event.target.value);
+                                        setNewPassword(password);
                                     }}
                                     label="Repeat New Password"
                                     error={password !== passwordRepeated}
