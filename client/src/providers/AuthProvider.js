@@ -143,14 +143,16 @@ function AuthProvider({ children }) {
         `,
         })
         .then((result) => {
-          if (result.data.userLogin) {
+          console.log(result.data);
+          if (result.data.userLogin === 'false') {
+            notifyError('Log in failed.');
+          } else {
             notifySuccess('Logged in successfully.');
             const jwt_temp = result.data.userLogin;
             setJwt(jwt_temp);
-          } else {
-            notifyError('Log in failed.');
-            // Todo: Need more descriptive messages here from backend
           }
+
+          // Todo: Need more descriptive messages here from backend
         });
     });
   }
