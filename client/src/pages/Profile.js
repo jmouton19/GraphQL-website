@@ -277,9 +277,8 @@ function Profile() {
           <TabPanel value="2">
             <List>
               {groups.map((group) => (
-                <ListItemButton>
+                <ListItemButton key={group.id}>
                   <ListItem
-                    key={group.id}
                     onClick={() => navigate(`/group/${group.id}`)}
                   >
                     <ListItemAvatar>
@@ -308,9 +307,8 @@ function Profile() {
           <TabPanel value="3">
             <List>
               {acceptedFriends.map((friend) => (
-                <ListItemButton>
+                <ListItemButton key={friend.id}>
                   <ListItem
-                    key={friend.id}
                     onClick={() => navigate(`/profile/${friend.username}`)}
                     secondaryAction={
                       <IconButton

@@ -48,7 +48,6 @@ async function loadGroupPosts(client, groupId, order) {
 }
 
 async function loadUserPosts(client, userId, order) {
-  console.log(userId);
   return new Promise((resolve) => {
     client
       .query({
