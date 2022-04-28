@@ -47,6 +47,41 @@ async function loadGroupPosts(client, groupId, order) {
   });
 }
 
+async function loadUserPosts(client, userId, order) {
+  console.log(userId);
+  return new Promise((resolve) => {
+    client
+      .query({
+        fetchPolicy: 'no-cache',
+        query: gql`
+        query {
+          posts (where: {creator: {userId:{eq:${userId}}}}, order: { dateCreated: ${order} }) {
+              id
+              body
+              creator{
+                  user {
+                      avatar
+                      firstName
+                      lastName
+                      username
+                  }
+              }
+              creatorId
+              dateCreated
+              dateCreated
+              latitude
+              longitude
+              video
+          }
+        }
+        `,
+      })
+      .then((result) => {
+        resolve(result.data.posts);
+      });
+  });
+}
+
 async function loadAllPosts(client, order) {
   return new Promise((resolve) => {
     client
@@ -84,8 +119,8 @@ async function loadAllPosts(client, order) {
 function PostProvider(props) {
   // props:
   const { children, config } = props;
-  
-  const order = 'DESC'
+
+  const order = 'DESC';
 
   /*
   Examples of config prop
@@ -113,6 +148,13 @@ function PostProvider(props) {
 
     if (config && config.type === 'group')
       loadGroupPosts(client, config.groupId, order)
+        .then((data) => {
+          setPostData(data);
+        })
+        .catch((e) => console.error(e));
+
+    if (config && config.type === 'user')
+      loadUserPosts(client, config.userId, order)
         .then((data) => {
           setPostData(data);
         })

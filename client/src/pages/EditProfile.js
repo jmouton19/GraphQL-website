@@ -22,13 +22,11 @@ import Typography from "@mui/material/Typography";
 import React, { useEffect, useState } from "react";
 import { gql, useApolloClient } from '@apollo/client';
 //import shortid from 'shortid';
-import { useAuthUser, useLogIn, useLogOut } from '../providers/AuthProvider';
-import { useNavigate } from 'react-router-dom';
+import { useAuthUser, useLogOut } from '../providers/AuthProvider';
 import {
     useNotifyError,
     useNotifySuccess,
 } from '../providers/NotificationProvider';
-import LoadingPage from './LoadingPage';
 import { stringToObject } from '../utils/utils';
 import validator from 'validator';
 import Visibility from "@mui/icons-material/Visibility";

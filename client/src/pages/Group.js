@@ -141,7 +141,12 @@ function Group() {
             </Stack>
           </Box>
           <TabPanel value="1">
-            <PostProvider>
+            <PostProvider
+              config={{
+                type: 'group',
+                groupId: params.groupId,
+              }}
+            >
               <Stack spacing={2}>
                 {authUserIsMember && (
                   <AddPostCard creatorId={authUserMembershipId} />

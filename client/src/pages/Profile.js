@@ -17,10 +17,7 @@ import { TabContext, TabList, TabPanel } from '@mui/lab';
 import { Tab } from '@mui/material';
 import cheeseMarker from '../assets/cheese-pin.png';
 import { Avatar, Typography } from '@mui/material';
-import { usePosts } from '../providers/PostProvider';
-import PostCard from '../components/PostComponents/PostCard';
 import { gql, useApolloClient } from '@apollo/client';
-import shortid from 'shortid';
 import { useAuthUser } from '../providers/AuthProvider';
 import { useParams } from 'react-router-dom';
 import {
@@ -34,8 +31,9 @@ import DoneIcon from '@mui/icons-material/Done';
 import ChatIcon from '@mui/icons-material/Chat';
 import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
 import { useNavigate } from 'react-router-dom';
-import EditProfile from "./EditProfile";
-
+import EditProfile from './EditProfile';
+import PostProvider from '../providers/PostProvider';
+import PostList from '../components/PostComponents/PostList';
 
 function Profile() {
   const authUser = useAuthUser();
@@ -45,7 +43,6 @@ function Profile() {
   const [groups, setGroups] = useState([]);
   const client = useApolloClient();
   const params = useParams();
-  const data = usePosts();
   const [activeTabNumber, setActiveTabNumber] = useState('1');
   const notifyError = useNotifyError();
   const notifySuccess = useNotifySuccess();
@@ -63,7 +60,7 @@ function Profile() {
     } else {
       loadViewUser();
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [params]);
 
   const loadViewUser = () => {
@@ -266,11 +263,16 @@ function Profile() {
             </Stack>
           </Box>
           <TabPanel value="1">
-            <Stack spacing={2}>
-              {data.map((postData) => (
-                <PostCard key={shortid.generate()} postData={postData} />
-              ))}
-            </Stack>
+            <PostProvider
+              config={{
+                type: 'user',
+                userId: viewUser.id,
+              }}
+            >
+              <Stack spacing={2}>
+                <PostList />
+              </Stack>
+            </PostProvider>
           </TabPanel>
           <TabPanel value="2">
             <List>

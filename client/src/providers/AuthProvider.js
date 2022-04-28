@@ -179,7 +179,6 @@ function AuthProvider({ children }) {
         .then((result) => {
           const retrievedProfile = result.data.users[0];
           if (retrievedProfile) {
-            console.log("here");
             setAuthUser({ ...retrievedProfile, jwt });
             resolve(true);
           } else {
