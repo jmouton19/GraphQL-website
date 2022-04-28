@@ -22,8 +22,8 @@ import Typography from "@mui/material/Typography";
 import React, { useEffect, useState } from "react";
 import { gql, useApolloClient } from '@apollo/client';
 //import shortid from 'shortid';
-import { useAuthUser, useLoadUserProfile, useLogOut } from '../providers/AuthProvider';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useAuthUser, useLogIn, useLogOut } from '../providers/AuthProvider';
+import { useNavigate } from 'react-router-dom';
 import {
     useNotifyError,
     useNotifySuccess,
@@ -46,8 +46,6 @@ const fabStyle = {
 
 function EditProfile() {
     const authUser = useAuthUser();
-    const navigate = useNavigate();
-    const loadUserProfile = useLoadUserProfile();
     const logOut = useLogOut();
     const [edit, setEdit] = useState(false);
     const client = useApolloClient();
@@ -67,7 +65,6 @@ function EditProfile() {
     const [password, setPassword] = useState("");
 	const [passwordRepeated, setPasswordRepeated] = useState("");
 	const [oldPassword, setOldPassword] = useState("");
-    console.log(authUser.id);
 
 
     useEffect(() => {
@@ -119,14 +116,8 @@ function EditProfile() {
         .then((result) => {
             const userUpdated = stringToObject(result.data.updateUser);
             if (userUpdated.success === "true") {
-                loadUserProfile(email, authUser.jwt).then((res) => {
-                    if(res) {
-                        navigate(`/profile/${username}`);
-                    } else {
-                        logOut();
-                    }
-                })
-                notifySuccess(`${userUpdated.message}`);
+                logOut();
+                notifySuccess(`${userUpdated.message} Please log in again.`);
             } else {
                 notifyError(userUpdated.message);
             }

@@ -175,6 +175,7 @@ function AuthProvider({ children }) {
         .then((result) => {
           const retrievedProfile = result.data.users[0];
           if (retrievedProfile) {
+            console.log("here");
             setAuthUser({ ...retrievedProfile, jwt });
             resolve(true);
           } else {
@@ -186,7 +187,10 @@ function AuthProvider({ children }) {
   };
 
   const logOut = () => {
-    setAuthUser(null);
+    return new Promise((resolve) => {
+      setAuthUser(null);
+      resolve(true);
+    });
   };
 
   return (
