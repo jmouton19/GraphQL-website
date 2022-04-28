@@ -18,12 +18,14 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import AvatarPicker from './AvatarPicker';
 import SettingsIcon from '@mui/icons-material/Settings';
 import {
-	useNotifyError,
-	useNotifySuccess,
-  } from '../providers/NotificationProvider';
-  import { gql, useApolloClient } from '@apollo/client';
+  useNotifyError,
+  useNotifySuccess,
+} from '../providers/NotificationProvider';
+import { gql, useApolloClient } from '@apollo/client';
+import { useNavigate } from 'react-router-dom';
 
 function GroupDetails({ details }) {
+  const navigate = useNavigate();
   const [openDialog, setOpenDialog] = useState(false);
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
@@ -42,10 +44,10 @@ function GroupDetails({ details }) {
   }, []);
 
   const createGroup = () => {
-	  //TODO: Use actual date
-	client
-	.mutate({
-	  mutation: gql`
+    //TODO: Use actual date
+    client
+      .mutate({
+        mutation: gql`
 	  mutation{
 		addGroup(input:{
 			name: "${name}"
@@ -55,15 +57,17 @@ function GroupDetails({ details }) {
 		})
 	}
 	`,
-	}).then((result) => {
-		if(result.data.addGroup === "true") {
-			notifySuccess("Group has been created.")
-			setOpenDialog(false);
-		} else {
-			notifyError("Unable to create group.")
-		}
-	})
-  }
+      })
+      .then((result) => {
+        if (result.data.addGroup === 'true') {
+          notifySuccess('Group has been created.');
+          setOpenDialog(false);
+          navigate('/groups');
+        } else {
+          notifyError('Unable to create group.');
+        }
+      });
+  };
 
   return (
     <>
@@ -123,8 +127,8 @@ function GroupDetails({ details }) {
         <DialogActions>
           <Stack padding={1} spacing={1} direction="row">
             {details && (
-              <IconButton color='error'>
-                <DeleteIcon/>
+              <IconButton color="error">
+                <DeleteIcon />
               </IconButton>
             )}
             <Button variant="outlined" onClick={createGroup}>

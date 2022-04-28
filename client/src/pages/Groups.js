@@ -19,6 +19,7 @@ function Groups() {
 
   client
     .query({
+      fetchPolicy:'no-cache',
       query: gql`
         query {
           groups {
