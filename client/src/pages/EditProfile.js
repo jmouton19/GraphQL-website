@@ -22,8 +22,8 @@ import Typography from "@mui/material/Typography";
 import React, { useEffect, useState } from "react";
 import { gql, useApolloClient } from '@apollo/client';
 //import shortid from 'shortid';
-import { useAuthUser } from '../providers/AuthProvider';
-import { useParams } from 'react-router-dom';
+import { useAuthUser, useLoadUserProfile, useLogOut } from '../providers/AuthProvider';
+import { useNavigate, useParams } from 'react-router-dom';
 import {
     useNotifyError,
     useNotifySuccess,
@@ -46,9 +46,11 @@ const fabStyle = {
 
 function EditProfile() {
     const authUser = useAuthUser();
+    const navigate = useNavigate();
+    const loadUserProfile = useLoadUserProfile();
+    const logOut = useLogOut();
     const [edit, setEdit] = useState(false);
     const client = useApolloClient();
-    const params = useParams();
     const notifyError = useNotifyError();
     const notifySuccess = useNotifySuccess();
     const [username, setUsername] = useState('');
@@ -65,6 +67,7 @@ function EditProfile() {
     const [password, setPassword] = useState("");
 	const [passwordRepeated, setPasswordRepeated] = useState("");
 	const [oldPassword, setOldPassword] = useState("");
+    console.log(authUser.id);
 
 
     useEffect(() => {
@@ -72,8 +75,10 @@ function EditProfile() {
         setLastName(authUser.lastName);
         setAvatarUrl(authUser.avatar);
         setPassword(authUser.password);
+        setUsername(authUser.username);
+        setEmail(authUser.email);
       // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [params]);
+    }, [authUser]);
 
     const validateUsername = () => {
         if (username === '') {
@@ -94,56 +99,39 @@ function EditProfile() {
         setUsernameError({ status: false, msg: '' });
     };
 
-    const editUser = (data) => {
-        const {
-            avatar,
-            email,
-            firstName,
-            lastName,
-            //oldPassword,
-            //newPassword,
-            username,
-        } = data;
-        console.log(authUser.id);
+    const editUser = () => {
         client
         .mutate({
             mutation: gql`
             mutation {
                 updateUser(
-                    input: { 
-                        userId:"${authUser.id}",
+                    input: {
+                        userId: ${authUser.id}
+                        firstName: "${firstName}"
+                        lastName: "${lastName}"
                         username: "${username}"
+                        avatar: "${avatarUrl}"
                     }
                 )
             }
         `,
         })
         .then((result) => {
-            const userUpdated = result.data.userUpdated;
-            if (userUpdated) {
-                console.log("updated");
-                notifySuccess('Updated successfully.');
+            const userUpdated = stringToObject(result.data.updateUser);
+            if (userUpdated.success === "true") {
+                loadUserProfile(email, authUser.jwt).then((res) => {
+                    if(res) {
+                        navigate(`/profile/${username}`);
+                    } else {
+                        logOut();
+                    }
+                })
+                notifySuccess(`${userUpdated.message}`);
             } else {
-                notifyError('Update failed')
+                notifyError(userUpdated.message);
             }
-        })
-        .catch((e) => console.error(e));
+        });
     };
-
-
-    function completeEditUser() {
-        const data = {
-            avatar: avatarUrl,
-            //email,
-            firstName,
-            lastName,
-            username,
-        };
-        console.log(data);
-        editUser(data)
-            .then(() => notifySuccess('Updated successfully.'))
-            .catch(() => notifyError('Update up failed'));
-    }
 
     return (
         <>
@@ -243,7 +231,7 @@ function EditProfile() {
                                             </Button>
                                         </Stack>
                                             <Button
-                                                onClick={() => completeEditUser()}
+                                                onClick={() => editUser()}
                                                 variant="contained"
                                                 sx={{ borderRadius: "50%" }}
                                                 //disabled={saveEditDisableChecks()}
