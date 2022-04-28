@@ -13,20 +13,14 @@ export function useAddPost() {
   return useContext(AddPostContext);
 }
 
-function PostProvider({ children }) {
-  // state:
-  const [postData, setPostData] = useState([]);
-
-  // hooks:
-  const client = useApolloClient();
-
-  // load posts initially
-  useEffect(() => {
+async function loadGroupPosts(client, groupId, order) {
+  return new Promise((resolve) => {
     client
       .query({
+        fetchPolicy: 'no-cache',
         query: gql`
           query {
-            posts {
+            posts(where: { creator: { groupId: { eq: ${groupId} } } }, order: { dateCreated: ${order} }) {
               id
               body
               creator {
@@ -48,9 +42,82 @@ function PostProvider({ children }) {
         `,
       })
       .then((result) => {
-        setPostData(result.data.posts);
+        resolve(result.data.posts);
       });
-  }, [client]);
+  });
+}
+
+async function loadAllPosts(client, order) {
+  return new Promise((resolve) => {
+    client
+      .query({
+        fetchPolicy: 'no-cache',
+        query: gql`
+          query {
+            posts(order: { dateCreated: ${order} }) {
+              id
+              body
+              creator {
+                user {
+                  firstName
+                  lastName
+                  avatar
+                }
+                group {
+                  name
+                }
+              }
+              dateCreated
+              latitude
+              longitude
+              video
+            }
+          }
+        `,
+      })
+      .then((result) => {
+        resolve(result.data.posts);
+      });
+  });
+}
+
+function PostProvider(props) {
+  // props:
+  const { children, config } = props;
+  
+  const order = 'DESC'
+
+  /*
+  Examples of config prop
+  const config = {
+    type: 'group',
+    groupId: 1,
+  };
+  */
+  // order can be "DESC" or "ASC"
+
+  // state:
+  const [postData, setPostData] = useState([]);
+
+  // hooks:
+  const client = useApolloClient();
+
+  // load posts initially
+  useEffect(() => {
+    if (config === undefined)
+      loadAllPosts(client, order)
+        .then((data) => {
+          setPostData(data);
+        })
+        .catch((e) => console.error(e));
+
+    if (config && config.type === 'group')
+      loadGroupPosts(client, config.groupId, order)
+        .then((data) => {
+          setPostData(data);
+        })
+        .catch((e) => console.error(e));
+  }, [client, config, order]);
 
   async function addPost(video, body, creatorId) {
     // if video is true, then the body is the Cloudinary Public ID of the uploaded video

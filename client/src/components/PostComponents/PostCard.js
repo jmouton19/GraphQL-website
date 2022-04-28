@@ -12,8 +12,8 @@ import Typography from '@mui/material/Typography';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import CommentIcon from '@mui/icons-material/Comment';
 import ThumbUpIcon from '@mui/icons-material/ThumbUp';
-import VideoPlayer from './cloudindary/VideoPlayer';
-import CommentProvider from '../providers/CommentProvider';
+import VideoPlayer from '../cloudindary/VideoPlayer';
+import CommentProvider from '../../providers/CommentProvider';
 import CommentViewer from './CommentViewer';
 
 const ExpandMore = styled((props) => {
@@ -44,8 +44,17 @@ function PostCard({ postData }) {
           </IconButton>
         }
         title={`${postData.creator.user.firstName} ${postData.creator.user.lastName}`}
-        subheader={ postData.creator.group ? `Posted in ${postData.creator.group.name}`: undefined}
+        subheader={
+          postData.creator.group
+            ? `Posted in ${postData.creator.group.name}`
+            : undefined
+        }
       />
+      <CardContent>
+        <Typography variant="caption" color="text.secondary">
+          {`Posted on: ${postData.dateCreated}`}
+        </Typography>
+      </CardContent>
       {postData.video ? (
         <CardMedia>
           <VideoPlayer cloudName="de7amnbmo" publicId={postData.body} />

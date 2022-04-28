@@ -168,6 +168,10 @@ function AuthProvider({ children }) {
             lastName
             avatar
             username
+            memberships {
+              id
+              groupId
+            }
           }
         }
       `,

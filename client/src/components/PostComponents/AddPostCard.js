@@ -10,14 +10,14 @@ import { TextField } from '@mui/material';
 import { Tooltip } from '@mui/material';
 import Button from '@mui/material/Button';
 
-import { showUploadWidget } from './cloudindary/upload';
+import { showUploadWidget } from '../cloudindary/upload';
 import { CardMedia } from '@mui/material';
-import VideoPlayer from './cloudindary/VideoPlayer';
-import { useAddPost } from '../providers/PostProvider';
+import VideoPlayer from '../cloudindary/VideoPlayer';
+import { useAddPost } from '../../providers/PostProvider';
 import {
   useNotifyError,
   useNotifySuccess,
-} from '../providers/NotificationProvider';
+} from '../../providers/NotificationProvider';
 
 const emptyPostData = {
   description: '',

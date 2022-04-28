@@ -7,11 +7,7 @@ import { Tab } from '@mui/material';
 import cheeseMarker from '../assets/cheese-pin.png';
 
 import { Avatar, Typography, AvatarGroup } from '@mui/material';
-import { usePosts } from '../providers/PostProvider';
-import PostCard from '../components/PostCard';
-
-import shortid from 'shortid';
-import AddPostCard from '../components/AddPostCard';
+import PostProvider from '../providers/PostProvider';
 import { gql, useApolloClient } from '@apollo/client';
 import { useParams } from 'react-router-dom';
 import { Badge } from '@mui/material';
@@ -21,9 +17,10 @@ import { useAuthUser } from '../providers/AuthProvider';
 import Button from '@mui/material/Button';
 import LoadingPage from './LoadingPage';
 import GroupDetails from '../components/GroupDetails';
+import PostList from '../components/PostComponents/PostList';
+import AddPostCard from '../components/PostComponents/AddPostCard';
 
 function Group() {
-  const data = usePosts();
   const [activeTabNumber, setActiveTabNumber] = useState('1');
 
   const [groupData, setGroupData] = useState(undefined);
@@ -144,14 +141,14 @@ function Group() {
             </Stack>
           </Box>
           <TabPanel value="1">
-            <Stack spacing={2}>
-              {authUserIsMember && (
-                <AddPostCard creatorId={authUserMembershipId} />
-              )}
-              {data.map((postData) => (
-                <PostCard key={shortid.generate()} postData={postData} />
-              ))}
-            </Stack>
+            <PostProvider>
+              <Stack spacing={2}>
+                {authUserIsMember && (
+                  <AddPostCard creatorId={authUserMembershipId} />
+                )}
+                <PostList />
+              </Stack>
+            </PostProvider>
           </TabPanel>
           <TabPanel value="2">
             <Stack spacing={2}>
