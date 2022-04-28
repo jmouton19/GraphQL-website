@@ -22,12 +22,15 @@ export function useCommentRemove() {
 
 function CommentProvider({ children, postId }) {
   const [comments, setComments] = useState([]);
+  const [needsRefresh, setNeedsRefresh] = useState(false);
+
   const client = useApolloClient();
   const authUser = useAuthUser();
 
   useEffect(() => {
     client
       .query({
+        fetchPolicy: 'no-cache',
         query: gql`
             query {
               comments(where: { postId: { eq: ${postId} } }) {
@@ -48,7 +51,9 @@ function CommentProvider({ children, postId }) {
       .then((result) => {
         setComments(result.data.comments);
       });
-  }, [client, postId]);
+
+    setNeedsRefresh(false);
+  }, [client, postId, needsRefresh]);
 
   const addComment = async (body) => {
     const date = new Date();
@@ -70,7 +75,8 @@ function CommentProvider({ children, postId }) {
       .then((result) => {
         const resultData = stringToObject(result.data.addCommment);
         if (resultData.success) {
-          // Todo: I still need to reload the existing comments after the add
+          setNeedsRefresh(true);
+          console.info(resultData.message);
         } else {
           console.error('error in creating comment');
         }
