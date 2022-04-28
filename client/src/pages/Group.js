@@ -9,7 +9,7 @@ import cheeseMarker from '../assets/cheese-pin.png';
 import { Avatar, Typography, AvatarGroup } from '@mui/material';
 import PostProvider from '../providers/PostProvider';
 import { gql, useApolloClient } from '@apollo/client';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { Badge } from '@mui/material';
 
 import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
@@ -19,9 +19,13 @@ import LoadingPage from './LoadingPage';
 import GroupDetails from '../components/GroupDetails';
 import PostList from '../components/PostComponents/PostList';
 import AddPostCard from '../components/PostComponents/AddPostCard';
+import { useNotifyError, useNotifySuccess } from '../providers/NotificationProvider';
 
 function Group() {
   const [activeTabNumber, setActiveTabNumber] = useState('1');
+  const navigate = useNavigate();
+  const notifySuccess = useNotifySuccess();
+  const notifyError = useNotifyError();
 
   const [groupData, setGroupData] = useState(undefined);
 
@@ -36,6 +40,7 @@ function Group() {
   useEffect(() => {
     client
       .query({
+        fetchPolicy:'no-cache',
         query: gql`
           query {
             groups(where: { id: { eq: ${params.groupId} } }) {
@@ -81,6 +86,27 @@ function Group() {
       });
   }, [client, params, authUser]);
 
+  const joinGroup = () => {
+    client
+      .mutate({
+        mutation: gql`
+            mutation {
+              addMember(input:{
+                groupId: ${params.groupId}
+            })
+            }
+        `,
+      })
+      .then((result) => {
+        if(result.data.addMember === "true"){
+          notifySuccess("Joined successfully.");
+          navigate(`/group/${params.groupId}`);
+        } else {
+          notifyError("Failed to join group.");
+        }
+      });
+  };
+
   const handleTabChange = (event, newValue) => {
     setActiveTabNumber(newValue);
   };
@@ -121,8 +147,12 @@ function Group() {
               Leave Group
             </Button>
           ) : (
-            <Button variant="outlined" color="primary">
-              Request To Join
+            <Button
+              variant="outlined"
+              color="primary"
+              onClick={() => joinGroup()}
+            >
+              Join Group
             </Button>
           )}
         </Stack>
