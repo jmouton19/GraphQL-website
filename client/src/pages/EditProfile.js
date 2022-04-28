@@ -80,13 +80,15 @@ function EditProfile() {
 
     
     function saveChangePasswordChecks() {
+        setNewPassword(password);
         return (
             password === "" ||
             oldPassword === "" ||
+            newPassword === "" ||
             passwordRepeated === "" ||
-            password != passwordRepeated
+            password !== passwordRepeated
         );
-    }
+    };
 
     const validateUsername = () => {
         if (username === '') {
