@@ -9,6 +9,7 @@ import {
   ListItemButton,
   ListItemText,
   Badge,
+  //Fab,
 } from '@mui/material';
 import { Stack } from '@mui/material';
 import { Container } from '@mui/material';
@@ -33,6 +34,8 @@ import DoneIcon from '@mui/icons-material/Done';
 import ChatIcon from '@mui/icons-material/Chat';
 import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
 import { useNavigate } from 'react-router-dom';
+import EditProfile from "./EditProfile";
+
 
 function Profile() {
   const authUser = useAuthUser();
@@ -259,6 +262,7 @@ function Profile() {
                 <Tab label="Groups" value="2" />
                 <Tab label="Friends" value="3" />
               </TabList>
+              <EditProfile />
             </Stack>
           </Box>
           <TabPanel value="1">
