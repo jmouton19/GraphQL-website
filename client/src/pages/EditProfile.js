@@ -3,7 +3,7 @@ import {
   Dialog,
   DialogActions,
   DialogTitle,
-  //Divider,
+  Divider,
   Fab,
   FormControl,
   FormHelperText,
@@ -21,7 +21,6 @@ import SaveIcon from '@mui/icons-material/Save';
 import Typography from '@mui/material/Typography';
 import React, { useEffect, useState } from 'react';
 import { gql, useApolloClient } from '@apollo/client';
-//import shortid from 'shortid';
 import { useAuthUser, useLogOut } from '../providers/AuthProvider';
 import { useNotify } from '../providers/NotificationProvider';
 import { stringToObject } from '../utils/utils';
@@ -52,9 +51,10 @@ function EditProfile() {
   const [avatarUrl, setAvatarUrl] = useState(null);
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
-  const [email, setEmail] = useState('');
+  const [ , setEmail] = useState('');
   const [changePassword, setChangePassword] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [newPassword, setNewPassword] = useState('');
   const [password, setPassword] = useState('');
   const [passwordRepeated, setPasswordRepeated] = useState('');
   const [oldPassword, setOldPassword] = useState('');
@@ -68,6 +68,15 @@ function EditProfile() {
     setEmail(authUser.email);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [authUser]);
+
+  function saveChangePasswordChecks() {
+    return (
+      password === '' ||
+      oldPassword === '' ||
+      passwordRepeated === '' ||
+      password !== passwordRepeated
+    );
+  }
 
   const validateUsername = () => {
     if (username === '') {
@@ -86,6 +95,33 @@ function EditProfile() {
     }
     // on no error:
     setUsernameError({ status: false, msg: '' });
+  };
+
+  const editPassword = () => {
+    client
+      .mutate({
+        mutation: gql`
+            mutation {
+                updateUser(
+                    input: {
+                        userId: ${authUser.id}
+                        newPassword: "${newPassword}"
+                        oldPassword: "${oldPassword}"
+                    }
+                )
+            }
+        `,
+      })
+      .then((result) => {
+        const userUpdated = stringToObject(result.data.updateUser);
+        //console.log(newPassword)
+        if (userUpdated.success === 'true') {
+          logOut();
+          notify('success', `${userUpdated.message} Please log in again.`);
+        } else {
+          notify('error', userUpdated.message);
+        }
+      });
   };
 
   const editUser = () => {
@@ -268,6 +304,7 @@ function EditProfile() {
                 autoComplete="new-password"
                 onChange={(event) => {
                   setPasswordRepeated(event.target.value);
+                  setNewPassword(password);
                 }}
                 label="Repeat New Password"
                 error={password !== passwordRepeated}
@@ -283,6 +320,21 @@ function EditProfile() {
                 </FormHelperText>
               ) : null}
             </FormControl>
+            <Divider />
+            <FormControl fullWidth>
+              <InputLabel htmlFor="password-old">Old Password</InputLabel>
+              <OutlinedInput
+                id="password-old-input"
+                type={showPassword ? 'text' : 'password'}
+                value={oldPassword}
+                name="old-password"
+                onChange={(event) => {
+                  setOldPassword(event.target.value);
+                }}
+                label="Old Password"
+              />
+            </FormControl>
+            <Divider />
           </Stack>
         </FormControl>
         <DialogActions>
@@ -292,11 +344,10 @@ function EditProfile() {
                 Cancel
               </Button>
               <Button
-                //onClick={() => saveChangedDetails(true)}
+                onClick={() => editPassword()}
                 variant="contained"
                 sx={{ borderRadius: '50%', height: 60, width: 60 }}
-                //disabled={saveChangePasswordChecks()}
-                //TODO:Add server communication and updating
+                disabled={saveChangePasswordChecks()}
               >
                 <SaveIcon />
               </Button>

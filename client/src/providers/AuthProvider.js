@@ -172,6 +172,8 @@ function AuthProvider({ children }) {
             notify('error', message);
             reject();
           }
+
+          // Todo: Need more descriptive messages here from backend
         });
     });
   }
