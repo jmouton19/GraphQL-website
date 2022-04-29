@@ -19,7 +19,6 @@ import { useAuthUser, useLogIn } from '../providers/AuthProvider';
 import { Navigate } from 'react-router-dom';
 import { FormControlLabel } from '@mui/material';
 import { Checkbox } from '@mui/material';
-import { useNotify } from '../providers/NotificationProvider';
 
 function Login() {
   const [email, setEmail] = useState('');
@@ -31,16 +30,12 @@ function Login() {
   const authUser = useAuthUser();
   const login = useLogIn();
 
-  const notify = useNotify();
-
   function toggleShowPassword() {
     setShowPassword(!showPassword);
   }
 
   function handleLogIn() {
-    login(email, password)
-      .then(() => notify('success', 'Logged in successfully.'))
-      .catch(() => notify('sucess', 'Log in failed.'));
+    login(email, password);
   }
 
   if (authUser) {
