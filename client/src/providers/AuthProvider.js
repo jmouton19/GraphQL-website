@@ -40,26 +40,35 @@ export function useLogOut() {
   return useContext(LogOutContext);
 }
 
-const localStorageItemName = 'kasie-auth-user';
+const AuthUserStorageItemName = 'kasie-auth-user';
 
 function AuthProvider({ children }) {
   // state
   const [client, setClient] = useState(initialClient);
   const [authUser, setAuthUser] = useState(
-    JSON.parse(window.localStorage.getItem(localStorageItemName))
+    JSON.parse(window.localStorage.getItem(AuthUserStorageItemName))
+      ? JSON.parse(window.localStorage.getItem(AuthUserStorageItemName))
+      : JSON.parse(window.sessionStorage.getItem(AuthUserStorageItemName))
   );
 
   // hooks:
   const notify = useNotify();
 
-  // load authUser from local storage (initially)
+  // save authUser to local storage [remember me] or session storage (on authUser change)
   useEffect(() => {
-    setAuthUser(JSON.parse(window.localStorage.getItem(localStorageItemName)));
-  }, []);
-
-  // save authUser to local storage (on authUser change)
-  useEffect(() => {
-    window.localStorage.setItem(localStorageItemName, JSON.stringify(authUser));
+    if (authUser) {
+      if (authUser.rememberMe) {
+        window.localStorage.setItem(
+          AuthUserStorageItemName,
+          JSON.stringify(authUser)
+        );
+      } else {
+        window.sessionStorage.setItem(
+          AuthUserStorageItemName,
+          JSON.stringify(authUser)
+        );
+      }
+    }
   }, [authUser]);
 
   // change client to authorised client (on authUser change)
@@ -87,6 +96,7 @@ function AuthProvider({ children }) {
     lastName,
     password,
     username,
+    rembemberMe,
   }) => {
     return new Promise((resolve, reject) => {
       client
@@ -124,6 +134,7 @@ function AuthProvider({ children }) {
             setAuthUser({
               ...user,
               jwt,
+              rembemberMe: rembemberMe ? true : false,
             });
             notify('success', message);
             resolve();
@@ -135,7 +146,7 @@ function AuthProvider({ children }) {
     });
   };
 
-  function logIn(email, password) {
+  function logIn(email, password, rememberMe) {
     return new Promise((resolve, reject) => {
       client
         .mutate({
@@ -165,6 +176,7 @@ function AuthProvider({ children }) {
             setAuthUser({
               ...user,
               jwt,
+              rememberMe: rememberMe ? true : false,
             });
             notify('success', message);
             resolve();
@@ -181,6 +193,8 @@ function AuthProvider({ children }) {
   const logOut = () => {
     return new Promise((resolve) => {
       setAuthUser(null);
+      window.localStorage.clear();
+      window.sessionStorage.clear();
       resolve(true);
     });
   };

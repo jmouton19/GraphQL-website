@@ -43,7 +43,7 @@ function SignUp() {
 
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
-  const [rememberMe, setRememberMe] = useState(true);
+  const [rememberMe, setRememberMe] = useState(false);
 
   const signUp = useSignUp();
 
@@ -315,7 +315,7 @@ function SignUp() {
               <Grid item xs={12}>
                 <FormControl fullWidth>
                   <FormControlLabel
-                    control={<Checkbox defaultChecked />}
+                    control={<Checkbox />}
                     label="Remember Me"
                     value={rememberMe}
                     onChange={(event) => {

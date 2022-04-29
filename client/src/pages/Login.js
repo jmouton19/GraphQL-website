@@ -25,7 +25,7 @@ function Login() {
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
 
-  const [rememberMe, setRememberMe] = useState(true);
+  const [rememberMe, setRememberMe] = useState(false);
 
   const authUser = useAuthUser();
   const login = useLogIn();
@@ -35,7 +35,7 @@ function Login() {
   }
 
   function handleLogIn() {
-    login(email, password);
+    login(email, password, rememberMe);
   }
 
   if (authUser) {
@@ -93,7 +93,7 @@ function Login() {
             <Grid item xs={12}>
               <FormControl fullWidth>
                 <FormControlLabel
-                  control={<Checkbox defaultChecked />}
+                  control={<Checkbox />}
                   label="Remember Me"
                   value={rememberMe}
                   onChange={(event) => {
