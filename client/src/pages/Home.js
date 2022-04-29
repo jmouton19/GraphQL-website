@@ -1,3 +1,4 @@
+import { gql, useApolloClient } from '@apollo/client';
 import { Stack } from '@mui/material';
 import { Box } from '@mui/material';
 import { Container } from '@mui/material';
@@ -9,18 +10,34 @@ import PostProvider from '../providers/PostProvider';
 
 function Feed() {
   const authUser = useAuthUser();
+  const client = useApolloClient();
 
-  // find correct membership id to make individual posts
-  const [creatorId, setCreatorId] = useState(null);
+  // fetch correct membership id to make individual posts
+  const [creatorId, setCreatorId] = useState(1);
   useEffect(() => {
     if (authUser) {
-      authUser.memberships.forEach((membership) => {
-        if (membership.groupId === null) {
-          setCreatorId(membership.id);
-        }
-      });
+      client
+        .query({
+          query: gql`
+            query {
+              users(where: { email: { eq: "${authUser.email}" } }) {
+                memberships {
+                  id
+                  groupId
+                }
+              }
+            }
+          `,
+        })
+        .then((result) => {
+          result.data.users[0].memberships.forEach((membership) => {
+            if (membership.groupId === null) {
+              setCreatorId(membership.id)
+            }
+          });
+        });
     }
-  }, [authUser]);
+  }, [authUser, client]);
 
   return (
     <React.Fragment>
