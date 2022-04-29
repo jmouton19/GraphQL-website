@@ -1,5 +1,6 @@
 using webAPI.data;
 using webAPI.graphQL.inputs;
+using webAPI.graphQL.outputs;
 using webAPI.Models;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
@@ -14,8 +15,12 @@ namespace webAPI.graphQL
     public class Mutation
     {
         [UseDbContext(typeof(AppDbContext))]
-        public async Task<string> AddUserAsync(AddUserInput input, [ScopedService] AppDbContext context)
+        public async Task<AuthOutput> AddUserAsync(AddUserInput input, [Service] IConfiguration config, [ScopedService] AppDbContext context)
         {
+            var authOutput = new AuthOutput();
+            authOutput.success = false;
+            authOutput.message = "Sign up failed.";
+
             var user = new User
             {
                 email = input.email,
@@ -43,13 +48,17 @@ namespace webAPI.graphQL
                     };
                     context.Memberships.Add(member);
                     await context.SaveChangesAsync();
-                    return "true";
+                    authOutput.user = addedUser;
+                    authOutput.success = true;
+                    authOutput.message = "Signed up sucessfully.";
+                    authOutput.jwt = getJWT(input.email, input.password, config, context);
+                    return authOutput;
                 }
-                return "false";
+                return authOutput;
 
             }
             else
-                return "false";
+                return authOutput;
         }
 
         [UseDbContext(typeof(AppDbContext))]
@@ -242,15 +251,14 @@ namespace webAPI.graphQL
                 return "false";
         }
 
-
         [UseDbContext(typeof(AppDbContext))]
-        public string UserLogin(LoginInput input, [Service] IConfiguration config, [ScopedService] AppDbContext context)
+        private string getJWT(string inputEmail, string inputPassword, [Service] IConfiguration config, [ScopedService] AppDbContext context)
         {
-            var currentUser = context.Users.Where(u => u.email == input.email).FirstOrDefault();
+            var currentUser = context.Users.Where(u => u.email == inputEmail).FirstOrDefault();
 
             if (currentUser != null)
             {
-                bool verified = BCrypt.Net.BCrypt.Verify(input.password, currentUser.password);
+                bool verified = BCrypt.Net.BCrypt.Verify(inputPassword, currentUser.password);
                 if (verified)
                 {
                     var symmetricSecurityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["tokenSettings:Key"]));
@@ -273,6 +281,31 @@ namespace webAPI.graphQL
             }
 
             return "false";
+        }
+
+
+        [UseDbContext(typeof(AppDbContext))]
+        public AuthOutput UserLogin(LoginInput input, [Service] IConfiguration config, [ScopedService] AppDbContext context)
+        {
+            var authOutput = new AuthOutput();
+            try
+            {
+              authOutput.user = context.Users.Where(u => u.email == input.email).FirstOrDefault();
+              authOutput.jwt = getJWT(input.email, input.password, config, context);
+              if (authOutput.user.Equals(null) || authOutput.jwt == "false")
+              {
+                throw new System.Exception();
+              }
+              authOutput.success = true;
+              authOutput.message = "Logged in successfully.";
+            }
+            catch (System.Exception)
+            {
+              authOutput.user = null;
+              authOutput.success = false;
+              authOutput.message = "Log in failed.";
+            }
+            return authOutput;
         }
 
         [UseDbContext(typeof(AppDbContext))]
