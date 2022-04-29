@@ -13,12 +13,17 @@ import {
 } from '../../providers/CommentProvider';
 import SendIcon from '@mui/icons-material/Send';
 import ClearIcon from '@mui/icons-material/Clear';
+import LoadingPage from '../../pages/LoadingPage';
 
 function CommentViewer() {
   const [newCommentBody, setNewCommentBody] = useState('');
   const commentsData = useComments();
   const removeComment = useCommentRemove();
   const addComment = useCommentAdd();
+
+  if (commentsData === null) {
+    return <LoadingPage minHeight={5} />;
+  }
 
   return (
     <Stack spacing={2}>

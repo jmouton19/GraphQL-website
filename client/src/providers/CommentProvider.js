@@ -1,4 +1,4 @@
-import { gql, useApolloClient } from '@apollo/client';
+import { gql, useApolloClient, useQuery } from '@apollo/client';
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { useAuthUser } from './AuthProvider';
 
@@ -21,7 +21,7 @@ export function useCommentRemove() {
 }
 
 function CommentProvider({ children, postId }) {
-  const [comments, setComments] = useState([]);
+  const [comments, setComments] = useState(null);
   const [needsRefresh, setNeedsRefresh] = useState(false);
 
   const client = useApolloClient();
