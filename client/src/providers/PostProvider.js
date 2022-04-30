@@ -5,6 +5,7 @@ import { stringToObject } from '../utils/utils';
 const PostsContext = createContext();
 const AddPostContext = createContext();
 const RefreshPostsContext = createContext();
+const FilterPostsContext = createContext();
 
 export function usePosts() {
   return useContext(PostsContext);
@@ -16,6 +17,10 @@ export function useAddPost() {
 
 export function useRefreshPosts() {
   return useContext(RefreshPostsContext);
+}
+
+export function useFilterPosts() {
+  return useContext(FilterPostsContext);
 }
 
 async function loadGroupPosts(client, groupId, order) {
@@ -138,6 +143,7 @@ function PostProvider(props) {
   // state:
   const [postData, setPostData] = useState([]);
   const [needsRefresh, setNeedsRefresh] = useState(false);
+  const [filterBy, setFilterBy] = useState('all');
 
   // hooks:
   const client = useApolloClient();
@@ -207,15 +213,28 @@ function PostProvider(props) {
     });
   }
 
+  function setFilterMethod(method) {
+    setFilterBy(method);
+  }
+
   function refreshPosts() {
     setNeedsRefresh(true);
   }
 
   return (
-    <PostsContext.Provider value={postData}>
+    <PostsContext.Provider
+      value={postData.filter((item) => {
+        if (filterBy === 'all') return true;
+        if (filterBy === 'video') return item.video;
+        if (filterBy === 'text') return !item.video;
+        return false;
+      })}
+    >
       <AddPostContext.Provider value={addPost}>
         <RefreshPostsContext.Provider value={refreshPosts}>
-          {children}
+          <FilterPostsContext.Provider value={setFilterMethod}>
+            {children}
+          </FilterPostsContext.Provider>
         </RefreshPostsContext.Provider>
       </AddPostContext.Provider>
     </PostsContext.Provider>

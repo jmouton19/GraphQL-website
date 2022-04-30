@@ -4,13 +4,16 @@ import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
 import StraightenIcon from '@mui/icons-material/Straighten';
 import VideoFileIcon from '@mui/icons-material/VideoFile';
 import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Tooltip from '@mui/material/Tooltip';
 import { Stack } from '@mui/material';
+import { useFilterPosts } from '../../providers/PostProvider';
 
 function PostSorter() {
   const [sortBy, setSortBy] = useState('newest');
   const [filterType, setFilterType] = useState('all');
+
+  const filterPostsBy = useFilterPosts();
 
   const handleSortByChange = (event, newSortMethod) => {
     if (newSortMethod) {
@@ -19,10 +22,15 @@ function PostSorter() {
   };
 
   const handleFilterTypeChange = (event) => {
-    if (filterType === "all") setFilterType("video")
-    if (filterType === "video") setFilterType("text")
-    if (filterType === "text") setFilterType("all")
+    if (filterType === 'all') setFilterType('video');
+    if (filterType === 'video') setFilterType('text');
+    if (filterType === 'text') setFilterType('all');
   };
+
+  useEffect(() => {
+    filterPostsBy(filterType);
+  }, [filterType, filterPostsBy])
+  
 
   return (
     <Stack direction="row" spacing={2}>
@@ -41,8 +49,8 @@ function PostSorter() {
       <ToggleButtonGroup exclusive onChange={handleFilterTypeChange}>
         <Tooltip title={`Show ${filterType} posts`}>
           <ToggleButton>
-            {filterType !== "text" && <VideoFileIcon />}
-            {filterType !== "video" && <InsertDriveFileIcon />}
+            {filterType !== 'text' && <VideoFileIcon />}
+            {filterType !== 'video' && <InsertDriveFileIcon />}
           </ToggleButton>
         </Tooltip>
       </ToggleButtonGroup>
