@@ -20,6 +20,7 @@ import GroupDetails from '../components/GroupDetails';
 import PostList from '../components/PostComponents/PostList';
 import AddPostCard from '../components/PostComponents/AddPostCard';
 import { useNotify } from '../providers/NotificationProvider';
+import PostSorter from '../components/PostComponents/PostSorter';
 
 function Group() {
   const [activeTabNumber, setActiveTabNumber] = useState('1');
@@ -177,6 +178,7 @@ function Group() {
               }}
             >
               <Stack spacing={2}>
+                <PostSorter/>
                 {authUserIsMember && (
                   <AddPostCard creatorId={authUserMembershipId} />
                 )}

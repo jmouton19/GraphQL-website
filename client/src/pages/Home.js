@@ -5,6 +5,7 @@ import { Container } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import AddPostCard from '../components/PostComponents/AddPostCard';
 import PostList from '../components/PostComponents/PostList';
+import PostSorter from '../components/PostComponents/PostSorter';
 import { useAuthUser } from '../providers/AuthProvider';
 import PostProvider from '../providers/PostProvider';
 
@@ -49,6 +50,7 @@ function Feed() {
         >
           <PostProvider>
             <Stack spacing={2}>
+              <PostSorter/>
               {creatorId && <AddPostCard creatorId={creatorId} />}
               <PostList />
             </Stack>

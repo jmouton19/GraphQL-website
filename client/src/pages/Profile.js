@@ -31,6 +31,7 @@ import { useNavigate } from 'react-router-dom';
 import EditProfile from './EditProfile';
 import PostProvider from '../providers/PostProvider';
 import PostList from '../components/PostComponents/PostList';
+import PostSorter from '../components/PostComponents/PostSorter';
 
 function Profile() {
   const authUser = useAuthUser();
@@ -80,7 +81,7 @@ function Profile() {
         if (retrievedProfile) {
           setViewUser(retrievedProfile);
         } else {
-          notify('error','Could not load user profile from server.');
+          notify('error', 'Could not load user profile from server.');
         }
       });
   };
@@ -266,6 +267,7 @@ function Profile() {
               }}
             >
               <Stack spacing={2}>
+                <PostSorter />
                 <PostList />
               </Stack>
             </PostProvider>
