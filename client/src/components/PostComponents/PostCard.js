@@ -15,6 +15,8 @@ import ThumbUpIcon from '@mui/icons-material/ThumbUp';
 import VideoPlayer from '../cloudindary/VideoPlayer';
 import CommentProvider from '../../providers/CommentProvider';
 import CommentViewer from './CommentViewer';
+import { Stack } from '@mui/material';
+import StyledLink from '../StyledLink'
 
 const ExpandMore = styled((props) => {
   const { expand, ...other } = props;
@@ -45,25 +47,38 @@ function PostCard({ postData }) {
         }
         title={`${postData.creator.user.firstName} ${postData.creator.user.lastName}`}
         subheader={
-          postData.creator.group
-            ? `Posted in ${postData.creator.group.name}`
-            : undefined
+          <Typography variant="caption" color="gray">
+            {new Date(postData.dateCreated).toLocaleString()}
+          </Typography>
         }
       />
-      <CardContent>
-        <Typography variant="caption" color="text.secondary">
-          {`Posted on: ${postData.dateCreated}`}
-        </Typography>
-      </CardContent>
       {postData.video ? (
         <CardMedia>
           <VideoPlayer cloudName="de7amnbmo" publicId={postData.body} />
         </CardMedia>
       ) : (
         <CardContent>
-          <Typography variant="body2" color="text.secondary">
+          <Typography variant="body" color="primary">
             {postData.body}
           </Typography>
+        </CardContent>
+      )}
+      {postData.creator.group && (
+        <CardContent sx={{ backgroundColor: '#282828' }}>
+          <StyledLink to={`/group/${postData.creator.group.id}`}>
+            <Stack direction="row" spacing={1}>
+              <Typography variant="caption" color="text.secondary">
+                Posted in
+              </Typography>
+              <Avatar
+                sx={{ width: 20, height: 20 }}
+                src={postData.creator.group.avatar}
+              />
+              <Typography variant="caption" color="text.secondary">
+                {postData.creator.group.name}
+              </Typography>
+            </Stack>
+          </StyledLink>
         </CardContent>
       )}
       <CardActions disableSpacing>

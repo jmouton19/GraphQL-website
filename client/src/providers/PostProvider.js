@@ -109,6 +109,8 @@ async function loadAllPosts(client, order) {
                 }
                 group {
                   name
+                  avatar
+                  id
                 }
               }
               dateCreated
