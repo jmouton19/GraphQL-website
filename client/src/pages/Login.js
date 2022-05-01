@@ -96,7 +96,7 @@ function Login() {
               <FormControl fullWidth>
                 <FormControlLabel
                   control={<Checkbox />}
-                  label="Remember Me"
+                  label={t("rememberMe.label")}
                   value={rememberMe}
                   onChange={(event) => {
                     setRememberMe(event.target.value);

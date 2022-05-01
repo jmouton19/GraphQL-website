@@ -1,4 +1,6 @@
 {
+	"profile.label": "Profil",
+
 	"saySomething.label": "Sag etwas...",
 
 	"postedIn.label": "Pfostiert in",
@@ -60,6 +62,8 @@
 	"signUp.label": "Anmelden",
 
 	"login.label": "Einloggen",
+
+	"logout.label": "Ausloggen",
 
 	"sortNewest.label": "Nach neuestem sortieren",
 

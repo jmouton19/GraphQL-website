@@ -1,4 +1,6 @@
 {
+	"profile.label": "Profile",
+
 	"saySomething.label": "Say Something...",
 
 	"postedIn.label": "Posted in",
@@ -61,6 +63,8 @@
 
 	"login.label": "Login",
 
+	"logout.label": "Log Out",
+
 	"sortNewest.label": "Sort newest first",
 
 	"sortNearest.label": "Sort nearest first",
@@ -92,5 +96,5 @@
 	"editGroup.label": "Edit Group Details",
 
 	"saveDetails.label": "Save Details"
-	
+
 }
