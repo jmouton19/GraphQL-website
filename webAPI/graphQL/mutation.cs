@@ -268,6 +268,8 @@ namespace webAPI.graphQL
 
                 var memberInput = new AddMemberInput(group.Id);
                 await AddMemberAsync(memberInput, context, contextAccessor);
+                var updatePrivs = new EditAdminInput(group.Id, group.ownerId, true);
+                await EditAdminAsync(updatePrivs, context, contextAccessor);
                 return "true";
             }
             else
@@ -329,6 +331,59 @@ namespace webAPI.graphQL
                             await context.SaveChangesAsync();
                             response.success = true;
                             response.message = "Member updated.";
+                        }
+                        else
+                        {
+                            response.success = false;
+                            response.message = "Member does not exist.";
+                        }
+
+                    }
+                    else
+                    {
+                        response.success = false;
+                        response.message = "You must construct additional pylons!";
+                    }
+                }
+                else
+                {
+                    response.success = false;
+                    response.message = "Null Identity";
+                }
+            }
+            else
+            {
+                response.success = false;
+                response.message = "Group does not exist";
+            }
+            return response;
+        }
+
+        [UseDbContext(typeof(AppDbContext))]
+        [Authorize]
+        public async Task<Response> KickMemberAsync(EditAdminInput input, [ScopedService] AppDbContext context, [Service] IHttpContextAccessor contextAccessor)
+        {
+            var response = new Response();
+            response.success = false;
+            response.message = string.Empty;
+
+            var currentGroup = context.Groups.Where(u => u.Id == input.groupId).FirstOrDefault();
+            if (currentGroup != null)
+            {
+                var identity = contextAccessor.HttpContext.User.Identity as ClaimsIdentity;
+                if (identity != null)
+                {
+                    string idendityId = identity.Claims.FirstOrDefault(u => u.Type == ClaimTypes.Sid).Value;
+                    var adminMember = context.Memberships.Where(u => u.userId == Int32.Parse(idendityId) && u.groupId == currentGroup.Id).FirstOrDefault();
+                    if (idendityId != null && (currentGroup.ownerId.ToString() == idendityId || adminMember?.admin == true))
+                    {
+                        var currentMember = context.Memberships.Where(u => u.userId == input.userId && u.groupId == input.groupId).FirstOrDefault();
+                        if (currentMember != null)
+                        {
+                            context.Memberships.Remove(currentMember);
+                            await context.SaveChangesAsync();
+                            response.success = true;
+                            response.message = "Member has been kicked.";
                         }
                         else
                         {
