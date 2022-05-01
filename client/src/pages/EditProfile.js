@@ -21,12 +21,14 @@ import SaveIcon from '@mui/icons-material/Save';
 import Typography from '@mui/material/Typography';
 import React, { useEffect, useState } from 'react';
 import { gql, useApolloClient } from '@apollo/client';
-import { useAuthUser, useLogOut } from '../providers/AuthProvider';
+import { useAuthUser, useLogOut, useLogIn } from '../providers/AuthProvider';
 import { useNotify } from '../providers/NotificationProvider';
 import { stringToObject } from '../utils/utils';
 import validator from 'validator';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
+import DeleteIcon from "@mui/icons-material/Delete";
+import { useNavigate } from "react-router-dom";
 
 const fabStyle = {
   margin: 0,
@@ -40,6 +42,7 @@ const fabStyle = {
 function EditProfile() {
   const authUser = useAuthUser();
   const logOut = useLogOut();
+  const login = useLogIn();
   const [edit, setEdit] = useState(false);
   const client = useApolloClient();
   const notify = useNotify();
@@ -51,13 +54,17 @@ function EditProfile() {
   const [avatarUrl, setAvatarUrl] = useState(null);
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
-  const [ , setEmail] = useState('');
+  const [rememberMe, setRememberMe] = useState(false);
+
   const [changePassword, setChangePassword] = useState(false);
+  const [confirmDelete, setConfirmDelete] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [newPassword, setNewPassword] = useState('');
   const [password, setPassword] = useState('');
   const [passwordRepeated, setPasswordRepeated] = useState('');
   const [oldPassword, setOldPassword] = useState('');
+  const [email, setEmail] = useState("");
+  const navigate = useNavigate();
 
   useEffect(() => {
     setFirstName(authUser.firstName);
@@ -152,6 +159,9 @@ function EditProfile() {
       });
   };
 
+  const deleteUser = () => {
+  };
+
   return (
     <>
       <Fab
@@ -238,7 +248,7 @@ function EditProfile() {
                         Change password
                       </Button>
                       <Button
-                        //onClick={() => setConfirmDelete(true)}
+                        onClick={() => setConfirmDelete(true)}
                         variant="text"
                         size="small"
                         color="error"
@@ -355,6 +365,86 @@ function EditProfile() {
           </FormControl>
         </DialogActions>
       </Dialog>
+      <Dialog
+				open={confirmDelete}
+				onClose={() => setConfirmDelete(false)}
+				fullWidth
+			>
+				<DialogTitle>
+					Enter your email and password to confirm deletion
+				</DialogTitle>
+				<Stack padding={1} spacing={1}>
+					<FormControl fullWidth>
+						<InputLabel htmlFor="email-input">Email</InputLabel>
+						<OutlinedInput
+							id="email-input"
+							name="email"
+							onChange={(event) => {
+								setEmail(event.target.value);
+							}}
+							label="Email"
+						/>
+					</FormControl>
+					<FormControl fullWidth>
+						<InputLabel htmlFor="password-input">Password</InputLabel>
+						<OutlinedInput
+							id="password-input"
+							type={showPassword ? "text" : "password"}
+							name="password"
+							autoComplete="new-password"
+							onChange={(event) => {
+								setPassword(event.target.value);
+							}}
+							label="Password"
+							endAdornment={
+								<InputAdornment position="end">
+									<IconButton
+										onClick={() => setShowPassword(!showPassword)}
+										onMouseDown={() => setShowPassword(!showPassword)}
+									>
+										{showPassword ? <VisibilityOff /> : <Visibility />}
+									</IconButton>
+								</InputAdornment>
+							}
+						/>
+					</FormControl>
+				</Stack>
+				<DialogActions>
+					<FormControl fullWidth>
+						<Stack direction="row" justifyContent="space-between">
+							<Button
+								variant="text"
+								onClick={() => setConfirmDelete(false)}
+								color="primary"
+							>
+								Cancel
+							</Button>
+							<Button
+								onClick={() => {
+                  setRememberMe(false);
+									login(email, password, rememberMe)
+										.then(() => {
+											deleteUser()
+												.then(() => {
+													notify('success',"Account successfully deleted.");
+													logOut();
+													setTimeout(() => navigate("/"), 200);
+												})
+												.catch((err) => notify('error', ""));
+										})
+										.catch((err) => notify('error', ""));
+								}}
+								variant="contained"
+								//disabled={saveDeleteDisableChecks()}
+								sx={{ borderRadius: "50%", height: 60, width: 60 }}
+								color="error"
+							>
+								<DeleteIcon />
+							</Button>
+						</Stack>
+					</FormControl>
+				</DialogActions>
+			</Dialog>
     </>
   );
 }
