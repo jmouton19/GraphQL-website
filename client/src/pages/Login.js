@@ -19,7 +19,7 @@ import { useAuthUser, useLogIn } from '../providers/AuthProvider';
 import { Navigate } from 'react-router-dom';
 import { FormControlLabel } from '@mui/material';
 import { Checkbox } from '@mui/material';
-import { useTranslation } from "react-i18next";
+import { useTranslation } from 'react-i18next';
 
 function Login() {
   const { t } = useTranslation();
@@ -51,12 +51,14 @@ function Login() {
           <Grid container direction="column" spacing={2} alignItems="stretch">
             <Grid item xs={12}>
               <Typography variant="h3" color="primary" align="center">
-                {t("login.label")}
+                {t('login.label')}
               </Typography>
             </Grid>
             <Grid item xs={12}>
               <FormControl fullWidth>
-                <InputLabel htmlFor="email-input">{t("emailAddress.label")}</InputLabel>
+                <InputLabel htmlFor="email-input">
+                  {t('emailAddress.label')}
+                </InputLabel>
                 <OutlinedInput
                   id="email-input"
                   value={email}
@@ -64,13 +66,15 @@ function Login() {
                   onChange={(event) => {
                     setEmail(event.target.value);
                   }}
-                  label={t("emailAddress.label")}
+                  label={t('emailAddress.label')}
                 />
               </FormControl>
             </Grid>
             <Grid item xs={12}>
               <FormControl fullWidth>
-                <InputLabel htmlFor="password-input">{t("password.label")}</InputLabel>
+                <InputLabel htmlFor="password-input">
+                  {t('password.label')}
+                </InputLabel>
                 <OutlinedInput
                   id="password-input"
                   value={password}
@@ -78,7 +82,7 @@ function Login() {
                   onChange={(event) => {
                     setPassword(event.target.value);
                   }}
-                  label={t("password.label")}
+                  label={t('password.label')}
                   endAdornment={
                     <InputAdornment position="end">
                       <IconButton
@@ -96,7 +100,7 @@ function Login() {
               <FormControl fullWidth>
                 <FormControlLabel
                   control={<Checkbox />}
-                  label={t("rememberMe.label")}
+                  label={t('rememberMe.label')}
                   value={rememberMe}
                   onChange={(event) => {
                     setRememberMe(event.target.value);
@@ -107,14 +111,14 @@ function Login() {
             <Grid item xs={12}>
               <FormControl fullWidth>
                 <Button variant="contained" onClick={handleLogIn}>
-                  {t("login.label")}
+                  {t('login.label')}
                 </Button>
               </FormControl>
             </Grid>
             <Grid item xs={12}>
               <Typography variant="caption" color="primary">
                 <StyledLink to="/signup">
-                  {t("dontHaveAccount.label")}
+                  {t('dontHaveAccount.label')}
                 </StyledLink>
               </Typography>
             </Grid>

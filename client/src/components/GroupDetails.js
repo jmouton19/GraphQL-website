@@ -20,8 +20,10 @@ import SettingsIcon from '@mui/icons-material/Settings';
 import { useNotify } from '../providers/NotificationProvider';
 import { gql, useApolloClient } from '@apollo/client';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 function GroupDetails({ details }) {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [openDialog, setOpenDialog] = useState(false);
   const [name, setName] = useState('');
@@ -86,20 +88,20 @@ function GroupDetails({ details }) {
 
       <Dialog onClose={() => setOpenDialog(false)} open={openDialog}>
         <DialogTitle color="primary">
-          {details ? 'Edit Group Details' : 'Create Group'}
+          {details ? t('editGroup.label') : t('createGroup.label')}
         </DialogTitle>
         <DialogContent>
           <Stack spacing={1}>
             <DialogContentText>
               {details
-                ? 'Please edit your group details.'
-                : 'Please enter your group details here.'}
+                ? t('editGroupDetails.label')
+                : t('enterGroupDetails.label')}
             </DialogContentText>
 
             <FormControl fullWidth>
-              <InputLabel>Group Name</InputLabel>
+              <InputLabel>{t('groupName.label')}</InputLabel>
               <OutlinedInput
-                label="Group Name"
+                label={t('groupName.label')}
                 onChange={(event) => {
                   setName(event.target.value);
                 }}
@@ -107,16 +109,16 @@ function GroupDetails({ details }) {
               />
             </FormControl>
             <FormControl fullWidth>
-              <InputLabel>Group Description</InputLabel>
+              <InputLabel>{t('groupDescription.label')}</InputLabel>
               <OutlinedInput
-                label="Group Description"
+                label={t('groupDescription.label')}
                 onChange={(event) => {
                   setDescription(event.target.value);
                 }}
                 value={description}
               />
             </FormControl>
-            <DialogContentText>Pick your group avatar.</DialogContentText>
+            <DialogContentText>{t('pickAvatar.label')}</DialogContentText>
             <AvatarPicker setAvatarUrl={(imageUrl) => setAvatarUrl(imageUrl)} />
           </Stack>
         </DialogContent>
@@ -127,9 +129,13 @@ function GroupDetails({ details }) {
                 <DeleteIcon />
               </IconButton>
             )}
-            <Button variant="outlined" onClick={createGroup}>
-              {details ? 'Save Details' : 'Create Group'}
-            </Button>
+            {details ? (
+              <Button variant="outlined">{t('saveDetails.label')}</Button>
+            ) : (
+              <Button variant="outlined" onClick={createGroup}>
+                {t('createGroup.label')}
+              </Button>
+            )}
           </Stack>
         </DialogActions>
       </Dialog>

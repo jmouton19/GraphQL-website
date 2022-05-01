@@ -16,8 +16,10 @@ import { gql, useApolloClient } from '@apollo/client';
 import { useNotify } from '../providers/NotificationProvider';
 import { Link } from 'react-router-dom';
 import { Tooltip } from '@mui/material';
+import { useTranslation } from 'react-i18next';
 
 export default function SearchMenu() {
+  const { t } = useTranslation();
   const client = useApolloClient();
   const notify = useNotify();
   const [groups, setGroups] = useState([]);
@@ -102,7 +104,7 @@ export default function SearchMenu() {
 
   return (
     <>
-      <Tooltip title="Search">
+      <Tooltip title={t('search.label')}>
         <IconButton size="large" color="primary" onClick={handleSearchMenu}>
           <SearchIcon />
         </IconButton>

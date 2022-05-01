@@ -32,8 +32,10 @@ import EditProfile from './EditProfile';
 import PostProvider from '../providers/PostProvider';
 import PostList from '../components/PostComponents/PostList';
 import PostSorter from '../components/PostComponents/PostSorter';
+import { useTranslation } from 'react-i18next';
 
 function Profile() {
+  const { t } = useTranslation();
   const authUser = useAuthUser();
   const [viewUser, setViewUser] = useState(null);
   const [acceptedFriends, setAcceptedFriends] = useState([]);
@@ -240,7 +242,7 @@ function Profile() {
             </IconButton>
           )}
         </Stack>
-        <Typography>  </Typography> 
+        <Typography> </Typography>
       </Stack>
       {authUser === viewUser && (
         <TabContext value={activeTabNumber}>
@@ -252,9 +254,9 @@ function Profile() {
                 indicatorColor="primary"
                 aria-label="secondary tabs example"
               >
-                <Tab label="Posts" value="1" />
-                <Tab label="Groups" value="2" />
-                <Tab label="Friends" value="3" />
+                <Tab label={t("posts.label")} value="1" />
+                <Tab label={t("groups.label")} value="2" />
+                <Tab label={t("friends.label")} value="3" />
               </TabList>
               <EditProfile />
             </Stack>

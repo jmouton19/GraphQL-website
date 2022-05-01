@@ -31,6 +31,8 @@
 
 	"repeatNewPassword.label": "Repeat New Password",
 
+	"repeatPassword.label": "Repeat Password",
+
 	"oldPassword.label": "Old Password",
 
 	"cancel.label": "Cancel",
@@ -87,6 +89,8 @@
 
 	"enterGroupDetails.label": "Please enter your group details here.",
 
+	"editGroupDetails.label": "Please edit your group details.",
+
 	"pickAvatar.label": "Pick your group avatar.",
 
 	"groupName.label": "Group Name",
@@ -95,6 +99,10 @@
 
 	"editGroup.label": "Edit Group Details",
 
-	"saveDetails.label": "Save Details"
+	"saveDetails.label": "Save Details",
+
+	"passwordMismatch.label": "Passwords do not match",
+
+	"addVideo.label": "Add Video Instead"
 
 }

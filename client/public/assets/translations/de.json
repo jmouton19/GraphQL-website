@@ -31,11 +31,13 @@
 
 	"repeatNewPassword.label": "Neues Passwort wiederholen",
 
+	"repeatPassword.label": "Passwort wiederholen",
+
 	"oldPassword.label": "Altes Passwort",
 
 	"cancel.label": "Abbrechen",
 
-	"confirmDelete.label": "Lese deine Email Addresse und dein Passwort rein um dein Profil zu löschen.",
+	"confirmDelete.label": "Lese deine Email Addresse und dein Passwort rein um deinen Profil zu löschen.",
 
 	"editProfile.label": "Profil bearbeiten",
 
@@ -87,6 +89,8 @@
 
 	"enterGroupDetails.label": "Gruppeneinzelheiten hier einlesen.",
 
+	"editGroupDetails.label": "Gruppeneinzelheiten hier verändern.",
+
 	"pickAvatar.label": "Wähle deinen Avatar.",
 
 	"groupName.label": "Gruppenname",
@@ -95,6 +99,10 @@
 
 	"editGroup.label": "Gruppeneinzelheiten bearbeiten",
 
-	"saveDetails.label": "Einzelheiten speichern"
+	"saveDetails.label": "Einzelheiten speichern",
+
+	"passwordMismatch.label": "Passwörter stimmen nicht überein",
+
+	"addVideo.label": "Video anstatt anheften"
 	
 }

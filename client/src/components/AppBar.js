@@ -139,7 +139,7 @@ function PrimaryAppBar() {
                 to={`/signup`}
                 onClick={handleUserMenuClose}
               >
-                {t("singIp.label")}
+                {t("signUp.label")}
               </MenuItem>
             )}
             {authUser && (

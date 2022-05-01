@@ -15,6 +15,7 @@ import { CardMedia } from '@mui/material';
 import VideoPlayer from '../cloudindary/VideoPlayer';
 import { useAddPost, useRefreshPosts } from '../../providers/PostProvider';
 import { useNotify } from '../../providers/NotificationProvider';
+import { useTranslation } from 'react-i18next';
 
 const emptyPostData = {
   description: '',
@@ -22,6 +23,7 @@ const emptyPostData = {
 };
 
 function AddPostCard({ creatorId }) {
+  const {t} = useTranslation();
   const [newPostData, setNewPostData] = useState(emptyPostData);
 
   const handleUploadSuccess = (publicID) => {
@@ -48,7 +50,7 @@ function AddPostCard({ creatorId }) {
             <TextField
               fullWidth
               id="outlined-basic"
-              label="Say Something..."
+              label={t("saySomething.label")}
               value={newPostData.description}
               variant="outlined"
               onChange={(event) => {
@@ -70,7 +72,7 @@ function AddPostCard({ creatorId }) {
         </CardMedia>
       )}
       <CardActions>
-        <Tooltip title="Add Video Instead">
+        <Tooltip title={t("addVideo.label")}>
           <IconButton
             color="primary"
             disabled={hasVideoData || hasTextData}
@@ -118,7 +120,7 @@ function AddPostCard({ creatorId }) {
               });
           }}
         >
-          Post
+          {t("post.label")}
         </Button>
       </CardActions>
     </Card>

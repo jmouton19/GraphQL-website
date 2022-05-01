@@ -9,8 +9,10 @@ import { Container } from '@mui/material';
 import { Box } from '@mui/system';
 import { Paper } from '@mui/material';
 import GroupDetails from '../components/GroupDetails';
+import { useTranslation } from 'react-i18next';
 
 function Groups() {
+  const { t } = useTranslation();
   const client = useApolloClient();
 
   const navigate = useNavigate();
@@ -19,7 +21,7 @@ function Groups() {
 
   client
     .query({
-      fetchPolicy:'no-cache',
+      fetchPolicy: 'no-cache',
       query: gql`
         query {
           groups {
@@ -42,7 +44,7 @@ function Groups() {
         }}
       >
         <Stack spacing={2}>
-          <GroupDetails/>
+          <GroupDetails />
           {groupList.map((group) => (
             <Paper sx={{ padding: 2 }}>
               <Stack
@@ -63,7 +65,7 @@ function Groups() {
                     navigate(`/group/${group.id}`);
                   }}
                 >
-                  Visit group
+                  {t("visitGroup.label")}
                 </Button>
               </Stack>
             </Paper>

@@ -1,28 +1,30 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { ToggleButton, ToggleButtonGroup, Tooltip } from '@mui/material';
 
 import { useTranslation } from 'react-i18next';
 
 const LanguageSelector = () => {
-  const { t, i18n } = useTranslation();
+  const { i18n } = useTranslation();
+  const [language, setLanguage] = useState('en');
 
-  const changeLanguage = (lng) => {
-    i18n.changeLanguage(lng);
+  useEffect(() => {
+    i18n.changeLanguage(language);
+  }, [language]);
+
+  const changeLanguage = (event, lng) => {
+    if (lng !== null) {
+      setLanguage(lng);
+    }
   };
 
   return (
-    <ToggleButtonGroup exclusive  color='primary'>
-      <Tooltip title="English">
-        <ToggleButton onClick={() => changeLanguage("en")}>
-          EN
-        </ToggleButton>
-      </Tooltip>
-
-      <Tooltip title="Deutsch">
-        <ToggleButton onClick={() => changeLanguage("de")}>
-          DE
-        </ToggleButton>
-      </Tooltip>
+    <ToggleButtonGroup
+      value={language}
+      exclusive
+      onChange={changeLanguage}
+    >
+      <ToggleButton value="en">EN</ToggleButton>
+      <ToggleButton value="de">DE</ToggleButton>
     </ToggleButtonGroup>
   );
 };
