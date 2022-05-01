@@ -286,6 +286,47 @@ namespace webAPI.graphQL
 
             return response;
         }
+        public async Task<Response> DeleteCommentAsync(int commentId, [ScopedService] AppDbContext context, [Service] IHttpContextAccessor contextAccessor)
+        {
+            var response = new Response();
+            response.success = false;
+            response.message = string.Empty;
+
+            var currentComment = context.Comments.Where(u => u.Id == commentId).FirstOrDefault();
+            if (currentComment != null)
+            {
+                var identity = contextAccessor.HttpContext.User.Identity as ClaimsIdentity;
+                if (identity != null)
+                {
+                    string idendityId = identity.Claims.FirstOrDefault(u => u.Type == ClaimTypes.Sid).Value;
+                    if (idendityId != null && idendityId == currentComment.creator?.userId.ToString())
+                    {
+                        context.Comments.Remove(currentComment);
+                        await context.SaveChangesAsync();
+                        response.success = true;
+                        response.message = "Comment deleted.";
+                    }
+                    else
+                    {
+                        response.success = false;
+                        response.message = "You have no power here!";
+                    }
+
+                }
+                else
+                {
+                    response.success = false;
+                    response.message = "Null identity.";
+                }
+            }
+            else
+            {
+                response.success = false;
+                response.message = "Comment does not exist.";
+            }
+
+            return response;
+        }
 
         [UseDbContext(typeof(AppDbContext))]
         [Authorize]
