@@ -245,6 +245,47 @@ namespace webAPI.graphQL
             else
                 return "success:false,message:This group does not exist.";
         }
+        public async Task<Response> DeletePostAsync(int postId, [ScopedService] AppDbContext context, [Service] IHttpContextAccessor contextAccessor)
+        {
+            var response = new Response();
+            response.success = false;
+            response.message = string.Empty;
+
+            var currentPost = context.Posts.Where(u => u.Id == postId).FirstOrDefault();
+            if (currentPost != null)
+            {
+                var identity = contextAccessor.HttpContext.User.Identity as ClaimsIdentity;
+                if (identity != null)
+                {
+                    string idendityId = identity.Claims.FirstOrDefault(u => u.Type == ClaimTypes.Sid).Value;
+                    if (idendityId != null && idendityId == currentPost.creator?.userId.ToString())
+                    {
+                        context.Posts.Remove(currentPost);
+                        await context.SaveChangesAsync();
+                        response.success = true;
+                        response.message = "Post deleted.";
+                    }
+                    else
+                    {
+                        response.success = false;
+                        response.message = "You have no power here!";
+                    }
+
+                }
+                else
+                {
+                    response.success = false;
+                    response.message = "Null identity.";
+                }
+            }
+            else
+            {
+                response.success = false;
+                response.message = "Post does not exist.";
+            }
+
+            return response;
+        }
 
         [UseDbContext(typeof(AppDbContext))]
         [Authorize]
