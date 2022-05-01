@@ -56,7 +56,7 @@ function Login() {
             </Grid>
             <Grid item xs={12}>
               <FormControl fullWidth>
-                <InputLabel htmlFor="email-input">Email Address</InputLabel>
+                <InputLabel htmlFor="email-input">{t("emailAddress.label")}</InputLabel>
                 <OutlinedInput
                   id="email-input"
                   value={email}
@@ -64,13 +64,13 @@ function Login() {
                   onChange={(event) => {
                     setEmail(event.target.value);
                   }}
-                  label="Email Address"
+                  label={t("emailAddress.label")}
                 />
               </FormControl>
             </Grid>
             <Grid item xs={12}>
               <FormControl fullWidth>
-                <InputLabel htmlFor="password-input">Password</InputLabel>
+                <InputLabel htmlFor="password-input">{t("password.label")}</InputLabel>
                 <OutlinedInput
                   id="password-input"
                   value={password}
@@ -78,7 +78,7 @@ function Login() {
                   onChange={(event) => {
                     setPassword(event.target.value);
                   }}
-                  label="Password"
+                  label={t("password.label")}
                   endAdornment={
                     <InputAdornment position="end">
                       <IconButton
@@ -107,14 +107,14 @@ function Login() {
             <Grid item xs={12}>
               <FormControl fullWidth>
                 <Button variant="contained" onClick={handleLogIn}>
-                  Login
+                  {t("login.label")}
                 </Button>
               </FormControl>
             </Grid>
             <Grid item xs={12}>
               <Typography variant="caption" color="primary">
                 <StyledLink to="/signup">
-                  {'Don`t have an account? Sign up instead.'}
+                  {t("dontHaveAccount.label")}
                 </StyledLink>
               </Typography>
             </Grid>

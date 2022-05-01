@@ -1,96 +1,96 @@
 {
-	"saySomething.label": "Say Something...",
+	"saySomething.label": "Sag etwas...",
 
-	"postedIn.label": "Posted in",
+	"postedIn.label": "Pfostiert in",
 
-	"post.label": "Post",
+	"post.label": "Pfosten",
 
-	"posts.label": "Posts",
+	"posts.label": "Pfosten",
 
-	"groups.label": "Groups",
+	"groups.label": "Gruppen",
 
-	"friends.label": "Friends",
+	"friends.label": "Freunde",
 
-	"username.label": "Username",
+	"username.label": "Nutzername",
 
-	"emailAddress.label": "Email Address",
+	"emailAddress.label": "Email Addresse",
 
-	"firstName.label": "First Name",
+	"firstName.label": "Vorname",
 
-	"lastName.label": "Last Name",
+	"lastName.label": "Nachname",
 
-	"password.label": "Password",
+	"password.label": "Passwort",
 
-	"changePassword.label": "Change Password",
+	"changePassword.label": "Passwort verändern",
 
-	"deleteAccount.label": "Delete Account",
+	"deleteAccount.label": "Profil löschen",
 
-	"newPassword.label": "New Password",
+	"newPassword.label": "Neues Passwort",
 
-	"repeatNewPassword.label": "Repeat New Password",
+	"repeatNewPassword.label": "Neues Passwort wiederholen",
 
-	"oldPassword.label": "Old Password",
+	"oldPassword.label": "Altes Passwort",
 
-	"cancel.label": "Cancel",
+	"cancel.label": "Abbrechen",
 
-	"confirmDelete.label": "Enter your email and password to confirm deletion.",
+	"confirmDelete.label": "Lese deine Email Addresse und dein Passwort rein um dein Profil zu löschen.",
 
-	"editProfile.label": "Edit Profile",
+	"editProfile.label": "Profil bearbeiten",
 
-	"findGroups.label": "Find Groups",
+	"findGroups.label": "Gruppen finden",
 
-	"visitGroup.label": "Visit Group",
+	"visitGroup.label": "Gruppe besuchen",
 
-	"members.label": "Members",
+	"members.label": "Mitglieder",
 
-	"joinGroup.label": "Join Group",
+	"joinGroup.label": "Gruppe beitreten",
 
-	"leaveGroup.label": "Leave Group",
+	"leaveGroup.label": "Gruppe verlassen",
 
-	"pendingFriends.label": "Pending Friends",
+	"pendingFriends.label": "Anstehende Freunde",
 
-	"provideLocationAccess.label": "Provide Location Access?",
+	"provideLocationAccess.label": "Standortzugriff bereitstellen?",
 
-	"alreadyHaveAccount.label": "Already have an account? Log in instead.",
+	"alreadyHaveAccount.label": "Schon einen Profil? Jetzt einloggen.",
 
-	"dontHaveAccount.label": "Don't have an account? Sing up instead.",
+	"dontHaveAccount.label": "Noch keinen Profil? Jetzt anmelden.",
 
-	"rememberMe.label": "Remember Me",
+	"rememberMe.label": "Erinnere mich",
 
-	"signUp.label": "Sign Up",
+	"signUp.label": "Anmelden",
 
 	"login.label": "Einloggen",
 
-	"sortNewest.label": "Sort newest first",
+	"sortNewest.label": "Nach neuestem sortieren",
 
-	"sortNearest.label": "Sort nearest first",
+	"sortNearest.label": "Nach nächstem sortieren",
 
-	"showAllPosts.label": "Show all posts",
+	"showAllPosts.label": "All Pfosten zeigen",
 
-	"search.label": "Search",
+	"search.label": "Suchen",
 
-	"directMessages.label": "Direct Messages",
+	"directMessages.label": "Direktnachrichten",
 
-	"notifications.label": "Notifications",
+	"notifications.label": "Benachrichtigungen",
 
-	"users.label": "Users",
+	"users.label": "Nutzer",
 
-	"mapView.label": "Map View",
+	"mapView.label": "Karten-Ansicht",
 
-	"feedView.label": "Feed View",
+	"feedView.label": "Feed-Ansicht",
 
-	"createGroup.label": "Create Group",
+	"createGroup.label": "Gruppe erstellen",
 
-	"enterGroupDetails.label": "Please enter your group details here.",
+	"enterGroupDetails.label": "Gruppeneinzelheiten hier einlesen.",
 
-	"pickAvatar.label": "Pick your group avatar.",
+	"pickAvatar.label": "Wähle deinen Avatar.",
 
-	"groupName.label": "Group Name",
+	"groupName.label": "Gruppenname",
 
-	"groupDescription.label": "Group Description",
+	"groupDescription.label": "Gruppenbeschreibung",
 
-	"editGroup.label": "Edit Group Details",
+	"editGroup.label": "Gruppeneinzelheiten bearbeiten",
 
-	"saveDetails.label": "Save Details"
+	"saveDetails.label": "Einzelheiten speichern"
 	
 }
