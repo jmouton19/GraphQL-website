@@ -2,10 +2,7 @@ using webAPI.data;
 using webAPI.graphQL.inputs;
 using webAPI.graphQL.outputs;
 using webAPI.Models;
-using Microsoft.IdentityModel.Tokens;
-using System.Text;
 using webAPI.Models.other;
-using System.IdentityModel.Tokens.Jwt;
 using HotChocolate.AspNetCore.Authorization;
 using System.Security.Claims;
 
@@ -260,7 +257,8 @@ namespace webAPI.graphQL
                 if (identity != null)
                 {
                     string idendityId = identity.Claims.FirstOrDefault(u => u.Type == ClaimTypes.Sid).Value;
-                    if (idendityId != null && idendityId == currentPost.creator?.userId.ToString())
+                    var currentMember = context.Memberships.Where(u => u.Id == currentPost.creatorId).FirstOrDefault();
+                    if (idendityId != null && idendityId == currentMember?.userId.ToString())
                     {
                         context.Posts.Remove(currentPost);
                         await context.SaveChangesAsync();
@@ -303,7 +301,8 @@ namespace webAPI.graphQL
                 if (identity != null)
                 {
                     string idendityId = identity.Claims.FirstOrDefault(u => u.Type == ClaimTypes.Sid).Value;
-                    if (idendityId != null && idendityId == currentComment.creator?.userId.ToString())
+                    var currentMember = context.Memberships.Where(u => u.Id == currentComment.creatorId).FirstOrDefault();
+                    if (idendityId != null && idendityId == currentMember?.userId.ToString())
                     {
                         context.Comments.Remove(currentComment);
                         await context.SaveChangesAsync();
@@ -342,17 +341,26 @@ namespace webAPI.graphQL
 
             var identity = contextAccessor.HttpContext.User.Identity as ClaimsIdentity;
             if (identity != null)
-            { //should have used list here
+            {
                 string idendityId = identity.Claims.FirstOrDefault(u => u.Type == ClaimTypes.Sid).Value;
-                var friendship = context.Friendships.Where(u => u.senderId == Int32.Parse(idendityId) && u.receiverId == friendId).FirstOrDefault();
-                if (friendship != null)
-                    context.Friendships.Remove(friendship);
-                friendship = context.Friendships.Where(u => u.senderId == friendId && u.receiverId == Int32.Parse(idendityId)).FirstOrDefault();
-                if (friendship != null)
-                    context.Friendships.Remove(friendship);
-                await context.SaveChangesAsync();
-                response.success = true;
-                response.message = "Friend deleted lmao.";
+                List<Friendship> friendships = context.Friendships.Where(u => u.accepted == true && ((u.senderId == Int32.Parse(idendityId) && u.receiverId == friendId) || (u.senderId == friendId && u.receiverId == Int32.Parse(idendityId)))).ToList();
+                if (friendships.Count != 0)
+                {
+                    foreach (Friendship friendship in friendships)
+                    {
+                        context.Friendships.Remove(friendship);
+                    }
+
+                    await context.SaveChangesAsync();
+                    response.success = true;
+                    response.message = "Friend deleted lmao.";
+                }
+                else
+                {
+                    response.success = false;
+                    response.message = "Not friends.";
+                }
+
             }
             else
             {
