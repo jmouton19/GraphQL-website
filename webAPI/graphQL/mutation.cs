@@ -380,10 +380,19 @@ namespace webAPI.graphQL
                         var currentMember = context.Memberships.Where(u => u.userId == input.userId && u.groupId == input.groupId).FirstOrDefault();
                         if (currentMember != null)
                         {
-                            context.Memberships.Remove(currentMember);
-                            await context.SaveChangesAsync();
-                            response.success = true;
-                            response.message = "Member has been kicked.";
+                            if (currentMember != adminMember)
+                            {
+                                context.Memberships.Remove(currentMember);
+                                await context.SaveChangesAsync();
+                                response.success = true;
+                                response.message = "Member has been kicked.";
+                            }
+                            else
+                            {
+                                response.success = false;
+                                response.message = "You cant kick yourself m8.";
+                            }
+
                         }
                         else
                         {
