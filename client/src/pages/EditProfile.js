@@ -159,12 +159,22 @@ function EditProfile() {
       });
   };
 
-  
-
-  function saveDeleteDisableChecks() {
-		return password == "" || email == "";
+  function saveEditDisableChecks() {
+		if (
+			authUser.username !== username ||
+			authUser.firstName !== firstName ||
+			authUser.lastName !== lastName||
+			authUser.avatar !== avatarUrl
+		) {
+			return false;
+		} else {
+			return true;
+		}
 	}
 
+  function saveDeleteDisableChecks() {
+		return password === "" || email === "";
+	}
 
   const deleteUser = () => {
   };
