@@ -321,10 +321,11 @@ namespace webAPI.graphQL
                 if (identity != null)
                 {
                     string idendityId = identity.Claims.FirstOrDefault(u => u.Type == ClaimTypes.Sid).Value;
+                    var adminMember = context.Memberships.Where(u => u.userId == Int32.Parse(idendityId) && u.groupId == currentGroup.Id).FirstOrDefault();
                     if (idendityId != null && idendityId == currentGroup.ownerId.ToString())
                     {
                         var currentMember = context.Memberships.Where(u => u.userId == input.userId && u.groupId == input.groupId).FirstOrDefault();
-                        if (currentMember != null)
+                        if (currentMember != null && currentMember != adminMember)
                         {
                             currentMember.admin = input.admin;
                             context.Memberships.Update(currentMember);
@@ -335,7 +336,7 @@ namespace webAPI.graphQL
                         else
                         {
                             response.success = false;
-                            response.message = "Member does not exist.";
+                            response.message = "Unable to edit member.";
                         }
 
                     }
@@ -382,10 +383,20 @@ namespace webAPI.graphQL
                         {
                             if (currentMember != adminMember)
                             {
-                                context.Memberships.Remove(currentMember);
-                                await context.SaveChangesAsync();
-                                response.success = true;
-                                response.message = "Member has been kicked.";
+                                if (currentMember.admin != true)
+                                {
+                                    context.Memberships.Remove(currentMember);
+                                    await context.SaveChangesAsync();
+                                    response.success = true;
+                                    response.message = "Member has been kicked.";
+                                }
+                                else
+                                {
+                                    response.success = false;
+                                    response.message = "Admins cant be kicked.";
+
+                                }
+
                             }
                             else
                             {
