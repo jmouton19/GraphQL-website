@@ -240,7 +240,7 @@ function Profile() {
             </IconButton>
           )}
         </Stack>
-        <Typography>Bio ?</Typography>
+        <Typography>  </Typography> 
       </Stack>
       {authUser === viewUser && (
         <TabContext value={activeTabNumber}>
