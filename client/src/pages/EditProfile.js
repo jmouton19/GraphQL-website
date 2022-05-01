@@ -159,6 +159,13 @@ function EditProfile() {
       });
   };
 
+  
+
+  function saveDeleteDisableChecks() {
+		return password == "" || email == "";
+	}
+
+
   const deleteUser = () => {
   };
 
@@ -435,7 +442,7 @@ function EditProfile() {
 										.catch((err) => notify('error', ""));
 								}}
 								variant="contained"
-								//disabled={saveDeleteDisableChecks()}
+								disabled={saveDeleteDisableChecks()}
 								sx={{ borderRadius: "50%", height: 60, width: 60 }}
 								color="error"
 							>
