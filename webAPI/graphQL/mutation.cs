@@ -328,6 +328,42 @@ namespace webAPI.graphQL
             return response;
         }
 
+        public async Task<Response> DeleteFriend(int friendId, [ScopedService] AppDbContext context, [Service] IHttpContextAccessor contextAccessor)
+        {
+            var response = new Response();
+            response.success = false;
+            response.message = string.Empty;
+
+            var identity = contextAccessor.HttpContext.User.Identity as ClaimsIdentity;
+            if (identity != null)
+            {
+                string idendityId = identity.Claims.FirstOrDefault(u => u.Type == ClaimTypes.Sid).Value;
+                var friendships = context.Friendships.Where(u => (u.senderId == Int32.Parse(idendityId) && u.receiverId == friendId) || (u.senderId == friendId && u.receiverId == Int32.Parse(idendityId))).ToList();
+                if (friendships != null)
+                {
+                    foreach (var friendship in friendships)
+                    {
+                        context.Friendships.Remove(friendship);
+                    }
+                    await context.SaveChangesAsync();
+                    response.success = true;
+                    response.message = "Friend deleted lmao.";
+                }
+                else
+                {
+                    response.success = false;
+                    response.message = "You are not friends";
+                }
+
+            }
+            else
+            {
+                response.success = false;
+                response.message = "Null identity.";
+            }
+
+            return response;
+        }
         [UseDbContext(typeof(AppDbContext))]
         [Authorize]
         public async Task<string> AddGroupAsync(AddGroupInput input, [ScopedService] AppDbContext context, [Service] IHttpContextAccessor contextAccessor)
