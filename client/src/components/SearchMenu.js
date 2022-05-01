@@ -128,7 +128,7 @@ export default function SearchMenu() {
         <ListItem onKeyDown={(e) => e.stopPropagation()}>
           <TextField
             variant="outlined"
-            label="Search"
+            label={t('search.label')}
             onChange={(event) => setSearchValue(event.target.value)}
           />
         </ListItem>
@@ -142,7 +142,7 @@ export default function SearchMenu() {
                 display="block"
                 variant="caption"
               >
-                Groups
+                {t('groups.label')}
               </Typography>
             </div>
           </ListItem>
@@ -167,7 +167,7 @@ export default function SearchMenu() {
             );
           })}
         {users.length !== 0 && (
-          <MenuItem>
+          <ListItem>
             <Divider component="div" />
             <div>
               <Typography
@@ -176,10 +176,10 @@ export default function SearchMenu() {
                 display="block"
                 variant="caption"
               >
-                Users
+                {t('users.label')}
               </Typography>
             </div>
-          </MenuItem>
+          </ListItem>
         )}
         {users &&
           users.map((user) => {
