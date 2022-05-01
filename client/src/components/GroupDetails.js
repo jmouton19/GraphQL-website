@@ -39,7 +39,7 @@ function GroupDetails({ details }) {
       setDescription(details.description);
       setAvatarUrl(details.avatarUrl);
     }
-  }, []);
+  }, [details]);
 
   const createGroup = () => {
     //TODO: Use actual date
