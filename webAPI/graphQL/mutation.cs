@@ -134,6 +134,58 @@ namespace webAPI.graphQL
                 return "success:false,message:This user does not exist.";
         }
 
+        [UseDbContext(typeof(AppDbContext))]
+        [Authorize]
+        public async Task<Response> UpdateGroupAsync(UpdateGroupInput input, [ScopedService] AppDbContext context, [Service] IHttpContextAccessor contextAccessor)
+        {
+            var response = new Response();
+            response.success = false;
+            response.message = string.Empty;
+
+            var currentGroup = context.Groups.Where(u => u.Id == input.groupId).FirstOrDefault();
+            if (currentGroup != null)
+            {
+                var identity = contextAccessor.HttpContext.User.Identity as ClaimsIdentity;
+
+                if (identity != null)
+                {
+                    string idendityId = identity.Claims.FirstOrDefault(u => u.Type == ClaimTypes.Sid).Value;
+                    var currentMember = context.Memberships.Where(u => u.userId == Int32.Parse(idendityId) && u.groupId == currentGroup.Id).FirstOrDefault();
+                    if (idendityId != null && currentGroup.ownerId.ToString() == idendityId && currentMember.admin == true)
+                    {
+                        if (input.description != null)
+                            currentGroup.description = input.description;
+                        if (input.name != null)
+                            currentGroup.name = input.name;
+                        if (input.avatar != null)
+                            currentGroup.avatar = input.avatar;
+
+                        context.Groups.Update(currentGroup);
+                        await context.SaveChangesAsync();
+                        response.success = true;
+                        response.message = "Group profile has been updated.";
+                    }
+                    else
+                    {
+                        response.success = false;
+                        response.message = "You shall not pass!";
+                    }
+                }
+                else
+                {
+                    response.success = false;
+                    response.message = "Null identity.";
+                }
+
+            }
+            else
+            {
+                response.success = false;
+                response.message = "Group does not exist.";
+            }
+
+            return response;
+        }
 
 
         [UseDbContext(typeof(AppDbContext))]
@@ -290,20 +342,20 @@ namespace webAPI.graphQL
             var authOutput = new AuthOutput();
             try
             {
-              authOutput.user = context.Users.Where(u => u.email == input.email).FirstOrDefault();
-              authOutput.jwt = getJWT(input.email, input.password, config, context);
-              if (authOutput.user.Equals(null) || authOutput.jwt == "false")
-              {
-                throw new System.Exception();
-              }
-              authOutput.success = true;
-              authOutput.message = "Logged in successfully.";
+                authOutput.user = context.Users.Where(u => u.email == input.email).FirstOrDefault();
+                authOutput.jwt = getJWT(input.email, input.password, config, context);
+                if (authOutput.user.Equals(null) || authOutput.jwt == "false")
+                {
+                    throw new System.Exception();
+                }
+                authOutput.success = true;
+                authOutput.message = "Logged in successfully.";
             }
             catch (System.Exception)
             {
-              authOutput.user = null;
-              authOutput.success = false;
-              authOutput.message = "Log in failed.";
+                authOutput.user = null;
+                authOutput.success = false;
+                authOutput.message = "Log in failed.";
             }
             return authOutput;
         }
