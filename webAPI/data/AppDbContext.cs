@@ -162,7 +162,7 @@ namespace webAPI.data
             new Membership
             {
                 Id = 3,
-                admin = false,
+                admin = true,
                 groupId = 1,
                 userId = 2,
             },

@@ -51,7 +51,8 @@ namespace webAPI.graphQL
                     authOutput.user = addedUser;
                     authOutput.success = true;
                     authOutput.message = "Signed up sucessfully.";
-                    authOutput.jwt = getJWT(input.email, input.password, config, context);
+                    var utility = new Utilities();
+                    authOutput.jwt = utility.getJWT(input.email, input.password, config, context);
                     return authOutput;
                 }
                 return authOutput;
@@ -151,7 +152,7 @@ namespace webAPI.graphQL
                 {
                     string idendityId = identity.Claims.FirstOrDefault(u => u.Type == ClaimTypes.Sid).Value;
                     var currentMember = context.Memberships.Where(u => u.userId == Int32.Parse(idendityId) && u.groupId == currentGroup.Id).FirstOrDefault();
-                    if (idendityId != null && currentGroup.ownerId.ToString() == idendityId && currentMember.admin == true)
+                    if (idendityId != null && (currentGroup.ownerId.ToString() == idendityId || currentMember?.admin == true))
                     {
                         if (input.description != null)
                             currentGroup.description = input.description;
@@ -265,7 +266,7 @@ namespace webAPI.graphQL
                 context.Groups.Add(group);
                 await context.SaveChangesAsync();
 
-                var memberInput = new AddMemberInput(group.Id, true);
+                var memberInput = new AddMemberInput(group.Id);
                 await AddMemberAsync(memberInput, context, contextAccessor);
                 return "true";
             }
@@ -286,7 +287,7 @@ namespace webAPI.graphQL
                 {
                     userId = Int32.Parse(idendityId),
                     groupId = input.groupId,
-                    admin = input.admin
+                    admin = false
                 };
                 var currentMember = context.Memberships.Where(u => u.groupId == input.groupId && u.userId == member.userId).FirstOrDefault();
                 if (currentMember == null)
@@ -304,37 +305,57 @@ namespace webAPI.graphQL
         }
 
         [UseDbContext(typeof(AppDbContext))]
-        private string getJWT(string inputEmail, string inputPassword, [Service] IConfiguration config, [ScopedService] AppDbContext context)
+        [Authorize]
+        public async Task<Response> EditAdminAsync(EditAdminInput input, [ScopedService] AppDbContext context, [Service] IHttpContextAccessor contextAccessor)
         {
-            var currentUser = context.Users.Where(u => u.email == inputEmail).FirstOrDefault();
+            var response = new Response();
+            response.success = false;
+            response.message = string.Empty;
 
-            if (currentUser != null)
+            var currentGroup = context.Groups.Where(u => u.Id == input.groupId).FirstOrDefault();
+            if (currentGroup != null)
             {
-                bool verified = BCrypt.Net.BCrypt.Verify(inputPassword, currentUser.password);
-                if (verified)
+                var identity = contextAccessor.HttpContext.User.Identity as ClaimsIdentity;
+                if (identity != null)
                 {
-                    var symmetricSecurityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["tokenSettings:Key"]));
-                    var credentials = new SigningCredentials(symmetricSecurityKey, SecurityAlgorithms.HmacSha256);
-                    var claims = new[]{
-                        new Claim(ClaimTypes.Sid,currentUser.Id.ToString())
-                    };
+                    string idendityId = identity.Claims.FirstOrDefault(u => u.Type == ClaimTypes.Sid).Value;
+                    if (idendityId != null && idendityId == currentGroup.ownerId.ToString())
+                    {
+                        var currentMember = context.Memberships.Where(u => u.userId == input.userId && u.groupId == input.groupId).FirstOrDefault();
+                        if (currentMember != null)
+                        {
+                            currentMember.admin = input.admin;
+                            context.Memberships.Update(currentMember);
+                            await context.SaveChangesAsync();
+                            response.success = true;
+                            response.message = "Member updated.";
+                        }
+                        else
+                        {
+                            response.success = false;
+                            response.message = "Member does not exist.";
+                        }
 
-                    var jwtToken = new JwtSecurityToken(
-                        issuer: config["tokenSettings:Issuer"],
-                        audience: config["tokenSettings:Audience"],
-                        claims,
-                        expires: DateTime.Now.AddMinutes(15),
-                        signingCredentials: credentials
-                    );
-                    string token = new JwtSecurityTokenHandler().WriteToken(jwtToken);
-                    return token;
+                    }
+                    else
+                    {
+                        response.success = false;
+                        response.message = "You must construct additional pylons!";
+                    }
                 }
-
+                else
+                {
+                    response.success = false;
+                    response.message = "Null Identity";
+                }
             }
-
-            return "false";
+            else
+            {
+                response.success = false;
+                response.message = "Group does not exist";
+            }
+            return response;
         }
-
 
         [UseDbContext(typeof(AppDbContext))]
         public AuthOutput UserLogin(LoginInput input, [Service] IConfiguration config, [ScopedService] AppDbContext context)
@@ -343,7 +364,8 @@ namespace webAPI.graphQL
             try
             {
                 authOutput.user = context.Users.Where(u => u.email == input.email).FirstOrDefault();
-                authOutput.jwt = getJWT(input.email, input.password, config, context);
+                var utility = new Utilities();
+                authOutput.jwt = utility.getJWT(input.email, input.password, config, context);
                 if (authOutput.user.Equals(null) || authOutput.jwt == "false")
                 {
                     throw new System.Exception();
