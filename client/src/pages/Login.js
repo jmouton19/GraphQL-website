@@ -19,8 +19,10 @@ import { useAuthUser, useLogIn } from '../providers/AuthProvider';
 import { Navigate } from 'react-router-dom';
 import { FormControlLabel } from '@mui/material';
 import { Checkbox } from '@mui/material';
+import { useTranslation } from "react-i18next";
 
 function Login() {
+  const { t } = useTranslation();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -49,7 +51,7 @@ function Login() {
           <Grid container direction="column" spacing={2} alignItems="stretch">
             <Grid item xs={12}>
               <Typography variant="h3" color="primary" align="center">
-                Login
+                {t("login.label")}
               </Typography>
             </Grid>
             <Grid item xs={12}>

@@ -22,6 +22,7 @@ import MapIcon from '@mui/icons-material/Map';
 import { Tooltip } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import SearchMenu from './SearchMenu';
+import LanguageSelector from './LanguageSelector';
 
 function PrimaryAppBar() {
   const [userMenuAnchorEl, setUserMenuAnchorEl] = useState(null);
@@ -79,6 +80,7 @@ function PrimaryAppBar() {
           </Tooltip>
 
           <Box sx={{ flexGrow: 1 }} />
+          <LanguageSelector/>
 
           <SearchMenu />
 
