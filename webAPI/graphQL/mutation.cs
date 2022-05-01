@@ -245,6 +245,8 @@ namespace webAPI.graphQL
             else
                 return "success:false,message:This group does not exist.";
         }
+        [UseDbContext(typeof(AppDbContext))]
+        [Authorize]
         public async Task<Response> DeletePostAsync(int postId, [ScopedService] AppDbContext context, [Service] IHttpContextAccessor contextAccessor)
         {
             var response = new Response();
@@ -286,6 +288,8 @@ namespace webAPI.graphQL
 
             return response;
         }
+        [UseDbContext(typeof(AppDbContext))]
+        [Authorize]
         public async Task<Response> DeleteCommentAsync(int commentId, [ScopedService] AppDbContext context, [Service] IHttpContextAccessor contextAccessor)
         {
             var response = new Response();
@@ -328,6 +332,8 @@ namespace webAPI.graphQL
             return response;
         }
 
+        [UseDbContext(typeof(AppDbContext))]
+        [Authorize]
         public async Task<Response> DeleteFriend(int friendId, [ScopedService] AppDbContext context, [Service] IHttpContextAccessor contextAccessor)
         {
             var response = new Response();
@@ -336,25 +342,17 @@ namespace webAPI.graphQL
 
             var identity = contextAccessor.HttpContext.User.Identity as ClaimsIdentity;
             if (identity != null)
-            {
+            { //should have used list here
                 string idendityId = identity.Claims.FirstOrDefault(u => u.Type == ClaimTypes.Sid).Value;
-                var friendships = context.Friendships.Where(u => (u.senderId == Int32.Parse(idendityId) && u.receiverId == friendId) || (u.senderId == friendId && u.receiverId == Int32.Parse(idendityId))).ToList();
-                if (friendships != null)
-                {
-                    foreach (var friendship in friendships)
-                    {
-                        context.Friendships.Remove(friendship);
-                    }
-                    await context.SaveChangesAsync();
-                    response.success = true;
-                    response.message = "Friend deleted lmao.";
-                }
-                else
-                {
-                    response.success = false;
-                    response.message = "You are not friends";
-                }
-
+                var friendship = context.Friendships.Where(u => u.senderId == Int32.Parse(idendityId) && u.receiverId == friendId).FirstOrDefault();
+                if (friendship != null)
+                    context.Friendships.Remove(friendship);
+                friendship = context.Friendships.Where(u => u.senderId == friendId && u.receiverId == Int32.Parse(idendityId)).FirstOrDefault();
+                if (friendship != null)
+                    context.Friendships.Remove(friendship);
+                await context.SaveChangesAsync();
+                response.success = true;
+                response.message = "Friend deleted lmao.";
             }
             else
             {
