@@ -20,6 +20,7 @@ import SettingsIcon from '@mui/icons-material/Settings';
 import { useNotify } from '../providers/NotificationProvider';
 import { gql, useApolloClient } from '@apollo/client';
 import { useNavigate } from 'react-router-dom';
+import { stringToObject } from '../utils/utils';
 
 function GroupDetails({ details }) {
   const navigate = useNavigate();
@@ -27,6 +28,7 @@ function GroupDetails({ details }) {
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [avatarUrl, setAvatarUrl] = useState(null);
+  const [id, setID] = useState(null);
 
   const notify = useNotify();
   const client = useApolloClient();
@@ -36,6 +38,7 @@ function GroupDetails({ details }) {
       setName(details.name);
       setDescription(details.description);
       setAvatarUrl(details.avatarUrl);
+      setID(details.id);
     }
   }, []);
 
@@ -61,6 +64,28 @@ function GroupDetails({ details }) {
           navigate('/groups');
         } else {
           notify('error', 'Unable to create group.');
+        }
+      });
+  };
+
+  
+  const deleteGroup = () => {
+    console.log("here")
+    client
+      .mutate({
+        mutation: gql`
+            mutation {
+              deleteGroup(groupId:${id})
+            }
+        `,
+      })
+      .then((result) => {
+        const groupDeleted = stringToObject(result.data.deleteGroup);
+        if (groupDeleted.success === 'true') {
+          notify('success', `${groupDeleted.message}`);
+          navigate('/groups');
+        } else {
+          notify('error', groupDeleted.message);
         }
       });
   };
@@ -123,7 +148,16 @@ function GroupDetails({ details }) {
         <DialogActions>
           <Stack padding={1} spacing={1} direction="row">
             {details && (
-              <IconButton color="error">
+              <IconButton color="error"
+                onClick={() => {
+									deleteGroup()
+										.then(() => {
+											notify('success',"Group successfully deleted.");
+											//setTimeout(() => navigate("/"), 200);
+										})            
+                  .catch((err) => notify('error', "Unable to delete group."));
+								}}
+                >
                 <DeleteIcon />
               </IconButton>
             )}
