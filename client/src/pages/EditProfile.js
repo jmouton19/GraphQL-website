@@ -466,7 +466,7 @@ function EditProfile() {
 												})
 												.catch((err) => notify('error', "Unable to delete profile."));
 										})
-										.catch((err) => notify('error', "Unable to confirm details."));
+										.catch((err) => notify('error', "Unable to confirm details"));
 								}}
 								variant="contained"
 								disabled={saveDeleteDisableChecks()}
