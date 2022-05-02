@@ -177,6 +177,23 @@ function EditProfile() {
 	}
 
   const deleteUser = () => {
+    client
+      .mutate({
+        mutation: gql`
+            mutation {
+              deleteUser(userId:${authUser.id})
+            }
+        `,
+      })
+      .then((result) => {
+        const userDeleted = stringToObject(result.data.deleteUser);
+        if (userDeleted.success === 'true') {
+          logOut();
+          notify('success', `${userDeleted.message}`);
+        } else {
+          notify('error', userDeleted.message);
+        }
+      });
   };
 
   return (
@@ -277,7 +294,7 @@ function EditProfile() {
                       onClick={() => editUser()}
                       variant="contained"
                       sx={{ borderRadius: '50%' }}
-                      //disabled={saveEditDisableChecks()}
+                      disabled={saveEditDisableChecks()}
                     >
                       <SaveIcon />
                     </Button>
@@ -447,9 +464,9 @@ function EditProfile() {
 													logOut();
 													setTimeout(() => navigate("/"), 200);
 												})
-												.catch((err) => notify('error', ""));
+												.catch((err) => notify('error', "Unable to delete profile."));
 										})
-										.catch((err) => notify('error', ""));
+										.catch((err) => notify('error', "Unable to confirm details."));
 								}}
 								variant="contained"
 								disabled={saveDeleteDisableChecks()}
