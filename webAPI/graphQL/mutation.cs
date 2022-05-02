@@ -755,7 +755,13 @@ namespace webAPI.graphQL
 
             }
             response.posts.Sort((s1, s2) => s1.distance.CompareTo(s2.distance));
-
+            if (input.quantity != null)
+            {
+                int quantity = (int)input.quantity;
+                if (quantity > response.posts.Count)
+                    quantity = response.posts.Count;
+                response.posts.RemoveRange(quantity, response.posts.Count - quantity);
+            }
             response.success = true;
             response.message = "lekker lekker";
             return response;
