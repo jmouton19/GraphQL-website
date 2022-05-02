@@ -28,7 +28,7 @@ namespace webAPI.Models.other
                         issuer: config["tokenSettings:Issuer"],
                         audience: config["tokenSettings:Audience"],
                         claims,
-                        expires: DateTime.Now.AddMinutes(15),
+                        expires: DateTime.Now.AddMinutes(30),
                         signingCredentials: credentials
                     );
                     string token = new JwtSecurityTokenHandler().WriteToken(jwtToken);

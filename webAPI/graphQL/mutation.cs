@@ -5,6 +5,7 @@ using webAPI.Models;
 using webAPI.Models.other;
 using HotChocolate.AspNetCore.Authorization;
 using System.Security.Claims;
+using Geolocation;
 
 namespace webAPI.graphQL
 {
@@ -716,6 +717,48 @@ namespace webAPI.graphQL
                 }
             }
             return "success:false,message:Mission Failed, we'll get em next time.";
+        }
+
+        [UseDbContext(typeof(AppDbContext))]
+        [Authorize]
+        public DistanceOutput Distance(AddDistanceInput input, [ScopedService] AppDbContext context)
+        {
+            var response = new DistanceOutput
+            {
+                message = string.Empty,
+                success = false,
+                posts = new List<PostDist>()
+            };
+
+            Coordinate origin = new Coordinate(input.latitude, input.longitude);
+
+            List<Post> posts = context.Posts.ToList();
+            foreach (Post post in posts)
+            {
+                Coordinate destination = new Coordinate(post.latitude, post.longitude);
+                double distance = GeoCalculator.GetDistance(origin, destination, 2, DistanceUnit.Kilometers);
+
+                PostDist postDist = new PostDist
+                {
+                    post = post,
+                    distance = distance
+                };
+
+                if (distance <= input.radius)
+                {
+                    response.posts.Add(postDist);
+                }
+                else if (input.radius == null)
+                {
+                    response.posts.Add(postDist);
+                }
+
+            }
+            response.posts.Sort((s1, s2) => s1.distance.CompareTo(s2.distance));
+
+            response.success = true;
+            response.message = "lekker lekker";
+            return response;
         }
 
     }
