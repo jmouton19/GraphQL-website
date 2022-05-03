@@ -62,75 +62,95 @@ namespace webAPI.graphQL
 
         [UseDbContext(typeof(AppDbContext))]
         [Authorize]
-        public async Task<string> UpdateUserAsync(UpdateUserInput input, [ScopedService] AppDbContext context, [Service] IHttpContextAccessor contextAccessor)
+        public async Task<Response> UpdateUserAsync(UpdateUserInput input, [ScopedService] AppDbContext context, [Service] IHttpContextAccessor contextAccessor)
         {
+            var response = new Response();
+            response.success = false;
+            response.message = string.Empty;
 
             var currentUser = context.Users.Where(u => u.Id == input.userId).FirstOrDefault();
             if (currentUser != null)
             {
                 var identity = contextAccessor.HttpContext.User.Identity as ClaimsIdentity;
 
-                if (identity != null)
+                string idendityId = identity.Claims.FirstOrDefault(u => u.Type == ClaimTypes.Sid).Value;
+                if (idendityId != null && idendityId == input.userId.ToString())
                 {
-                    string idendityId = identity.Claims.FirstOrDefault(u => u.Type == ClaimTypes.Sid).Value;
-                    if (idendityId != null && idendityId == input.userId.ToString())
+                    if (input.firstName != null)
+                        currentUser.firstName = input.firstName;
+                    if (input.lastName != null)
+                        currentUser.lastName = input.lastName;
+                    if (input.avatar != null)
+                        currentUser.avatar = input.avatar;
+                    if (input.DOB != null)
+                        currentUser.DOB = input.DOB;
+
+
+                    if (input.username != null && input.username != currentUser.username)
                     {
-                        if (input.firstName != null)
-                            currentUser.firstName = input.firstName;
-                        if (input.lastName != null)
-                            currentUser.lastName = input.lastName;
-                        if (input.avatar != null)
-                            currentUser.avatar = input.avatar;
-                        if (input.DOB != null)
-                            currentUser.DOB = input.DOB;
-
-
-                        if (input.username != null && input.username != currentUser.username)
+                        var checker = context.Users.Where(u => u.username == input.username).FirstOrDefault();
+                        if (checker == null)
+                            currentUser.username = input.username;
+                        else
                         {
-                            var checker = context.Users.Where(u => u.username == input.username).FirstOrDefault();
-                            if (checker == null)
-                                currentUser.username = input.username;
-                            else
-                                return "success:false,message:Username already taken.";
-
+                            response.success = false;
+                            response.message = "Username already taken.";
+                            return response;
                         }
 
-                        if (input.email != null && input.email != currentUser.email)
-                        {
-                            var checker = context.Users.Where(u => u.email == input.email).FirstOrDefault();
-                            if (checker == null)
-                                currentUser.email = input.email;
-                            else
-                                return "success:false,message:Email already taken.";
-
-                        }
-
-                        if (input.newPassword != null)
-                        {
-                            if (input.oldPassword != null)
-                            {
-                                bool verified = BCrypt.Net.BCrypt.Verify(input.oldPassword, currentUser.password);
-                                if (verified)
-                                    currentUser.password = BCrypt.Net.BCrypt.HashPassword(input.newPassword);
-                                else
-                                    return "success:false,message:Incorrect password.";
-                            }
-                            else
-                                return "success:false,message:Please provide old password.";
-
-                        }
-
-                        context.Users.Update(currentUser);
-                        await context.SaveChangesAsync();
-                        return "success:true,message:User profile has been updated.";
                     }
-                    else return "success:false,message:You shall not pass!";
+
+                    if (input.email != null && input.email != currentUser.email)
+                    {
+                        var checker = context.Users.Where(u => u.email == input.email).FirstOrDefault();
+                        if (checker == null)
+                            currentUser.email = input.email;
+                        else
+                        {
+                            response.success = false;
+                            response.message = "Email already taken.";
+                            return response;
+                        }
+                    }
+
+                    if (input.newPassword != null)
+                    {
+                        if (input.oldPassword != null)
+                        {
+                            bool verified = BCrypt.Net.BCrypt.Verify(input.oldPassword, currentUser.password);
+                            if (verified)
+                                currentUser.password = BCrypt.Net.BCrypt.HashPassword(input.newPassword);
+                            else
+                            {
+                                response.success = false;
+                                response.message = "Incorrect password.";
+                                return response;
+                            }
+                        }
+                        else
+                        {
+                            response.success = false;
+                            response.message = "Please provide old password.";
+                            return response;
+                        }
+                    }
+                    context.Users.Update(currentUser);
+                    await context.SaveChangesAsync();
+                    response.success = true;
+                    response.message = "User profile has been updated.";
                 }
                 else
-                    return "success:false,message:Null identity.";
+                {
+                    response.success = false;
+                    response.message = "You shall not pass!";
+                }
             }
             else
-                return "success:false,message:This user does not exist.";
+            {
+                response.success = false;
+                response.message = "This user does not exist.";
+            }
+            return response;
         }
 
         [UseDbContext(typeof(AppDbContext))]
@@ -146,36 +166,27 @@ namespace webAPI.graphQL
             {
                 var identity = contextAccessor.HttpContext.User.Identity as ClaimsIdentity;
 
-                if (identity != null)
+                string idendityId = identity.Claims.FirstOrDefault(u => u.Type == ClaimTypes.Sid).Value;
+                var currentMember = context.Memberships.Where(u => u.userId == Int32.Parse(idendityId) && u.groupId == currentGroup.Id).FirstOrDefault();
+                if (idendityId != null && (currentGroup.ownerId.ToString() == idendityId || currentMember?.admin == true))
                 {
-                    string idendityId = identity.Claims.FirstOrDefault(u => u.Type == ClaimTypes.Sid).Value;
-                    var currentMember = context.Memberships.Where(u => u.userId == Int32.Parse(idendityId) && u.groupId == currentGroup.Id).FirstOrDefault();
-                    if (idendityId != null && (currentGroup.ownerId.ToString() == idendityId || currentMember?.admin == true))
-                    {
-                        if (input.description != null)
-                            currentGroup.description = input.description;
-                        if (input.name != null)
-                            currentGroup.name = input.name;
-                        if (input.avatar != null)
-                            currentGroup.avatar = input.avatar;
+                    if (input.description != null)
+                        currentGroup.description = input.description;
+                    if (input.name != null)
+                        currentGroup.name = input.name;
+                    if (input.avatar != null)
+                        currentGroup.avatar = input.avatar;
 
-                        context.Groups.Update(currentGroup);
-                        await context.SaveChangesAsync();
-                        response.success = true;
-                        response.message = "Group profile has been updated.";
-                    }
-                    else
-                    {
-                        response.success = false;
-                        response.message = "You shall not pass!";
-                    }
+                    context.Groups.Update(currentGroup);
+                    await context.SaveChangesAsync();
+                    response.success = true;
+                    response.message = "Group profile has been updated.";
                 }
                 else
                 {
                     response.success = false;
-                    response.message = "Null identity.";
+                    response.message = "You shall not pass!";
                 }
-
             }
             else
             {
@@ -189,31 +200,39 @@ namespace webAPI.graphQL
 
         [UseDbContext(typeof(AppDbContext))]
         [Authorize]
-        public async Task<string> DeleteUserAsync(int userId, [ScopedService] AppDbContext context, [Service] IHttpContextAccessor contextAccessor)
+        public async Task<Response> DeleteUserAsync(int userId, [ScopedService] AppDbContext context, [Service] IHttpContextAccessor contextAccessor)
         {
+            var response = new Response();
+            response.success = false;
+            response.message = string.Empty;
 
             var currentUser = context.Users.Where(u => u.Id == userId).FirstOrDefault();
             if (currentUser != null)
             {
                 var identity = contextAccessor.HttpContext.User.Identity as ClaimsIdentity;
-                if (identity != null)
-                {
-                    string idendityId = identity.Claims.FirstOrDefault(u => u.Type == ClaimTypes.Sid).Value;
-                    if (idendityId != null && idendityId == userId.ToString())
-                    {
-                        context.Users.Remove(currentUser);
-                        await context.SaveChangesAsync();
-                        return "success:true,message:User profile deleted.";
-                    }
-                    else
-                        return "success:false,message:You must construct additional pylons.";
 
+                string idendityId = identity.Claims.FirstOrDefault(u => u.Type == ClaimTypes.Sid).Value;
+                if (idendityId != null && idendityId == userId.ToString())
+                {
+                    context.Users.Remove(currentUser);
+                    await context.SaveChangesAsync();
+                    response.success = true;
+                    response.message = "User profile deleted.";
+                    return response;
                 }
                 else
-                    return "success:false,message:Null identity.";
+                {
+                    response.success = false;
+                    response.message = "You must construct additional pylons.";
+                    return response;
+                }
             }
             else
-                return "success:false,message:This user does not exist.";
+            {
+                response.success = false;
+                response.message = "This user does not exist.";
+                return response;
+            }
         }
 
         [UseDbContext(typeof(AppDbContext))]
@@ -228,29 +247,21 @@ namespace webAPI.graphQL
             if (currentGroup != null)
             {
                 var identity = contextAccessor.HttpContext.User.Identity as ClaimsIdentity;
-                if (identity != null)
+
+                string idendityId = identity.Claims.FirstOrDefault(u => u.Type == ClaimTypes.Sid).Value;
+                if (idendityId != null && idendityId == currentGroup.ownerId.ToString())
                 {
-                    string idendityId = identity.Claims.FirstOrDefault(u => u.Type == ClaimTypes.Sid).Value;
-                    if (idendityId != null && idendityId == currentGroup.ownerId.ToString())
-                    {
-                        context.Groups.Remove(currentGroup);
-                        await context.SaveChangesAsync();
-                        response.success = true;
-                        response.message = "Group deleted";
-                    }
-                    else
-                    {
-                        response.success = false;
-                        response.message = "You have no power here!";
-                    }
-
-
+                    context.Groups.Remove(currentGroup);
+                    await context.SaveChangesAsync();
+                    response.success = true;
+                    response.message = "Group deleted";
                 }
                 else
                 {
                     response.success = false;
-                    response.message = "Null identity.";
+                    response.message = "You have no power here!";
                 }
+
             }
             else
             {
@@ -271,28 +282,20 @@ namespace webAPI.graphQL
             if (currentPost != null)
             {
                 var identity = contextAccessor.HttpContext.User.Identity as ClaimsIdentity;
-                if (identity != null)
-                {
-                    string idendityId = identity.Claims.FirstOrDefault(u => u.Type == ClaimTypes.Sid).Value;
-                    var currentMember = context.Memberships.Where(u => u.Id == currentPost.creatorId).FirstOrDefault();
-                    if (idendityId != null && idendityId == currentMember?.userId.ToString())
-                    {
-                        context.Posts.Remove(currentPost);
-                        await context.SaveChangesAsync();
-                        response.success = true;
-                        response.message = "Post deleted.";
-                    }
-                    else
-                    {
-                        response.success = false;
-                        response.message = "You have no power here!";
-                    }
 
+                string idendityId = identity.Claims.FirstOrDefault(u => u.Type == ClaimTypes.Sid).Value;
+                var currentMember = context.Memberships.Where(u => u.Id == currentPost.creatorId).FirstOrDefault();
+                if (idendityId != null && idendityId == currentMember?.userId.ToString())
+                {
+                    context.Posts.Remove(currentPost);
+                    await context.SaveChangesAsync();
+                    response.success = true;
+                    response.message = "Post deleted.";
                 }
                 else
                 {
                     response.success = false;
-                    response.message = "Null identity.";
+                    response.message = "You have no power here!";
                 }
             }
             else
@@ -315,28 +318,20 @@ namespace webAPI.graphQL
             if (currentComment != null)
             {
                 var identity = contextAccessor.HttpContext.User.Identity as ClaimsIdentity;
-                if (identity != null)
-                {
-                    string idendityId = identity.Claims.FirstOrDefault(u => u.Type == ClaimTypes.Sid).Value;
-                    var currentMember = context.Memberships.Where(u => u.Id == currentComment.creatorId).FirstOrDefault();
-                    if (idendityId != null && idendityId == currentMember?.userId.ToString())
-                    {
-                        context.Comments.Remove(currentComment);
-                        await context.SaveChangesAsync();
-                        response.success = true;
-                        response.message = "Comment deleted.";
-                    }
-                    else
-                    {
-                        response.success = false;
-                        response.message = "You have no power here!";
-                    }
 
+                string idendityId = identity.Claims.FirstOrDefault(u => u.Type == ClaimTypes.Sid).Value;
+                var currentMember = context.Memberships.Where(u => u.Id == currentComment.creatorId).FirstOrDefault();
+                if (idendityId != null && idendityId == currentMember?.userId.ToString())
+                {
+                    context.Comments.Remove(currentComment);
+                    await context.SaveChangesAsync();
+                    response.success = true;
+                    response.message = "Comment deleted.";
                 }
                 else
                 {
                     response.success = false;
-                    response.message = "Null identity.";
+                    response.message = "You have no power here!";
                 }
             }
             else
@@ -357,94 +352,92 @@ namespace webAPI.graphQL
             response.message = string.Empty;
 
             var identity = contextAccessor.HttpContext.User.Identity as ClaimsIdentity;
-            if (identity != null)
+
+            string idendityId = identity.Claims.FirstOrDefault(u => u.Type == ClaimTypes.Sid).Value;
+            List<Friendship> friendships = context.Friendships.Where(u => u.accepted == true && ((u.senderId == Int32.Parse(idendityId) && u.receiverId == friendId) || (u.senderId == friendId && u.receiverId == Int32.Parse(idendityId)))).ToList();
+            if (friendships.Count != 0)
             {
-                string idendityId = identity.Claims.FirstOrDefault(u => u.Type == ClaimTypes.Sid).Value;
-                List<Friendship> friendships = context.Friendships.Where(u => u.accepted == true && ((u.senderId == Int32.Parse(idendityId) && u.receiverId == friendId) || (u.senderId == friendId && u.receiverId == Int32.Parse(idendityId)))).ToList();
-                if (friendships.Count != 0)
+                foreach (Friendship friendship in friendships)
                 {
-                    foreach (Friendship friendship in friendships)
-                    {
-                        context.Friendships.Remove(friendship);
-                    }
-
-                    await context.SaveChangesAsync();
-                    response.success = true;
-                    response.message = "Friend deleted lmao.";
-                }
-                else
-                {
-                    response.success = false;
-                    response.message = "Not friends.";
+                    context.Friendships.Remove(friendship);
                 }
 
+                await context.SaveChangesAsync();
+                response.success = true;
+                response.message = "Friend deleted lmao.";
             }
             else
             {
                 response.success = false;
-                response.message = "Null identity.";
+                response.message = "Not friends.";
             }
 
             return response;
         }
         [UseDbContext(typeof(AppDbContext))]
         [Authorize]
-        public async Task<string> AddGroupAsync(AddGroupInput input, [ScopedService] AppDbContext context, [Service] IHttpContextAccessor contextAccessor)
+        public async Task<Response> AddGroupAsync(AddGroupInput input, [ScopedService] AppDbContext context, [Service] IHttpContextAccessor contextAccessor)
         {
+            var response = new Response();
+            response.success = false;
+            response.message = string.Empty;
+
             var identity = contextAccessor.HttpContext.User.Identity as ClaimsIdentity;
             string idendityId = identity.Claims.FirstOrDefault(u => u.Type == ClaimTypes.Sid).Value;
-            if (idendityId != null)
+
+            var group = new Group
             {
-                var group = new Group
-                {
-                    name = input.name,
-                    description = input.description,
-                    dateCreated = input.dateCreated,
-                    ownerId = Int32.Parse(idendityId),
-                    avatar = input.avatar,
-                };
+                name = input.name,
+                description = input.description,
+                dateCreated = input.dateCreated,
+                ownerId = Int32.Parse(idendityId),
+                avatar = input.avatar,
+            };
 
-                context.Groups.Add(group);
-                await context.SaveChangesAsync();
+            context.Groups.Add(group);
+            await context.SaveChangesAsync();
 
-                var memberInput = new AddMemberInput(group.Id);
-                await AddMemberAsync(memberInput, context, contextAccessor);
-                var updatePrivs = new EditAdminInput(group.Id, group.ownerId, true);
-                await EditAdminAsync(updatePrivs, context, contextAccessor);
-                return "true";
-            }
-            else
-                return "false";
+            var memberInput = new AddMemberInput(group.Id);
+            await AddMemberAsync(memberInput, context, contextAccessor);
+            var updatePrivs = new EditAdminInput(group.Id, group.ownerId, true);
+            await EditAdminAsync(updatePrivs, context, contextAccessor);
+            response.success = true;
+            response.message = "Group has been created.";
 
+            return response;
         }
 
         [UseDbContext(typeof(AppDbContext))]
         [Authorize]
-        public async Task<string> AddMemberAsync(AddMemberInput input, [ScopedService] AppDbContext context, [Service] IHttpContextAccessor contextAccessor)
+        public async Task<Response> AddMemberAsync(AddMemberInput input, [ScopedService] AppDbContext context, [Service] IHttpContextAccessor contextAccessor)
         {
+            var response = new Response();
+            response.success = false;
+            response.message = string.Empty;
+
             var identity = contextAccessor.HttpContext.User.Identity as ClaimsIdentity;
             string idendityId = identity.Claims.FirstOrDefault(u => u.Type == ClaimTypes.Sid).Value;
-            if (idendityId != null)
-            {
-                var member = new Membership
-                {
-                    userId = Int32.Parse(idendityId),
-                    groupId = input.groupId,
-                    admin = false
-                };
-                var currentMember = context.Memberships.Where(u => u.groupId == input.groupId && u.userId == member.userId).FirstOrDefault();
-                if (currentMember == null)
-                {
-                    context.Memberships.Add(member);
-                    await context.SaveChangesAsync();
-                    return "true";
-                }
-                else
 
-                    return "false";
+            var member = new Membership
+            {
+                userId = Int32.Parse(idendityId),
+                groupId = input.groupId,
+                admin = false
+            };
+            var currentMember = context.Memberships.Where(u => u.groupId == input.groupId && u.userId == member.userId).FirstOrDefault();
+            if (currentMember == null)
+            {
+                context.Memberships.Add(member);
+                await context.SaveChangesAsync();
+                response.success = true;
+                response.message = "Membership created.";
             }
             else
-                return "false";
+            {
+                response.success = false;
+                response.message = "Membership already exists.";
+            }
+            return response;
         }
 
         [UseDbContext(typeof(AppDbContext))]
@@ -459,38 +452,31 @@ namespace webAPI.graphQL
             if (currentGroup != null)
             {
                 var identity = contextAccessor.HttpContext.User.Identity as ClaimsIdentity;
-                if (identity != null)
-                {
-                    string idendityId = identity.Claims.FirstOrDefault(u => u.Type == ClaimTypes.Sid).Value;
-                    var adminMember = context.Memberships.Where(u => u.userId == Int32.Parse(idendityId) && u.groupId == currentGroup.Id).FirstOrDefault();
-                    if (idendityId != null && idendityId == currentGroup.ownerId.ToString())
-                    {
-                        var currentMember = context.Memberships.Where(u => u.userId == input.userId && u.groupId == input.groupId).FirstOrDefault();
-                        if (currentMember != null && currentMember != adminMember)
-                        {
-                            currentMember.admin = input.admin;
-                            context.Memberships.Update(currentMember);
-                            await context.SaveChangesAsync();
-                            response.success = true;
-                            response.message = "Member updated.";
-                        }
-                        else
-                        {
-                            response.success = false;
-                            response.message = "Unable to edit member.";
-                        }
 
+                string idendityId = identity.Claims.FirstOrDefault(u => u.Type == ClaimTypes.Sid).Value;
+                var adminMember = context.Memberships.Where(u => u.userId == Int32.Parse(idendityId) && u.groupId == currentGroup.Id).FirstOrDefault();
+                if (idendityId != null && idendityId == currentGroup.ownerId.ToString())
+                {
+                    var currentMember = context.Memberships.Where(u => u.userId == input.userId && u.groupId == input.groupId).FirstOrDefault();
+                    if (currentMember != null && currentMember != adminMember)
+                    {
+                        currentMember.admin = input.admin;
+                        context.Memberships.Update(currentMember);
+                        await context.SaveChangesAsync();
+                        response.success = true;
+                        response.message = "Member updated.";
                     }
                     else
                     {
                         response.success = false;
-                        response.message = "You must construct additional pylons!";
+                        response.message = "Unable to edit member.";
                     }
+
                 }
                 else
                 {
                     response.success = false;
-                    response.message = "Null Identity";
+                    response.message = "You must construct additional pylons!";
                 }
             }
             else
@@ -513,56 +499,48 @@ namespace webAPI.graphQL
             if (currentGroup != null)
             {
                 var identity = contextAccessor.HttpContext.User.Identity as ClaimsIdentity;
-                if (identity != null)
+
+                string idendityId = identity.Claims.FirstOrDefault(u => u.Type == ClaimTypes.Sid).Value;
+                var adminMember = context.Memberships.Where(u => u.userId == Int32.Parse(idendityId) && u.groupId == currentGroup.Id).FirstOrDefault();
+                if (idendityId != null && (currentGroup.ownerId.ToString() == idendityId || adminMember?.admin == true))
                 {
-                    string idendityId = identity.Claims.FirstOrDefault(u => u.Type == ClaimTypes.Sid).Value;
-                    var adminMember = context.Memberships.Where(u => u.userId == Int32.Parse(idendityId) && u.groupId == currentGroup.Id).FirstOrDefault();
-                    if (idendityId != null && (currentGroup.ownerId.ToString() == idendityId || adminMember?.admin == true))
+                    var currentMember = context.Memberships.Where(u => u.userId == input.userId && u.groupId == input.groupId).FirstOrDefault();
+                    if (currentMember != null)
                     {
-                        var currentMember = context.Memberships.Where(u => u.userId == input.userId && u.groupId == input.groupId).FirstOrDefault();
-                        if (currentMember != null)
+                        if (currentMember != adminMember)
                         {
-                            if (currentMember != adminMember)
+                            if (currentMember.admin != true)
                             {
-                                if (currentMember.admin != true)
-                                {
-                                    context.Memberships.Remove(currentMember);
-                                    await context.SaveChangesAsync();
-                                    response.success = true;
-                                    response.message = "Member has been kicked.";
-                                }
-                                else
-                                {
-                                    response.success = false;
-                                    response.message = "Admins cant be kicked.";
-
-                                }
-
+                                context.Memberships.Remove(currentMember);
+                                await context.SaveChangesAsync();
+                                response.success = true;
+                                response.message = "Member has been kicked.";
                             }
                             else
                             {
                                 response.success = false;
-                                response.message = "You cant kick yourself m8.";
-                            }
+                                response.message = "Admins cant be kicked.";
 
+                            }
                         }
                         else
                         {
                             response.success = false;
-                            response.message = "Member does not exist.";
+                            response.message = "You cant kick yourself m8.";
                         }
 
                     }
                     else
                     {
                         response.success = false;
-                        response.message = "You must construct additional pylons!";
+                        response.message = "Member does not exist.";
                     }
+
                 }
                 else
                 {
                     response.success = false;
-                    response.message = "Null Identity";
+                    response.message = "You must construct additional pylons!";
                 }
             }
             else
@@ -600,92 +578,101 @@ namespace webAPI.graphQL
 
         [UseDbContext(typeof(AppDbContext))]
         [Authorize]
-        public async Task<string> AddPostAsync(AddPostInput input, [ScopedService] AppDbContext context, [Service] IHttpContextAccessor contextAccessor)
+        public async Task<Response> AddPostAsync(AddPostInput input, [ScopedService] AppDbContext context, [Service] IHttpContextAccessor contextAccessor)
         {
+            var response = new Response();
+            response.success = false;
+            response.message = string.Empty;
+
             var identity = contextAccessor.HttpContext.User.Identity as ClaimsIdentity;
             string idendityId = identity.Claims.FirstOrDefault(u => u.Type == ClaimTypes.Sid).Value;
-            if (idendityId != null)
-            {
-                var currentmember = context.Memberships.Where(u => u.Id == input.creatorId).FirstOrDefault();
-                if (currentmember != null)
-                {
-                    if (idendityId == currentmember.userId.ToString())
-                    {
-                        var post = new Post
-                        {
-                            body = input.body,
-                            dateCreated = input.dateCreated,
-                            video = input.video,
-                            latitude = input.latitude,
-                            longitude = input.longitude,
-                            creatorId = input.creatorId
-                        };
 
-                        try
-                        {
-                            context.Posts.Add(post);
-                            await context.SaveChangesAsync();
-                        }
-                        catch (Exception ex)
-                        {
-                            Console.WriteLine(ex);
-                            return "success:false,message:Post could not be created.";
-                        }
-                        return "success:true,message:Post created.";
-                    }
-                    else
-                        return "success:false,message:I used to be an adventurer like you, but then I took an arrow in the knee.";
+            var currentmember = context.Memberships.Where(u => u.Id == input.creatorId).FirstOrDefault();
+            if (currentmember != null)
+            {
+                if (idendityId == currentmember.userId.ToString())
+                {
+                    var post = new Post
+                    {
+                        body = input.body,
+                        dateCreated = input.dateCreated,
+                        video = input.video,
+                        latitude = input.latitude,
+                        longitude = input.longitude,
+                        creatorId = input.creatorId
+                    };
+
+                    context.Posts.Add(post);
+                    await context.SaveChangesAsync();
+
+                    response.success = true;
+                    response.message = "Post created.";
                 }
-                return "success:false,message:Member does not exist.";
+                else
+                {
+                    response.success = false;
+                    response.message = "I used to be an adventurer like you, but then I took an arrow in the knee.";
+                }
             }
-            return "success:false,message:Null identity.";
+            else
+            {
+                response.success = false;
+                response.message = "Member does not exist.";
+            }
+
+            return response;
         }
 
         [UseDbContext(typeof(AppDbContext))]
         [Authorize]
-        public async Task<string> AddCommmentAsync(AddCommentInput input, [ScopedService] AppDbContext context, [Service] IHttpContextAccessor contextAccessor)
+        public async Task<Response> AddCommmentAsync(AddCommentInput input, [ScopedService] AppDbContext context, [Service] IHttpContextAccessor contextAccessor)
         {
+            var response = new Response();
+            response.success = false;
+            response.message = string.Empty;
+
             var identity = contextAccessor.HttpContext.User.Identity as ClaimsIdentity;
             string idendityId = identity.Claims.FirstOrDefault(u => u.Type == ClaimTypes.Sid).Value;
-            if (idendityId != null)
-            {
-                var currentmember = context.Memberships.Where(u => u.Id == input.creatorId).FirstOrDefault();
-                if (currentmember != null)
-                {
-                    if (idendityId == currentmember.userId.ToString())
-                    {
-                        var comment = new Comment
-                        {
-                            body = input.body,
-                            dateCreated = input.dateCreated,
-                            creatorId = input.creatorId,
-                            postId = input.postId
-                        };
-                        try
-                        {
-                            context.Comments.Add(comment);
-                            await context.SaveChangesAsync();
-                        }
-                        catch (Exception ex)
-                        {
-                            Console.WriteLine(ex);
-                            return "success:false,message:Comment could not be created.";
-                        }
 
-                        return "success:true,message:Comment created.";
-                    }
-                    else
-                        return "success:false,message:I used to be an adventurer like you, but then I took an arrow in the knee.";
+            var currentmember = context.Memberships.Where(u => u.Id == input.creatorId).FirstOrDefault();
+            if (currentmember != null)
+            {
+                if (idendityId == currentmember.userId.ToString())
+                {
+                    var comment = new Comment
+                    {
+                        body = input.body,
+                        dateCreated = input.dateCreated,
+                        creatorId = input.creatorId,
+                        postId = input.postId
+                    };
+                    context.Comments.Add(comment);
+                    await context.SaveChangesAsync();
+                    response.success = true;
+                    response.message = "Comment created.";
                 }
-                return "success:false,message:Member does not exist.";
+                else
+                {
+                    response.success = false;
+                    response.message = "I used to be an adventurer like you, but then I took an arrow in the knee.";
+                }
             }
-            return "success:false,message:Null identity.";
+            else
+            {
+                response.success = false;
+                response.message = "Member does not exist.";
+            }
+            return response;
         }
 
         [UseDbContext(typeof(AppDbContext))]
         [Authorize]
-        public async Task<string> AddFriendAsync(AddFriendInput input, [ScopedService] AppDbContext context, [Service] IHttpContextAccessor contextAccessor)
+        public async Task<Response> AddFriendAsync(AddFriendInput input, [ScopedService] AppDbContext context, [Service] IHttpContextAccessor contextAccessor)
         {
+            var response = new Response();
+            response.success = false;
+            response.message = string.Empty;
+
             var identity = contextAccessor.HttpContext.User.Identity as ClaimsIdentity;
             string idendityId = identity.Claims.FirstOrDefault(u => u.Type == ClaimTypes.Sid).Value;
             if (idendityId == input.senderId.ToString())
@@ -694,10 +681,15 @@ namespace webAPI.graphQL
                 if (currentFriendship != null)
                 {
                     if (currentFriendship.accepted != true)
-                        return "success:false,message:Friend request already sent.";
+                    {
+                        response.success = false;
+                        response.message = "Friend request already sent.";
+                    }
                     else
-                        return "success:false,message:You are already friends";
-
+                    {
+                        response.success = false;
+                        response.message = "You are already friends.";
+                    }
                 }
                 else
                 {
@@ -716,23 +708,31 @@ namespace webAPI.graphQL
                             currentFriendship.accepted = true;
                             context.Friendships.Update(currentFriendship);
                             await context.SaveChangesAsync();
-                            return "success:true,message:Friend added";
+                            response.success = true;
+                            response.message = "Friend added.";
                         }
                         else
-                            return "success:false,message:You are already friends";
-
+                        {
+                            response.success = false;
+                            response.message = "You are already friends.";
+                        }
                     }
                     else
                     {
                         context.Friendships.Add(friendship);
                         await context.SaveChangesAsync();
-                        return "success:true,message:friend requested";
+                        response.success = true;
+                        response.message = "friend requested.";
                     }
-
-
                 }
             }
-            return "success:false,message:Mission Failed, we'll get em next time.";
+            else
+            {
+                response.success = false;
+                response.message = "Mission Failed, we'll get em next time.";
+            }
+
+            return response;
         }
 
         [UseDbContext(typeof(AppDbContext))]
