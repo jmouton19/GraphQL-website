@@ -1,32 +1,88 @@
 import React, { useState, useEffect } from 'react';
-import { ToggleButton, ToggleButtonGroup, Tooltip } from '@mui/material';
+import {
+  Avatar,
+  IconButton,
+  Menu,
+  MenuItem,
+  Stack,
+  Typography,
+} from '@mui/material';
+import deFlag from '../assets/flags/de.png';
+import enFlag from '../assets/flags/en.png';
+import ruFlag from '../assets/flags/ru.png';
 
 import { useTranslation } from 'react-i18next';
 
+const languages = [
+  {
+    title: 'English',
+    flag: enFlag,
+    language: 'en',
+  },
+  {
+    title: 'Deutsch',
+    flag: deFlag,
+    language: 'de',
+  },
+  {
+    title: 'Русский',
+    flag: ruFlag,
+    language: 'ru',
+  },
+];
+
 const LanguageSelector = () => {
   const { i18n } = useTranslation();
-  const [language, setLanguage] = useState('en');
+  const [language, setLanguage] = useState(languages[0]);
+  const [userMenuAnchorEl, setUserMenuAnchorEl] = useState(null);
 
   useEffect(() => {
-    i18n.changeLanguage(language);
+    i18n.changeLanguage(language['language']);
   }, [language]);
 
-  const changeLanguage = (event, lng) => {
-    if (lng !== null) {
-      setLanguage(lng);
-    }
+  const handleMenu = (event) => {
+    setUserMenuAnchorEl(event.currentTarget);
+  };
+
+  const handleUserMenuClose = () => {
+    setUserMenuAnchorEl(null);
   };
 
   return (
-    <ToggleButtonGroup
-      value={language}
-      exclusive
-      onChange={changeLanguage}
-    >
-      <ToggleButton value="en">EN</ToggleButton>
-      <ToggleButton value="de">DE</ToggleButton>
-      <ToggleButton value="ru">RU</ToggleButton>
-    </ToggleButtonGroup>
+    <>
+      <IconButton onClick={handleMenu}>
+        <Avatar src={language['flag']} sx={{ height: 25, width: 25 }} />
+      </IconButton>
+      <Menu
+        anchorEl={userMenuAnchorEl}
+        anchorOrigin={{
+          vertical: 'top',
+          horizontal: 'right',
+        }}
+        keepMounted
+        transformOrigin={{
+          vertical: 'top',
+          horizontal: 'right',
+        }}
+        open={Boolean(userMenuAnchorEl)}
+        onClose={handleUserMenuClose}
+      >
+        {languages.map((lng) => (
+          <MenuItem
+            selected={lng['title'] === language['title']}
+            onClick={() => {
+              setLanguage(lng);
+              handleUserMenuClose();
+            }}
+          >
+            <Stack direction="row" spacing={2} alignItems="center">
+              <Avatar src={lng['flag']} sx={{ height: 25, width: 25 }}/>
+              <Typography>{lng['title']}</Typography>
+            </Stack>
+          </MenuItem>
+        ))}
+      </Menu>
+    </>
   );
 };
 

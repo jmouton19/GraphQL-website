@@ -54,6 +54,7 @@ function PrimaryAppBar() {
               </Typography>
             </Stack>
           </StyledLink>
+          <LanguageSelector/>
 
           <Box sx={{ flexGrow: 1 }} />
 
@@ -82,7 +83,6 @@ function PrimaryAppBar() {
           </Tooltip>
 
           <Box sx={{ flexGrow: 1 }} />
-          <LanguageSelector/>
 
           <SearchMenu />
 
