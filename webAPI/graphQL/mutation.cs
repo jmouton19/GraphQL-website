@@ -251,6 +251,11 @@ namespace webAPI.graphQL
                 string idendityId = identity.Claims.FirstOrDefault(u => u.Type == ClaimTypes.Sid).Value;
                 if (idendityId != null && idendityId == currentGroup.ownerId.ToString())
                 {
+                    List<Membership> memberships = context.Memberships.Where(u => u.groupId == groupId).ToList();
+                    foreach (Membership membership in memberships)
+                    {
+                        context.Memberships.Remove(membership);
+                    }
                     context.Groups.Remove(currentGroup);
                     await context.SaveChangesAsync();
                     response.success = true;
