@@ -35,7 +35,7 @@ namespace webAPI.data
             modelBuilder.Entity<Group>().HasMany(g => g.memberships).WithOne(g => g.group!).HasForeignKey(m => m.groupId);
             modelBuilder.Entity<User>().HasMany(u => u.memberships).WithOne(u => u.user!).HasForeignKey(m => m.userId);
             modelBuilder.Entity<Membership>().HasMany(m => m.posts).WithOne(m => m.creator!).HasForeignKey(p => p.creatorId);
-            modelBuilder.Entity<Membership>().HasMany(m => m.comments).WithOne(m => m.creator!).HasForeignKey(p => p.creatorId);
+            modelBuilder.Entity<User>().HasMany(m => m.comments).WithOne(m => m.creator!).HasForeignKey(p => p.creatorId);
             modelBuilder.Entity<Post>().HasMany(p => p.comments).WithOne(c => c.post!).HasForeignKey(c => c.postId);
 
             modelBuilder.Entity<User>()

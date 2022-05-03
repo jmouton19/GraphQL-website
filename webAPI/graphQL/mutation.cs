@@ -6,6 +6,7 @@ using webAPI.Models.other;
 using HotChocolate.AspNetCore.Authorization;
 using System.Security.Claims;
 using Geolocation;
+using Microsoft.EntityFrameworkCore;
 
 namespace webAPI.graphQL
 {
@@ -357,7 +358,7 @@ namespace webAPI.graphQL
             response.message = string.Empty;
 
             var identity = contextAccessor.HttpContext.User.Identity as ClaimsIdentity;
-
+            //this is pepega lol
             string idendityId = identity.Claims.FirstOrDefault(u => u.Type == ClaimTypes.Sid).Value;
             List<Friendship> friendships = context.Friendships.Where(u => u.accepted == true && ((u.senderId == Int32.Parse(idendityId) && u.receiverId == friendId) || (u.senderId == friendId && u.receiverId == Int32.Parse(idendityId)))).ToList();
             if (friendships.Count != 0)
@@ -639,33 +640,54 @@ namespace webAPI.graphQL
             var identity = contextAccessor.HttpContext.User.Identity as ClaimsIdentity;
             string idendityId = identity.Claims.FirstOrDefault(u => u.Type == ClaimTypes.Sid).Value;
 
-            var currentmember = context.Memberships.Where(u => u.Id == input.creatorId).FirstOrDefault();
-            if (currentmember != null)
+            var currentPost = context.Posts.Include(x => x.creator).Where(u => u.Id == input.postId).FirstOrDefault();
+
+            if (currentPost != null)
             {
-                if (idendityId == currentmember.userId.ToString())
+                var comment = new Comment
                 {
-                    var comment = new Comment
+                    body = input.body,
+                    dateCreated = input.dateCreated,
+                    creatorId = Int32.Parse(idendityId),
+                    postId = input.postId
+                };
+                if (currentPost.creator?.groupId != null)
+                {
+                    var currentMember = context.Memberships.Where(u => u.userId == Int32.Parse(idendityId) && u.groupId == currentPost.creator.groupId).FirstOrDefault();
+                    if (currentMember != null)
                     {
-                        body = input.body,
-                        dateCreated = input.dateCreated,
-                        creatorId = input.creatorId,
-                        postId = input.postId
-                    };
-                    context.Comments.Add(comment);
-                    await context.SaveChangesAsync();
-                    response.success = true;
-                    response.message = "Comment created.";
+                        context.Comments.Add(comment);
+                        await context.SaveChangesAsync();
+                        response.success = true;
+                        response.message = "Comment created.";
+                    }
+                    else
+                    {
+                        response.success = false;
+                        response.message = "You are not a member of this group.";
+                    }
                 }
                 else
                 {
-                    response.success = false;
-                    response.message = "I used to be an adventurer like you, but then I took an arrow in the knee.";
+                    var currentFriend = context.Friendships.Where(u => u.accepted == true && ((u.senderId == Int32.Parse(idendityId) && u.receiverId == currentPost.creator.userId) || (u.senderId == currentPost.creator.userId && u.receiverId == Int32.Parse(idendityId)))).FirstOrDefault();
+                    if (currentFriend != null)
+                    {
+                        context.Comments.Add(comment);
+                        await context.SaveChangesAsync();
+                        response.success = true;
+                        response.message = "Comment created.";
+                    }
+                    else
+                    {
+                        response.success = false;
+                        response.message = "You are not a friend of this user.";
+                    }
                 }
             }
             else
             {
                 response.success = false;
-                response.message = "Member does not exist.";
+                response.message = "Post does not exist.";
             }
             return response;
         }

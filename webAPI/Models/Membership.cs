@@ -23,7 +23,6 @@ namespace webAPI.Models
         public Boolean? admin { get; set; }
         [GraphQLDescription("Posts made by this member.")]
         public List<Post>? posts { get; set; }
-        [GraphQLDescription("Comments made by this member.")]
-        public List<Comment>? comments { get; set; }
+
     }
 }

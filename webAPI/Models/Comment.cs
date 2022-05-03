@@ -11,8 +11,8 @@ namespace webAPI.Models
         [Required]
         public int creatorId { get; set; }
         [Required]
-        [GraphQLDescription("Specifies which member made the comment.")]
-        public Membership? creator { get; set; }
+        [GraphQLDescription("Specifies which USER made the comment.")]
+        public User? creator { get; set; }
 
         [Required]
         [GraphQLDescription("Specifies on which post the comment was made.")]
