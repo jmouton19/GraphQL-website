@@ -356,7 +356,7 @@ namespace webAPI.graphQL
             response.message = string.Empty;
 
             var identity = contextAccessor.HttpContext.User.Identity as ClaimsIdentity;
-            //this is pepega lol
+            //this is pepega list but it do be magnum tho
             string idendityId = identity.Claims.FirstOrDefault(u => u.Type == ClaimTypes.Sid).Value;
             List<Friendship> friendships = context.Friendships.Where(u => u.accepted == true && ((u.senderId == Int32.Parse(idendityId) && u.receiverId == friendId) || (u.senderId == friendId && u.receiverId == Int32.Parse(idendityId)))).ToList();
             if (friendships.Count != 0)
@@ -639,23 +639,25 @@ namespace webAPI.graphQL
             string idendityId = identity.Claims.FirstOrDefault(u => u.Type == ClaimTypes.Sid).Value;
 
             var currentPost = context.Posts.Include(x => x.creator).Where(u => u.Id == input.postId).FirstOrDefault();
-
+            var comment = new Comment
+            {
+                body = input.body,
+                dateCreated = input.dateCreated,
+                creatorId = Int32.Parse(idendityId),
+                postId = input.postId
+            };
             if (currentPost != null)
             {
-                var comment = new Comment
+                if (currentPost.creator?.userId == Int32.Parse(idendityId))
                 {
-                    body = input.body,
-                    dateCreated = input.dateCreated,
-                    creatorId = Int32.Parse(idendityId),
-                    postId = input.postId
-                };
-                if (currentPost.creator?.groupId != null)
+                    response.success = true;
+                    response.message = "Comment created.";
+                }
+                else if (currentPost.creator?.groupId != null)
                 {
                     var currentMember = context.Memberships.Where(u => u.userId == Int32.Parse(idendityId) && u.groupId == currentPost.creator.groupId).FirstOrDefault();
                     if (currentMember != null)
                     {
-                        context.Comments.Add(comment);
-                        await context.SaveChangesAsync();
                         response.success = true;
                         response.message = "Comment created.";
                     }
@@ -670,8 +672,6 @@ namespace webAPI.graphQL
                     var currentFriend = context.Friendships.Where(u => u.accepted == true && ((u.senderId == Int32.Parse(idendityId) && u.receiverId == currentPost.creator.userId) || (u.senderId == currentPost.creator.userId && u.receiverId == Int32.Parse(idendityId)))).FirstOrDefault();
                     if (currentFriend != null)
                     {
-                        context.Comments.Add(comment);
-                        await context.SaveChangesAsync();
                         response.success = true;
                         response.message = "Comment created.";
                     }
@@ -686,6 +686,11 @@ namespace webAPI.graphQL
             {
                 response.success = false;
                 response.message = "Post does not exist.";
+            }
+            if (response.success)
+            {
+                context.Comments.Add(comment);
+                await context.SaveChangesAsync();
             }
             return response;
         }
