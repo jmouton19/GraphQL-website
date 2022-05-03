@@ -103,6 +103,12 @@
 
 	"passwordMismatch.label": "Passwörter stimmen nicht überein",
 
-	"addVideo.label": "Video anstatt anheften"
+	"addVideo.label": "Video anstatt anheften",
+  
+  "confirmAccountTitle.label": "Bitte bestätigen Sie Ihr Konto",
+
+  "confirmAccountMessage.label": "Bitte geben Sie den an {{email}} gesendeten Aktivierungscode ein, um Ihre E-Mail-Adresse zu bestätigen.",
+  
+  "confirm.label": "Bestätigen Sie"
 	
 }

@@ -103,6 +103,12 @@
 
 	"passwordMismatch.label": "Passwords do not match",
 
-	"addVideo.label": "Add Video Instead"
+	"addVideo.label": "Add Video Instead",
+
+  "confirmAccountTitle.label": "Please Confirm Your Account",
+
+  "confirmAccountMessage.label": "Please enter the activation code sent to {{email}} to confirm your email address.",
+
+  "confirm.label": "Confirm"
 
 }
