@@ -56,7 +56,7 @@ const LanguageSelector = () => {
 
   useEffect(() => {
     i18n.changeLanguage(language['language']);
-  }, [language]);
+  }, [language, i18n]);
 
   const handleMenu = (event) => {
     setUserMenuAnchorEl(event.currentTarget);
@@ -87,15 +87,16 @@ const LanguageSelector = () => {
       >
         {languages.map((lng) => (
           <MenuItem
-            selected={lng['title'] === language['title']}
+          key = {lng.language}
+            selected={lng.title === language.title}
             onClick={() => {
               setLanguage(lng);
               handleUserMenuClose();
             }}
           >
             <Stack direction="row" spacing={2} alignItems="center">
-              <Avatar src={lng['flag']} sx={{ height: 25, width: 25 }}/>
-              <Typography>{lng['title']}</Typography>
+              <Avatar src={lng.flag} sx={{ height: 25, width: 25 }}/>
+              <Typography>{lng.title}</Typography>
             </Stack>
           </MenuItem>
         ))}

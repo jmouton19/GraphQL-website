@@ -46,9 +46,8 @@ function Groups() {
         <Stack spacing={2}>
           <GroupDetails />
           {groupList.map((group) => (
-            <Paper sx={{ padding: 2 }}>
+            <Paper sx={{ padding: 2 }} key={group.id}>
               <Stack
-                key={group.id}
                 direction="row"
                 spacing={2}
                 alignItems="center"

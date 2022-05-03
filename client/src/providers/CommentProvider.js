@@ -1,8 +1,7 @@
-import { gql, useApolloClient, useQuery } from '@apollo/client';
+import { gql, useApolloClient } from '@apollo/client';
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { useAuthUser } from './AuthProvider';
-
-import { stringToObject } from '../utils/utils';
+import { useNotify } from './NotificationProvider';
 
 const CommentsContext = createContext();
 const CommentAddContext = createContext();
@@ -21,6 +20,7 @@ export function useCommentRemove() {
 }
 
 function CommentProvider({ children, postId }) {
+  const notify = useNotify();
   const [comments, setComments] = useState(null);
   const [needsRefresh, setNeedsRefresh] = useState(false);
 
@@ -68,17 +68,20 @@ function CommentProvider({ children, postId }) {
                 dateCreated: "${date.toUTCString()}"
                 postId: ${postId}
               }
-            )
+            ) {
+              success
+              message
+            }
           }
         `,
       })
       .then((result) => {
-        const resultData = stringToObject(result.data.addCommment);
-        if (resultData.success) {
+        const { success, message } = result.data.addCommment;
+        if (success) {
           setNeedsRefresh(true);
-          console.info(resultData.message);
+          notify('success', message);
         } else {
-          console.error('error in creating comment');
+          notify('error', message);
         }
       });
   };
