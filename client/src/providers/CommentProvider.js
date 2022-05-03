@@ -1,6 +1,5 @@
 import { gql, useApolloClient } from '@apollo/client';
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import { useAuthUser } from './AuthProvider';
 import { useNotify } from './NotificationProvider';
 
 const CommentsContext = createContext();
@@ -25,7 +24,6 @@ function CommentProvider({ children, postId }) {
   const [needsRefresh, setNeedsRefresh] = useState(false);
 
   const client = useApolloClient();
-  const authUser = useAuthUser();
 
   useEffect(() => {
     client
@@ -37,11 +35,10 @@ function CommentProvider({ children, postId }) {
                 id
                 body
                 creator {
-                  user {
-                    firstName
-                    lastName
-                    avatar
-                  }
+                  firstName
+                  lastName
+                  avatar
+                  username
                 }
                 dateCreated
               }
@@ -64,7 +61,6 @@ function CommentProvider({ children, postId }) {
             addCommment(
               input: {
                 body: "${body}"
-                creatorId: ${authUser.id}
                 dateCreated: "${date.toUTCString()}"
                 postId: ${postId}
               }

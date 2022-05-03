@@ -144,12 +144,12 @@ function Group() {
       });
   };
 
-  const editAdmin = (memberId) => {
+  const editAdmin = (memberId, value) => {
     client
       .mutate({
         mutation: gql`
           mutation{
-            editAdmin(input:{userId:${memberId}, groupId:${params.groupId}}) {
+            editAdmin(input:{userId:${memberId}, groupId:${params.groupId}, admin: ${value}}) {
               success
               message
           }
@@ -275,7 +275,13 @@ function Group() {
                       <Stack direction="row">
                         <IconButton
                           color="primary"
-                          onClick={() => editAdmin(membership.user.id)}
+                          onClick={() => {
+                            if(membership.admin) {
+                              editAdmin(membership.user.id, false);
+                            } else {
+                              editAdmin(membership.user.id, true);
+                            }
+                          }}
                         >
                           <AdminPanelSettingsIcon />
                         </IconButton>
