@@ -48,7 +48,7 @@ function CommentViewer() {
           </Paper>
           <IconButton
             style={{ marginLeft: 'auto' }}
-            onClick={() => removeComment(comment)}
+            onClick={() => removeComment(comment.id)}
           >
             <ClearIcon />
           </IconButton>

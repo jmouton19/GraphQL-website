@@ -86,12 +86,27 @@ function CommentProvider({ children, postId }) {
       });
   };
 
-  const removeComment = (commentToDelete) => {
-    // Todo: Implement this with backend api
-    const newComments = comments.filter(
-      (comment) => comment !== commentToDelete
-    );
-    setComments(newComments);
+  const removeComment = (commentId) => {
+    client
+      .mutate({
+        mutation: gql`
+          mutation {
+            deleteComment(commentId:${commentId}){
+              success
+              message
+            }
+          }
+        `,
+      })
+      .then((result) => {
+        const { success, message } = result.data.deleteComment;
+        if (success) {
+          setNeedsRefresh(true);
+          notify('success', message);
+        } else {
+          notify('error', message);
+        }
+      });
   };
 
   return (
