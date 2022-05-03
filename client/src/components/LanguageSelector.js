@@ -25,6 +25,7 @@ const LanguageSelector = () => {
     >
       <ToggleButton value="en">EN</ToggleButton>
       <ToggleButton value="de">DE</ToggleButton>
+      <ToggleButton value="ru">RU</ToggleButton>
     </ToggleButtonGroup>
   );
 };
