@@ -24,3 +24,4 @@ COPY --from=node-builder /node/build ./wwwroot
 # ENTRYPOINT [ "dotnet","webAPI.dll" ]
 
 CMD ASPNETCORE_URLS=http://*:$PORT dotnet webAPI.dll
+ENV Logging__Console__FormatterName=

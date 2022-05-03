@@ -52,14 +52,17 @@ app.UseGraphQLVoyager(new VoyagerOptions()
 
 app.UseStaticFiles();
 app.UseSpaStaticFiles();
-app.UseSpa(spa =>
+if (builder.Environment.IsProduction())
 {
-    spa.Options.SourcePath = "wwwroot";
-    if (builder.Environment.IsDevelopment())
+    app.UseSpa(spa =>
     {
-        spa.UseReactDevelopmentServer(npmScript: "start");
-    }
-});
+        spa.Options.SourcePath = "wwwroot";
+        if (builder.Environment.IsDevelopment())
+        {
+            spa.UseReactDevelopmentServer(npmScript: "start");
+        }
+    });
+}
 
 app.UseAuthentication();
 app.UseAuthorization();
