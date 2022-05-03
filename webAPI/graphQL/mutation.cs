@@ -218,8 +218,12 @@ namespace webAPI.graphQL
 
         [UseDbContext(typeof(AppDbContext))]
         [Authorize]
-        public async Task<string> DeleteGroupAsync(int groupId, [ScopedService] AppDbContext context, [Service] IHttpContextAccessor contextAccessor)
+        public async Task<Response> DeleteGroupAsync(int groupId, [ScopedService] AppDbContext context, [Service] IHttpContextAccessor contextAccessor)
         {
+            var response = new Response();
+            response.success = false;
+            response.message = string.Empty;
+
             var currentGroup = context.Groups.Where(u => u.Id == groupId).FirstOrDefault();
             if (currentGroup != null)
             {
@@ -231,17 +235,29 @@ namespace webAPI.graphQL
                     {
                         context.Groups.Remove(currentGroup);
                         await context.SaveChangesAsync();
-                        return "success:true,message:Group deleted.";
+                        response.success = true;
+                        response.message = "Group deleted";
                     }
                     else
-                        return "success:false,message:You have no power here!";
+                    {
+                        response.success = false;
+                        response.message = "You have no power here!";
+                    }
+
 
                 }
                 else
-                    return "success:false,message:Null identity.";
+                {
+                    response.success = false;
+                    response.message = "Null identity.";
+                }
             }
             else
-                return "success:false,message:This group does not exist.";
+            {
+                response.success = false;
+                response.message = "This group does not exist.";
+            }
+            return response;
         }
         [UseDbContext(typeof(AppDbContext))]
         [Authorize]
