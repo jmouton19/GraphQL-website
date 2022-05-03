@@ -40,6 +40,7 @@ export default function SearchMenu() {
               name
               id
               description
+              avatar
             }
             }
           `,
@@ -72,6 +73,7 @@ export default function SearchMenu() {
               id
               firstName
               lastName
+              avatar
             }
             }
           `,

@@ -10,6 +10,9 @@ import {
 import deFlag from '../assets/flags/de.png';
 import enFlag from '../assets/flags/en.png';
 import ruFlag from '../assets/flags/ru.png';
+import espFlag from '../assets/flags/esp.png';
+import frFlag from '../assets/flags/fr.png';
+import chFlag from '../assets/flags/ch.png';
 
 import { useTranslation } from 'react-i18next';
 
@@ -29,6 +32,21 @@ const languages = [
     flag: ruFlag,
     language: 'ru',
   },
+  {
+    title: 'Español',
+    flag: espFlag,
+    language: 'esp',
+  },
+  {
+    title: 'Français',
+    flag: frFlag,
+    language: 'fr',
+  },
+  {
+    title: '中国',
+    flag: chFlag,
+    language: 'ch',
+  }
 ];
 
 const LanguageSelector = () => {

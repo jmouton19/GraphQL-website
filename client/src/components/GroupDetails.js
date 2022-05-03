@@ -37,7 +37,7 @@ function GroupDetails({ details }) {
     if (details) {
       setName(details.name);
       setDescription(details.description);
-      setAvatarUrl(details.avatarUrl);
+      setAvatarUrl(details.avatar);
     }
   }, [details]);
 
@@ -63,6 +63,34 @@ function GroupDetails({ details }) {
           navigate('/groups');
         } else {
           notify('error', 'Unable to create group.');
+        }
+      });
+  };
+
+  const editGroup = () => {
+    client
+      .mutate({
+        mutation: gql`
+        mutation {
+          updateGroup(input: { 
+              groupId:${details.id},
+              description: "${description}",
+              name: "${name}",
+              avatar:"${avatarUrl}"
+              }) {
+              success
+              message
+        }
+      }
+      `,
+      })
+      .then((result) => {
+        if (result.data.updateGroup.success) {
+          notify('success', result.data.updateGroup.message);
+          setOpenDialog(false);
+          navigate(`/group/${details.id}`);
+        } else {
+          notify('error', result.data.updateGroup.message);
         }
       });
   };
@@ -130,7 +158,7 @@ function GroupDetails({ details }) {
               </IconButton>
             )}
             {details ? (
-              <Button variant="outlined">{t('saveDetails.label')}</Button>
+              <Button variant="outlined" onClick={editGroup}>{t('saveDetails.label')}</Button>
             ) : (
               <Button variant="outlined" onClick={createGroup}>
                 {t('createGroup.label')}
