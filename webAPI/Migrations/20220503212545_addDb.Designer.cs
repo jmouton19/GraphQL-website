@@ -12,8 +12,8 @@ using webAPI.data;
 namespace webAPI.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20220501170301_AddAnotherMigrationLOL")]
-    partial class AddAnotherMigrationLOL
+    [Migration("20220503212545_addDb")]
+    partial class addDb
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -59,7 +59,7 @@ namespace webAPI.Migrations
                             Id = 1,
                             body = "i also like pengins",
                             creatorId = 2,
-                            dateCreated = new DateTime(2022, 5, 1, 17, 3, 1, 161, DateTimeKind.Utc).AddTicks(2544),
+                            dateCreated = new DateTime(2022, 5, 3, 21, 25, 45, 347, DateTimeKind.Utc).AddTicks(1496),
                             postId = 1
                         });
                 });
@@ -277,7 +277,7 @@ namespace webAPI.Migrations
                             Id = 1,
                             body = "I like penguins",
                             creatorId = 4,
-                            dateCreated = new DateTime(2022, 5, 1, 17, 3, 1, 161, DateTimeKind.Utc).AddTicks(2525),
+                            dateCreated = new DateTime(2022, 5, 3, 21, 25, 45, 347, DateTimeKind.Utc).AddTicks(1476),
                             latitude = 29.653700000000001,
                             longitude = 79.948599999999999,
                             video = false
@@ -287,7 +287,7 @@ namespace webAPI.Migrations
                             Id = 2,
                             body = "u4vuh4i7wb9atdvj11rs",
                             creatorId = 1,
-                            dateCreated = new DateTime(2022, 5, 1, 17, 3, 1, 161, DateTimeKind.Utc).AddTicks(2526),
+                            dateCreated = new DateTime(2022, 5, 3, 21, 25, 45, 347, DateTimeKind.Utc).AddTicks(1477),
                             latitude = 82.862799999999993,
                             longitude = 135.0,
                             video = true
@@ -345,7 +345,7 @@ namespace webAPI.Migrations
                             email = "nicolvisser@yahoo.com",
                             firstName = "Nicol",
                             lastName = "Visser",
-                            password = "$2a$11$bsfmSEx8GGIK1z3yfwVA2ujra0pA5ANhppcoSnQkLaPjbjkqtxt5y",
+                            password = "$2a$11$UwnvM59BFPtxvY6s2W7u7ut2BusKxcSxPBz9jb2UoO5MhSsw6XmHe",
                             username = "VisserMan"
                         },
                         new
@@ -356,7 +356,7 @@ namespace webAPI.Migrations
                             email = "jcmouton@protonmail.com",
                             firstName = "Jacques",
                             lastName = "Mouton",
-                            password = "$2a$11$or5c8.om95LVLLBYnG3EBuEeWtcxYBFB1gmVUvvODjKzXnC/y.SJa",
+                            password = "$2a$11$c1BSYkNpbr/4Hz.mhvkuMOvLYHW.w7iCORYGX5oSdq4gTPdHASEm.",
                             username = "JaySea"
                         },
                         new
@@ -367,7 +367,7 @@ namespace webAPI.Migrations
                             email = "philler@gmail.com",
                             firstName = "Philip",
                             lastName = "Schommarz",
-                            password = "$2a$11$42qr0rKIaih2NgrC2aaq1eLOscArE4NzTj/HbXYmDMpBb2Wy6Ulvu",
+                            password = "$2a$11$.vXvAOIkfJp.rBE2Y3MnF.BksjRbnQXR71rG1iJOJPbYJN2CDfi/.",
                             username = "Fillet"
                         },
                         new
@@ -378,7 +378,7 @@ namespace webAPI.Migrations
                             email = "mssteyn@rocketmail.com",
                             firstName = "Lize",
                             lastName = "Steyn",
-                            password = "$2a$11$0i8e22VuPj1H.qsqC2kzc.18KhdE0N9JgUcGzYlZiaFSopX.3wkpe",
+                            password = "$2a$11$mSQGUDEGFpk59NaWz4JCquG5RslCqJLtVgtTlXXErWH06aSzSvmo2",
                             username = "MorneSteyn"
                         },
                         new
@@ -389,14 +389,14 @@ namespace webAPI.Migrations
                             email = "eduanuys@gmail.com",
                             firstName = "Eduan",
                             lastName = "Uys",
-                            password = "$2a$11$hKYNcxYJY50./ynzC2oWl.OLoir.7DeQrXOs0gZCke.T438Sczgjq",
+                            password = "$2a$11$kfVndyMojY1XuFsbnvr6yefdsNsnmMYzRLAatEDwoAu61fauDyP1m",
                             username = "uysbeer"
                         });
                 });
 
             modelBuilder.Entity("webAPI.Models.Comment", b =>
                 {
-                    b.HasOne("webAPI.Models.Membership", "creator")
+                    b.HasOne("webAPI.Models.User", "creator")
                         .WithMany("comments")
                         .HasForeignKey("creatorId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -478,8 +478,6 @@ namespace webAPI.Migrations
 
             modelBuilder.Entity("webAPI.Models.Membership", b =>
                 {
-                    b.Navigation("comments");
-
                     b.Navigation("posts");
                 });
 
@@ -491,6 +489,8 @@ namespace webAPI.Migrations
             modelBuilder.Entity("webAPI.Models.User", b =>
                 {
                     b.Navigation("OwnedGroups");
+
+                    b.Navigation("comments");
 
                     b.Navigation("memberships");
                 });

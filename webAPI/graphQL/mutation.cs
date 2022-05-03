@@ -324,10 +324,8 @@ namespace webAPI.graphQL
             if (currentComment != null)
             {
                 var identity = contextAccessor.HttpContext.User.Identity as ClaimsIdentity;
-
                 string idendityId = identity.Claims.FirstOrDefault(u => u.Type == ClaimTypes.Sid).Value;
-                var currentMember = context.Memberships.Where(u => u.Id == currentComment.creatorId).FirstOrDefault();
-                if (idendityId != null && idendityId == currentMember?.userId.ToString())
+                if (idendityId != null && idendityId == currentComment.creatorId.ToString())
                 {
                     context.Comments.Remove(currentComment);
                     await context.SaveChangesAsync();
@@ -351,7 +349,7 @@ namespace webAPI.graphQL
 
         [UseDbContext(typeof(AppDbContext))]
         [Authorize]
-        public async Task<Response> DeleteFriend(int friendId, [ScopedService] AppDbContext context, [Service] IHttpContextAccessor contextAccessor)
+        public async Task<Response> DeleteFriendAsync(int friendId, [ScopedService] AppDbContext context, [Service] IHttpContextAccessor contextAccessor)
         {
             var response = new Response();
             response.success = false;
