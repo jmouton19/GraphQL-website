@@ -40,7 +40,7 @@ const cheeseIcon = new Icon({
 
 function LocationMarker(props) {
   const { newPostData } = props;
-  const map = useMapEvents({
+  useMapEvents({
     click(e){
       props.setNewPostData({...newPostData, latitude: e.latlng.lat, longitude:e.latlng.lng});
     },
