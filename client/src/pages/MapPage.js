@@ -1,4 +1,4 @@
-import React, { memo, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { MapContainer, TileLayer, Marker, Popup, Circle } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import cheeseMarker from '../assets/cheese-pin.png';
@@ -11,14 +11,12 @@ import {
   Fab,
   FormControl,
   FormControlLabel,
-  FormGroup,
   IconButton,
   Slider,
   Snackbar,
   SnackbarContent,
   Stack,
   Switch,
-  Typography,
 } from '@mui/material';
 import { usePosts } from '../providers/PostProvider';
 import { useTheme } from '@mui/material';
@@ -37,6 +35,10 @@ const userIcon = new Icon({
   iconUrl: userMarker,
   iconSize: [32, 32],
 });
+
+function scaleSlider(value){
+  return (0.9**-value) -1;
+};
 
 function MapPage() {
   const { t } = useTranslation();
@@ -126,7 +128,7 @@ function MapPage() {
           </Marker>
         ))}
         {useRadius && (
-          <Circle center={userLocation} radius={radius*100}/>
+          <Circle center={userLocation} radius={((0.9**-radius)-1)*100}/>
         )}
       </MapContainer>
       <Container>
@@ -140,7 +142,7 @@ function MapPage() {
           <FormControl>
             <FormControlLabel
               control={<Switch color="primary" />}
-              label={`${t('radius.label')}: ${(radius/10).toFixed(0)} km`}
+              label={`${t('radius.label')}: ${(((0.9**-radius) -1)/10).toFixed(0)} km`}
               labelPlacement="end"
               value={useRadius}
               onChange={() => setUseRadius(!useRadius)}
@@ -152,6 +154,7 @@ function MapPage() {
               value={radius}
               onChange={handleRadiusChange}
               disabled={!useRadius}
+              scale={scaleSlider}
             />
           </Box>
         </Stack>

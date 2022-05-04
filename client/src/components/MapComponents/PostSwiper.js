@@ -13,20 +13,23 @@ function PostSwiper({ posts, focusedPost }) {
   const [swiper, setSwiper] = useState(null);
 
   useEffect(() => {
-    console.log(`${swiper ? "Swiper": "No swiper"}`);
+    console.log(`${swiper ? 'Swiper' : 'No swiper'}`);
     if (swiper) {
-      swiper.slideTo(posts.indexOf(focusedPost) );
+      swiper.slideToLoop(posts.indexOf(focusedPost) - 1);
     }
-  }, [swiper, focusedPost]);
+  }, [swiper, focusedPost, posts]);
 
   return (
     <>
       <Swiper
+        style={{
+          '--swiper-navigation-color': '#ffc619',
+          '--swiper-pagination-color': '#ffc619',
+        }}
         onSwiper={setSwiper}
         slidesPerView={3}
         spaceBetween={30}
         loop={true}
-        loopFillGroupWithBlank={false}
         pagination={{
           clickable: true,
         }}
