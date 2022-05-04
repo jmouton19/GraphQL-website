@@ -54,7 +54,8 @@ namespace webAPI.data
                 email = "nicolvisser@yahoo.com",
                 password = Hasher("Visser"),
                 username = "VisserMan",
-                avatar = "https://i.ibb.co/hm99dG4/20d9de001ebe.png"
+                avatar = "https://i.ibb.co/hm99dG4/20d9de001ebe.png",
+                validated = true
             },
                     new User
                     {
@@ -65,7 +66,8 @@ namespace webAPI.data
                         email = "jcmouton@protonmail.com",
                         password = Hasher("Mouton"),
                         username = "JaySea",
-                        avatar = "https://i.ibb.co/SBLGDZW/jc.png"
+                        avatar = "https://i.ibb.co/SBLGDZW/jc.png",
+                        validated = true
                     },
                     new User
                     {
@@ -76,7 +78,8 @@ namespace webAPI.data
                         email = "philler@gmail.com",
                         password = Hasher("Schommarz"),
                         username = "Fillet",
-                        avatar = "https://i.ibb.co/jg3970L/76cb8121601e.png"
+                        avatar = "https://i.ibb.co/jg3970L/76cb8121601e.png",
+                        validated = true
                     },
                     new User
                     {
@@ -87,7 +90,8 @@ namespace webAPI.data
                         email = "mssteyn@rocketmail.com",
                         password = Hasher("Steyn"),
                         username = "MorneSteyn",
-                        avatar = "https://i.ibb.co/VYbZ60Q/38816802529d.jpg"
+                        avatar = "https://i.ibb.co/VYbZ60Q/38816802529d.jpg",
+                        validated = true
                     },
                     new User
                     {
@@ -98,7 +102,8 @@ namespace webAPI.data
                         email = "eduanuys@gmail.com",
                         password = Hasher("Uys"),
                         username = "uysbeer",
-                        avatar = "https://i.ibb.co/3cfRt6n/Image.png"
+                        avatar = "https://i.ibb.co/3cfRt6n/Image.png",
+                        validated = true
                     });
             modelBuilder.Entity<Group>().HasData(new Group
             {

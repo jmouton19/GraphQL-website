@@ -26,6 +26,10 @@ namespace webAPI.Models
         public List<Membership>? memberships { get; set; }
         [GraphQLDescription("Comments made by this member.")]
         public List<Comment>? comments { get; set; }
+        [GraphQLDescription("Indictaes whether the user has validated his email.")]
+        [Required]
+        public bool validated { get; set; }
+
         // public List<Friendship>? FriendshipsSent { get; set; }
         // public List<Friendship>? FriendshipsReceived { get; set; }
     }

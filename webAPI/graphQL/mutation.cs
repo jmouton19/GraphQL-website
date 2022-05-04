@@ -8,6 +8,7 @@ using System.Security.Claims;
 using Geolocation;
 using Microsoft.EntityFrameworkCore;
 using FluentEmail.Core;
+using System.Web;
 
 namespace webAPI.graphQL
 {
@@ -29,6 +30,7 @@ namespace webAPI.graphQL
                 lastName = input.lastName,
                 DOB = input.DOB,
                 avatar = input.avatar,
+                validated = false,
                 password = BCrypt.Net.BCrypt.HashPassword(input.password)
             };
             var currentUser = context.Users.Where(u => u.email == input.email || u.username == input.username).FirstOrDefault();
@@ -52,16 +54,24 @@ namespace webAPI.graphQL
                     authOutput.success = true;
                     authOutput.message = "Signed up sucessfully.";
                     var utility = new Utilities();
-                    authOutput.jwt = utility.getJWT(input.email, input.password, config, context);
+                    authOutput.jwt = null;
 
+                    var token = BCrypt.Net.BCrypt.HashPassword(authOutput.user.email + authOutput.user.username);
+                    var uriBuilder = new UriBuilder("https://cs334proj2group8.herokuapp.com/confirmEmail");
+                    var parameters = HttpUtility.ParseQueryString(string.Empty);
+                    parameters["token"] = token;
+                    parameters["userId"] = authOutput.user.Id.ToString();
+                    uriBuilder.Query = parameters.ToString();
+                    string urlString = uriBuilder.ToString();
                     var emailTemplate =
-                                @"<p>Dear @Model.username,</p> 
-                                <p>Thanks for signing up to 'Kasie!. Please click the link to activate your account.</p>
-                                <p>Sincerely,<br>JC</p>";
+                                @"<p>Dear @Model.user.username,</p> 
+                                <p>Thanks for signing up to Kasie! Please click the link below to activate your account.</p>
+                                <p>@Model.url</p>
+                                <p>Sincerely,<br>Kasie Team</p>";
 
                     var newEmail = email.To(addedUser.email)
-                        .Subject($"Thanks for signing up to 'Kasie {addedUser.username}")
-                        .UsingTemplate<User>(emailTemplate, addedUser);
+                        .Subject($"Thanks for signing up to Kasie {addedUser.username}")
+                        .UsingTemplate(emailTemplate, new { user = addedUser, url = urlString });
 
                     await newEmail.SendAsync();
 
@@ -577,7 +587,7 @@ namespace webAPI.graphQL
                 authOutput.user = context.Users.Where(u => u.email == input.email).FirstOrDefault();
                 var utility = new Utilities();
                 authOutput.jwt = utility.getJWT(input.email, input.password, config, context);
-                if (authOutput.user.Equals(null) || authOutput.jwt == "false")
+                if (authOutput.user.Equals(null) || authOutput.jwt == "false" || authOutput.user.validated == false)
                 {
                     throw new System.Exception();
                 }
@@ -821,6 +831,22 @@ namespace webAPI.graphQL
                     quantity = response.posts.Count;
                 response.posts.RemoveRange(quantity, response.posts.Count - quantity);
             }
+            response.success = true;
+            response.message = "lekker lekker";
+            return response;
+
+        }
+
+        [UseDbContext(typeof(AppDbContext))]
+        [Authorize]
+        public Response ValidateEmail(AddValidateInput input, [ScopedService] AppDbContext context)
+        {
+            var response = new Response
+            {
+                message = string.Empty,
+                success = false
+            };
+
             response.success = true;
             response.message = "lekker lekker";
             return response;
