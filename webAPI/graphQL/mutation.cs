@@ -21,6 +21,7 @@ namespace webAPI.graphQL
             var authOutput = new AuthOutput();
             authOutput.success = false;
             authOutput.message = "Sign up failed.";
+            authOutput.jwt = null;
 
             var user = new User
             {
@@ -54,28 +55,7 @@ namespace webAPI.graphQL
                     authOutput.success = true;
                     authOutput.message = "Signed up sucessfully.";
                     var utility = new Utilities();
-                    authOutput.jwt = null;
-
-                    string tokenString = addedUser.email + addedUser.username;
-                    var key = BCrypt.Net.BCrypt.HashPassword(tokenString);
-                    var uriBuilder = new UriBuilder(config["SMPTsettings:http"], config["SMPTsettings:domain"], Int32.Parse(config["SMPTsettings:port"]), "/confirmEmail");
-                    var parameters = HttpUtility.ParseQueryString(string.Empty);
-                    parameters["key"] = key;
-                    parameters["userId"] = authOutput.user.Id.ToString();
-                    uriBuilder.Query = parameters.ToString();
-                    string urlString = uriBuilder.ToString();
-                    var emailTemplate =
-                                @"<p>Dear @Model.user.username,</p> 
-                                <p>Thanks for signing up to Kasie! Please click the link below to activate your account.</p>
-                                <p>@Model.url</p>
-                                <p>Sincerely,<br>Kasie Team</p>";
-
-                    var newEmail = email.To(addedUser.email)
-                        .Subject($"Thanks for signing up to Kasie {addedUser.username}")
-                        .UsingTemplate(emailTemplate, new { user = addedUser, url = urlString });
-
-                    await newEmail.SendAsync();
-
+                    await utility.validationEmailAsync(addedUser, config, email);
                     return authOutput;
                 }
                 return authOutput;
@@ -583,14 +563,21 @@ namespace webAPI.graphQL
         public AuthOutput UserLogin(LoginInput input, [Service] IConfiguration config, [ScopedService] AppDbContext context)
         {
             var authOutput = new AuthOutput();
+            authOutput.user = null;
+            authOutput.success = false;
+            authOutput.message = "Please activate your account.";
             try
             {
                 authOutput.user = context.Users.Where(u => u.email == input.email).FirstOrDefault();
                 var utility = new Utilities();
                 authOutput.jwt = utility.getJWT(input.email, input.password, config, context);
-                if (authOutput.user.Equals(null) || authOutput.jwt == "false" || authOutput.user.validated == false)
+                if (authOutput.user == null || authOutput.jwt == "false")
                 {
                     throw new System.Exception();
+                }
+                if (authOutput.user.validated == false)
+                {
+                    return authOutput;
                 }
                 authOutput.success = true;
                 authOutput.message = "Logged in successfully.";
@@ -874,6 +861,30 @@ namespace webAPI.graphQL
                     response.success = false;
                     response.message = "Account has already been activated.";
                 }
+            }
+            else
+            {
+                response.success = false;
+                response.message = "This user does not exist.";
+            }
+            return response;
+        }
+
+        [UseDbContext(typeof(AppDbContext))]
+        public async Task<Response> resendValidationAsync(string emailInput, [Service] IConfiguration config, [ScopedService] AppDbContext context, [Service] IFluentEmail email)
+        {
+            var response = new Response
+            {
+                message = string.Empty,
+                success = false
+            };
+            var addedUser = context.Users.Where(u => u.email == emailInput).FirstOrDefault();
+            if (addedUser != null)
+            {
+                var utility = new Utilities();
+                await utility.validationEmailAsync(addedUser, config, email);
+                response.success = true;
+                response.message = "Activation email has been sent.";
             }
             else
             {

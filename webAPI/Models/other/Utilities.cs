@@ -1,6 +1,8 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using System.Web;
+using FluentEmail.Core;
 using Microsoft.IdentityModel.Tokens;
 using webAPI.data;
 
@@ -38,6 +40,29 @@ namespace webAPI.Models.other
             }
 
             return "false";
+        }
+
+        public async Task validationEmailAsync(User addedUser, IConfiguration config, IFluentEmail email)
+        {
+            string tokenString = addedUser.email + addedUser.username;
+            var key = BCrypt.Net.BCrypt.HashPassword(tokenString);
+            var uriBuilder = new UriBuilder(config["SMPTsettings:http"], config["SMPTsettings:domain"], Int32.Parse(config["SMPTsettings:port"]), "/confirmEmail");
+            var parameters = HttpUtility.ParseQueryString(string.Empty);
+            parameters["key"] = key;
+            parameters["userId"] = addedUser.Id.ToString();
+            uriBuilder.Query = parameters.ToString();
+            string urlString = uriBuilder.ToString();
+            var emailTemplate =
+                        @"<p>Dear @Model.user.username,</p> 
+                                <p>Thanks for signing up to Kasie! Please click the link below to activate your account.</p>
+                                <p>@Model.url</p>
+                                <p>Sincerely,<br>Kasie Team</p>";
+
+            var newEmail = email.To(addedUser.email)
+                .Subject($"Thanks for signing up to Kasie {addedUser.username}")
+                .UsingTemplate(emailTemplate, new { user = addedUser, url = urlString });
+
+            await newEmail.SendAsync();
         }
 
     }
