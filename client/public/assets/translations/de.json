@@ -103,6 +103,8 @@
 
 	"passwordMismatch.label": "Passwörter stimmen nicht überein",
 
-	"addVideo.label": "Video anstatt anheften"
+	"addVideo.label": "Video anstatt anheften",
+
+	"radius.label": "Radius"
 	
 }

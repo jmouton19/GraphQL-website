@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
+import { MapContainer, TileLayer, Marker, Popup, Circle } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import cheeseMarker from '../assets/cheese-pin.png';
 import userMarker from '../assets/userMarker.png';
@@ -9,9 +9,16 @@ import PostSlider from '../components/MapComponents/PostSlider';
 import {
   Container,
   Fab,
+  FormControl,
+  FormControlLabel,
+  FormGroup,
   IconButton,
+  Slider,
   Snackbar,
   SnackbarContent,
+  Stack,
+  Switch,
+  Typography,
 } from '@mui/material';
 import { usePosts } from '../providers/PostProvider';
 import { useTheme } from '@mui/material';
@@ -20,6 +27,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import shortid from 'shortid';
 import CenterFocusStrongIcon from '@mui/icons-material/CenterFocusStrong';
 import { useTranslation } from 'react-i18next';
+import { Box } from '@mui/system';
 
 const cheeseIcon = new Icon({
   iconUrl: cheeseMarker,
@@ -40,6 +48,8 @@ function MapPage() {
   const [userLocation, setUserLocation] = useState([-33.9321, 18.8602]);
   const [focusedPost, setFocusedPost] = useState(null);
   const [centerLocation, setCenterLocation] = useState([-33.9321, 18.8602]);
+  const [radius, setRadius] = useState(30);
+  const [useRadius, setUseRadius] = useState(false);
   const posts = usePosts();
 
   useEffect(() => {
@@ -58,6 +68,10 @@ function MapPage() {
     setHasLocationAccess(state);
     window.sessionStorage.setItem('locationAccess', state);
   }
+
+  const handleRadiusChange = (event, newValue) => {
+    setRadius(newValue);
+  };
 
   return (
     <>
@@ -86,8 +100,8 @@ function MapPage() {
           message={t('provideLocationAccess.label')}
         />
       </Snackbar>
-      <MapContainer center={userLocation} zoom={16} style={{ height: '40vh' }}>
-        <ChangeView center={centerLocation} zoom={16} />
+      <MapContainer center={userLocation} zoom={12} style={{ height: '40vh' }}>
+        <ChangeView center={centerLocation} />
         <TileLayer
           attribution='&copy; <a href="https://stadiamaps.com/">Stadia Maps</a>, &copy; <a href="https://openmaptiles.org/">OpenMapTiles</a> &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors'
           url="https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{x}/{y}{r}.png"
@@ -112,9 +126,35 @@ function MapPage() {
             <Popup>{post.video ? 'Video' : post.body}</Popup>
           </Marker>
         ))}
+        {useRadius && (
+          <Circle center={userLocation} radius={radius}/>
+        )}
       </MapContainer>
       <Container>
-        <PostSlider posts={posts} focusedPost={focusedPost} />
+        <Stack
+          direction="row"
+          spacing={2}
+          justifyContent="center"
+          mt={2}
+          alignItems="center"
+        >
+          <FormControl>
+            <FormControlLabel
+              control={<Switch color="primary" />}
+              label={`${t('radius.label')}: ${radius} km`}
+              labelPlacement="end"
+              value={useRadius}
+              onChange={() => setUseRadius(!useRadius)}
+            />
+          </FormControl>
+          <Box sx={{ width: '50%' }}>
+            <Slider
+              value={radius}
+              onChange={handleRadiusChange}
+              disabled={!useRadius}
+            />
+          </Box>
+        </Stack>
       </Container>
       <Fab
         style={{

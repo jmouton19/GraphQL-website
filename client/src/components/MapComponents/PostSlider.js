@@ -2,8 +2,8 @@ import { Stack, Box } from '@mui/material';
 import React, { Component } from 'react';
 import Slider from 'react-slick';
 import PostCard from '../PostComponents/PostCard';
-
 import shortid from 'shortid';
+
 export default class PostSlider extends Component {
   constructor(props) {
     super(props);
@@ -41,7 +41,7 @@ export default class PostSlider extends Component {
       ],
     };
     return (
-      <Box mt={2} ml={2} mr={2}>
+      <Box ml={2} mr={2} width="100%">
         <Slider {...settings} ref={this.slider}>
           {posts.map((post) => (
             <Stack key={shortid.generate()} padding={1}>
