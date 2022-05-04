@@ -20,9 +20,10 @@ import SettingsIcon from '@mui/icons-material/Settings';
 import { useNotify } from '../providers/NotificationProvider';
 import { gql, useApolloClient } from '@apollo/client';
 import { useNavigate } from 'react-router-dom';
-import { stringToObject } from '../utils/utils';
+import { useTranslation } from 'react-i18next';
 
-function GroupDetails({ details }) {
+function GroupDetails({ details, owner }) {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [openDialog, setOpenDialog] = useState(false);
   const [name, setName] = useState('');
@@ -37,55 +38,88 @@ function GroupDetails({ details }) {
     if (details) {
       setName(details.name);
       setDescription(details.description);
-      setAvatarUrl(details.avatarUrl);
-      setID(details.id);
+      setAvatarUrl(details.avatar);
     }
-  }, []);
+  }, [details]);
 
   const createGroup = () => {
-    //TODO: Use actual date
+    const date = new Date();
     client
       .mutate({
         mutation: gql`
 	  mutation{
-		addGroup(input:{
-			name: "${name}"
-			description: "${description}"
-			avatar:"${avatarUrl}"
-			dateCreated: "2022-02-03"
-		})
+		  addGroup(input:{
+			  name: "${name}"
+			  description: "${description}"
+			  avatar:"${avatarUrl}"
+			  dateCreated: "${date.toUTCString()}"
+		  }) {
+        success
+        message
+    }
 	}
 	`,
       })
       .then((result) => {
-        if (result.data.addGroup === 'true') {
-          notify('success', 'Group has been created.');
+        const { success, message } = result.data.addGroup;
+        if (success) {
+          notify('success', message);
           setOpenDialog(false);
           navigate('/groups');
         } else {
-          notify('error', 'Unable to create group.');
+          notify('error', message);
         }
       });
   };
 
-  
-  const deleteGroup = () => {
-    console.log("here")
+  const editGroup = () => {
     client
       .mutate({
         mutation: gql`
-            mutation {
-              deleteGroup(groupId:${id})
+        mutation {
+          updateGroup(input: { 
+              groupId:${details.id},
+              description: "${description}",
+              name: "${name}",
+              avatar:"${avatarUrl}"
+              }) {
+              success
+              message
+        }
+      }
+      `,
+      })
+      .then((result) => {
+        const { success, message } = result.data.updateGroup;
+        if (success) {
+          notify('success', message);
+          setOpenDialog(false);
+          navigate(`/group/${details.id}`);
+        } else {
+          notify('error', message);
+        }
+      });
+  };
+
+  const deleteGroup = () => {
+    client
+      .mutate({
+        mutation: gql`
+          mutation {
+            deleteGroup(groupId: ${details.id}) {
+              success
+              message
             }
+          }
         `,
       })
       .then((result) => {
-        const groupDeleted = stringToObject(result.data.deleteGroup);
-        if (groupDeleted.success === 'true') {
-          notify('success', `${groupDeleted.message}`);
-          navigate('/groups');
+        const { success, message } = result.data.deleteGroup;
+        if (success) {
+          notify('success', message);
+          navigate('/');
         } else {
-          notify('error', groupDeleted.message);
+          notify('error', message);
         }
       });
   };
@@ -111,20 +145,20 @@ function GroupDetails({ details }) {
 
       <Dialog onClose={() => setOpenDialog(false)} open={openDialog}>
         <DialogTitle color="primary">
-          {details ? 'Edit Group Details' : 'Create Group'}
+          {details ? t('editGroup.label') : t('createGroup.label')}
         </DialogTitle>
         <DialogContent>
           <Stack spacing={1}>
             <DialogContentText>
               {details
-                ? 'Please edit your group details.'
-                : 'Please enter your group details here.'}
+                ? t('editGroupDetails.label')
+                : t('enterGroupDetails.label')}
             </DialogContentText>
 
             <FormControl fullWidth>
-              <InputLabel>Group Name</InputLabel>
+              <InputLabel>{t('groupName.label')}</InputLabel>
               <OutlinedInput
-                label="Group Name"
+                label={t('groupName.label')}
                 onChange={(event) => {
                   setName(event.target.value);
                 }}
@@ -132,38 +166,35 @@ function GroupDetails({ details }) {
               />
             </FormControl>
             <FormControl fullWidth>
-              <InputLabel>Group Description</InputLabel>
+              <InputLabel>{t('groupDescription.label')}</InputLabel>
               <OutlinedInput
-                label="Group Description"
+                label={t('groupDescription.label')}
                 onChange={(event) => {
                   setDescription(event.target.value);
                 }}
                 value={description}
               />
             </FormControl>
-            <DialogContentText>Pick your group avatar.</DialogContentText>
+            <DialogContentText>{t('pickAvatar.label')}</DialogContentText>
             <AvatarPicker setAvatarUrl={(imageUrl) => setAvatarUrl(imageUrl)} />
           </Stack>
         </DialogContent>
         <DialogActions>
           <Stack padding={1} spacing={1} direction="row">
-            {details && (
-              <IconButton color="error"
-                onClick={() => {
-									deleteGroup()
-										.then(() => {
-											notify('success',"Group successfully deleted.");
-											//setTimeout(() => navigate("/"), 200);
-										})            
-                  .catch((err) => notify('error', "Unable to delete group."));
-								}}
-                >
+            {details && owner && (
+              <IconButton color="error" onClick={deleteGroup}>
                 <DeleteIcon />
               </IconButton>
             )}
-            <Button variant="outlined" onClick={createGroup}>
-              {details ? 'Save Details' : 'Create Group'}
-            </Button>
+            {details ? (
+              <Button variant="outlined" onClick={editGroup}>
+                {t('saveDetails.label')}
+              </Button>
+            ) : (
+              <Button variant="outlined" onClick={createGroup}>
+                {t('createGroup.label')}
+              </Button>
+            )}
           </Stack>
         </DialogActions>
       </Dialog>

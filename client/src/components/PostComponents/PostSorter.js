@@ -8,8 +8,10 @@ import React, { useState, useEffect } from 'react';
 import Tooltip from '@mui/material/Tooltip';
 import { Stack } from '@mui/material';
 import { useFilterPosts } from '../../providers/PostProvider';
+import { useTranslation } from 'react-i18next';
 
 function PostSorter() {
+  const { t } = useTranslation();
   const [sortBy, setSortBy] = useState('newest');
   const [filterType, setFilterType] = useState('all');
 
@@ -29,18 +31,17 @@ function PostSorter() {
 
   useEffect(() => {
     filterPostsBy(filterType);
-  }, [filterType, filterPostsBy])
-  
+  }, [filterType, filterPostsBy]);
 
   return (
     <Stack direction="row" spacing={2}>
       <ToggleButtonGroup value={sortBy} exclusive onChange={handleSortByChange}>
-        <Tooltip title="Sort newest first">
+        <Tooltip title={t('sortNewest.label')}>
           <ToggleButton value="newest">
             <CalendarTodayIcon />
           </ToggleButton>
         </Tooltip>
-        <Tooltip title="Sort nearest first">
+        <Tooltip title={t('sortNearest.label')}>
           <ToggleButton value="nearest">
             <StraightenIcon />
           </ToggleButton>

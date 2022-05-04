@@ -1,6 +1,5 @@
 import { gql, useApolloClient } from '@apollo/client';
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import { stringToObject } from '../utils/utils';
 
 const PostsContext = createContext();
 const AddPostContext = createContext();
@@ -200,16 +199,19 @@ function PostProvider(props) {
                 longitude: ${longitude}
                 video: ${video ? 'true' : 'false'}
               }
-            )
+            ) {
+              success
+              message
+            }
           }
         `,
         })
         .then((result) => {
-          const responseData = stringToObject(result.data.addPost);
-          if (responseData.success) {
-            resolve(responseData.message);
+          const {success, message} = result.data.addPost;
+          if (success) {
+            resolve(message);
           } else {
-            reject(responseData.message);
+            reject(message);
           }
         });
     });

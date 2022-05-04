@@ -23,7 +23,6 @@ import { useParams } from 'react-router-dom';
 import { useNotify } from '../providers/NotificationProvider';
 import LoadingPage from './LoadingPage';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
-import { stringToObject } from '../utils/utils';
 import DoneIcon from '@mui/icons-material/Done';
 import ChatIcon from '@mui/icons-material/Chat';
 import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
@@ -32,8 +31,10 @@ import EditProfile from './EditProfile';
 import PostProvider from '../providers/PostProvider';
 import PostList from '../components/PostComponents/PostList';
 import PostSorter from '../components/PostComponents/PostSorter';
+import { useTranslation } from 'react-i18next';
 
 function Profile() {
+  const { t } = useTranslation();
   const authUser = useAuthUser();
   const [viewUser, setViewUser] = useState(null);
   const [acceptedFriends, setAcceptedFriends] = useState([]);
@@ -91,16 +92,19 @@ function Profile() {
       .mutate({
         mutation: gql`
         mutation {
-          addFriend(input: { senderId: ${authUser.id}, receiverId: ${viewUser.id} })
+          addFriend(input: { senderId: ${authUser.id}, receiverId: ${viewUser.id} }) {
+            success
+            message
+          }
         }
       `,
       })
       .then((result) => {
-        let resultData = stringToObject(result.data.addFriend);
-        if (resultData.success === 'true') {
-          notify('success', resultData.message);
+        const { success, message } = result.data.addFriend;
+        if (success) {
+          notify('success', message);
         } else {
-          notify('error', resultData.message);
+          notify('error', message);
         }
       });
   };
@@ -112,16 +116,19 @@ function Profile() {
       .mutate({
         mutation: gql`
         mutation {
-          addFriend(input: { senderId: ${authUser.id}, receiverId: ${senderId} })
+          addFriend(input: { senderId: ${authUser.id}, receiverId: ${senderId} }) {
+            success
+            message
+          }
         }
       `,
       })
       .then((result) => {
-        let resultData = stringToObject(result.data.addFriend);
-        if (resultData.success === 'true') {
-          notify('success', resultData.message);
+        const { success, message } = result.data.addFriend;
+        if (success) {
+          notify('success', message);
         } else {
-          notify('error', resultData.message);
+          notify('error', message);
         }
         getFriends();
       });
@@ -240,7 +247,7 @@ function Profile() {
             </IconButton>
           )}
         </Stack>
-        <Typography>  </Typography> 
+        <Typography> </Typography>
       </Stack>
       {authUser === viewUser && (
         <TabContext value={activeTabNumber}>
@@ -252,9 +259,9 @@ function Profile() {
                 indicatorColor="primary"
                 aria-label="secondary tabs example"
               >
-                <Tab label="Posts" value="1" />
-                <Tab label="Groups" value="2" />
-                <Tab label="Friends" value="3" />
+                <Tab label={t('posts.label')} value="1" />
+                <Tab label={t('groups.label')} value="2" />
+                <Tab label={t('friends.label')} value="3" />
               </TabList>
               <EditProfile />
             </Stack>

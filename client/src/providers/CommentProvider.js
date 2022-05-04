@@ -1,8 +1,6 @@
-import { gql, useApolloClient, useQuery } from '@apollo/client';
+import { gql, useApolloClient } from '@apollo/client';
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import { useAuthUser } from './AuthProvider';
-
-import { stringToObject } from '../utils/utils';
+import { useNotify } from './NotificationProvider';
 
 const CommentsContext = createContext();
 const CommentAddContext = createContext();
@@ -21,11 +19,11 @@ export function useCommentRemove() {
 }
 
 function CommentProvider({ children, postId }) {
+  const notify = useNotify();
   const [comments, setComments] = useState(null);
   const [needsRefresh, setNeedsRefresh] = useState(false);
 
   const client = useApolloClient();
-  const authUser = useAuthUser();
 
   useEffect(() => {
     client
@@ -37,11 +35,10 @@ function CommentProvider({ children, postId }) {
                 id
                 body
                 creator {
-                  user {
-                    firstName
-                    lastName
-                    avatar
-                  }
+                  firstName
+                  lastName
+                  avatar
+                  username
                 }
                 dateCreated
               }
@@ -64,31 +61,48 @@ function CommentProvider({ children, postId }) {
             addCommment(
               input: {
                 body: "${body}"
-                creatorId: ${authUser.id}
                 dateCreated: "${date.toUTCString()}"
                 postId: ${postId}
               }
-            )
+            ) {
+              success
+              message
+            }
           }
         `,
       })
       .then((result) => {
-        const resultData = stringToObject(result.data.addCommment);
-        if (resultData.success) {
+        const { success, message } = result.data.addCommment;
+        if (success) {
           setNeedsRefresh(true);
-          console.info(resultData.message);
+          notify('success', message);
         } else {
-          console.error('error in creating comment');
+          notify('error', message);
         }
       });
   };
 
-  const removeComment = (commentToDelete) => {
-    // Todo: Implement this with backend api
-    const newComments = comments.filter(
-      (comment) => comment !== commentToDelete
-    );
-    setComments(newComments);
+  const removeComment = (commentId) => {
+    client
+      .mutate({
+        mutation: gql`
+          mutation {
+            deleteComment(commentId:${commentId}){
+              success
+              message
+            }
+          }
+        `,
+      })
+      .then((result) => {
+        const { success, message } = result.data.deleteComment;
+        if (success) {
+          setNeedsRefresh(true);
+          notify('success', message);
+        } else {
+          notify('error', message);
+        }
+      });
   };
 
   return (

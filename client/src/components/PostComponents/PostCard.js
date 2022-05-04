@@ -16,7 +16,8 @@ import VideoPlayer from '../cloudindary/VideoPlayer';
 import CommentProvider from '../../providers/CommentProvider';
 import CommentViewer from './CommentViewer';
 import { Stack } from '@mui/material';
-import StyledLink from '../StyledLink'
+import StyledLink from '../StyledLink';
+import { useTranslation } from 'react-i18next';
 
 const ExpandMore = styled((props) => {
   const { expand, ...other } = props;
@@ -30,6 +31,7 @@ const ExpandMore = styled((props) => {
 }));
 
 function PostCard({ postData }) {
+  const { t } = useTranslation();
   const [expanded, setExpanded] = React.useState(false);
 
   const handleExpandClick = () => {
@@ -68,7 +70,7 @@ function PostCard({ postData }) {
           <StyledLink to={`/group/${postData.creator.group.id}`}>
             <Stack direction="row" spacing={1}>
               <Typography variant="caption" color="text.secondary">
-                Posted in
+                {t('postedIn.label')}
               </Typography>
               <Avatar
                 sx={{ width: 20, height: 20 }}
