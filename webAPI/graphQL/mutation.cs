@@ -598,6 +598,7 @@ namespace webAPI.graphQL
             catch (System.Exception)
             {
                 authOutput.user = null;
+                authOutput.jwt = null;
                 authOutput.success = false;
                 authOutput.message = "Log in failed.";
             }
