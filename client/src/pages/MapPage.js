@@ -1,11 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import React, { memo, useEffect, useState } from 'react';
 import { MapContainer, TileLayer, Marker, Popup, Circle } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import cheeseMarker from '../assets/cheese-pin.png';
 import userMarker from '../assets/userMarker.png';
 import { Icon } from 'leaflet';
 import ChangeView from '../components/MapComponents/ChangeView';
-import PostSlider from '../components/MapComponents/PostSlider';
+import PostSwiper from '../components/MapComponents/PostSwiper';
 import {
   Container,
   Fab,
@@ -24,7 +24,6 @@ import { usePosts } from '../providers/PostProvider';
 import { useTheme } from '@mui/material';
 import DoneIcon from '@mui/icons-material/Done';
 import CloseIcon from '@mui/icons-material/Close';
-import shortid from 'shortid';
 import CenterFocusStrongIcon from '@mui/icons-material/CenterFocusStrong';
 import { useTranslation } from 'react-i18next';
 import { Box } from '@mui/system';
@@ -113,7 +112,7 @@ function MapPage() {
         </Marker>
         {posts.map((post) => (
           <Marker
-            key={shortid.generate()}
+            key={post.id}
             position={[post.latitude, post.longitude]}
             icon={cheeseIcon}
             eventHandlers={{
@@ -149,13 +148,14 @@ function MapPage() {
           </FormControl>
           <Box sx={{ width: '50%' }}>
             <Slider
-              max={15000}
+              max={100}
               value={radius}
               onChange={handleRadiusChange}
               disabled={!useRadius}
             />
           </Box>
         </Stack>
+        <PostSwiper posts={posts} focusedPost={focusedPost}/>
       </Container>
       <Fab
         style={{
@@ -173,6 +173,7 @@ function MapPage() {
         }}
       >
         <CenterFocusStrongIcon />
+       
       </Fab>
     </>
   );
