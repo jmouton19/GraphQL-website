@@ -74,7 +74,7 @@ const LanguageSelector = () => {
       <Menu
         anchorEl={userMenuAnchorEl}
         anchorOrigin={{
-          vertical: 'top',
+          vertical: 'bottom',
           horizontal: 'right',
         }}
         keepMounted

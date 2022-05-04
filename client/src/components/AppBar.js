@@ -113,7 +113,7 @@ function PrimaryAppBar() {
             id="menu-appbar"
             anchorEl={userMenuAnchorEl}
             anchorOrigin={{
-              vertical: 'top',
+              vertical: 'bottom',
               horizontal: 'right',
             }}
             keepMounted
