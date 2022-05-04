@@ -12,7 +12,6 @@ namespace webAPI.Models
         public Group? group { get; set; }
         public int? groupId { get; set; }
 
-
         [Required]
         public int userId { get; set; }
         [Required]

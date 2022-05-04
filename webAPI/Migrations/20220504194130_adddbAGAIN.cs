@@ -6,7 +6,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace webAPI.Migrations
 {
-    public partial class addValidatedUser : Migration
+    public partial class adddbAGAIN : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -163,11 +163,11 @@ namespace webAPI.Migrations
                 columns: new[] { "Id", "DOB", "avatar", "email", "firstName", "lastName", "password", "username", "validated" },
                 values: new object[,]
                 {
-                    { 1, new DateOnly(1943, 11, 23), "https://i.ibb.co/hm99dG4/20d9de001ebe.png", "nicolvisser@yahoo.com", "Nicol", "Visser", "$2a$11$z3tkCT25s35tyozN984PRe4QjnYFVA0WbNJeJc.lbh7lYyTuR0Sja", "VisserMan", false },
-                    { 2, new DateOnly(2000, 6, 3), "https://i.ibb.co/SBLGDZW/jc.png", "jcmouton@protonmail.com", "Jacques", "Mouton", "$2a$11$QMOx9Srw5y30RsEnZGHJu..sFsNgvwn7vV6ORjJke9QFrNoBtcjya", "JaySea", true },
-                    { 3, new DateOnly(2000, 11, 23), "https://i.ibb.co/jg3970L/76cb8121601e.png", "philler@gmail.com", "Philip", "Schommarz", "$2a$11$9amDYJWysUP0x6SEIX9oouwMkm9jLqg2Sez2/D2TAu7BhJF/kBtLO", "Fillet", true },
-                    { 4, new DateOnly(2000, 3, 11), "https://i.ibb.co/VYbZ60Q/38816802529d.jpg", "mssteyn@rocketmail.com", "Lize", "Steyn", "$2a$11$48o0ZdPjv9qF7Qx7uXOte.KZppq5rRDk/dyxIzaV0/s8pvpm.6aJu", "MorneSteyn", true },
-                    { 5, new DateOnly(2000, 1, 3), "https://i.ibb.co/3cfRt6n/Image.png", "eduanuys@gmail.com", "Eduan", "Uys", "$2a$11$lBvTs8SXHeT7PGgNxHvtRelXSTRV35MB6sCoHUlBOhNhoQJO10jqm", "uysbeer", true }
+                    { 1, new DateOnly(1943, 11, 23), "https://i.ibb.co/hm99dG4/20d9de001ebe.png", "nicolvisser@yahoo.com", "Nicol", "Visser", "$2a$11$WiLkFUgHz1QGGNPzRWfjFunm6QKI5TihEqoI5Lq4QxCKU8XBbb0cO", "VisserMan", true },
+                    { 2, new DateOnly(2000, 6, 3), "https://i.ibb.co/SBLGDZW/jc.png", "jcmouton@protonmail.com", "Jacques", "Mouton", "$2a$11$xcs39XLd.2y9Gre5Wvopdux.O3cOWh9XbAuGdfaQV/nS4E36Vy7dG", "JaySea", true },
+                    { 3, new DateOnly(2000, 11, 23), "https://i.ibb.co/jg3970L/76cb8121601e.png", "philler@gmail.com", "Philip", "Schommarz", "$2a$11$y3kvImnsBrCyf9vS2xnec./pkkijFFiQ3cUcYKEjfKgjEqC/Qg7te", "Fillet", true },
+                    { 4, new DateOnly(2000, 3, 11), "https://i.ibb.co/VYbZ60Q/38816802529d.jpg", "mssteyn@rocketmail.com", "Lize", "Steyn", "$2a$11$.19ogrZWSqMtN9biYuIko.F7g4lsCVm5QrRw5yDqZtxyTe1aBOCom", "MorneSteyn", true },
+                    { 5, new DateOnly(2000, 1, 3), "https://i.ibb.co/3cfRt6n/Image.png", "eduanuys@gmail.com", "Eduan", "Uys", "$2a$11$MrSgB5erS32EZCVZ75goZex.I1I4KikfuwKipMO6T9gAwLPsufhyC", "uysbeer", true }
                 });
 
             migrationBuilder.InsertData(
@@ -175,8 +175,8 @@ namespace webAPI.Migrations
                 columns: new[] { "Id", "accepted", "receiverId", "senderId" },
                 values: new object[,]
                 {
-                    { 1, false, 2, 1 },
-                    { 2, true, 4, 3 }
+                    { 1, true, 2, 1 },
+                    { 2, true, 1, 4 }
                 });
 
             migrationBuilder.InsertData(
@@ -214,17 +214,27 @@ namespace webAPI.Migrations
             migrationBuilder.InsertData(
                 table: "Posts",
                 columns: new[] { "Id", "body", "creatorId", "dateCreated", "latitude", "longitude", "video" },
-                values: new object[] { 1, "I like penguins", 4, new DateTime(2022, 5, 4, 11, 46, 42, 515, DateTimeKind.Utc).AddTicks(162), 29.653700000000001, 79.948599999999999, false });
+                values: new object[,]
+                {
+                    { 1, "I like penguins", 4, new DateTime(2012, 5, 4, 19, 20, 14, 774, DateTimeKind.Utc), 29.653700000000001, 79.948599999999999, false },
+                    { 5, "Nicol is not my friend kek", 5, new DateTime(2016, 5, 4, 19, 20, 14, 774, DateTimeKind.Utc), 8.8628, 15.0, false },
+                    { 6, "i love nicol visser", 7, new DateTime(2015, 5, 4, 19, 20, 14, 774, DateTimeKind.Utc), -82.862799999999993, -135.0, false }
+                });
 
             migrationBuilder.InsertData(
                 table: "Comments",
                 columns: new[] { "Id", "body", "creatorId", "dateCreated", "postId" },
-                values: new object[] { 1, "i also like pengins", 2, new DateTime(2022, 5, 4, 11, 46, 42, 515, DateTimeKind.Utc).AddTicks(184), 1 });
+                values: new object[] { 1, "i also like pengins", 2, new DateTime(2014, 5, 4, 19, 20, 14, 774, DateTimeKind.Utc), 1 });
 
             migrationBuilder.InsertData(
                 table: "Posts",
                 columns: new[] { "Id", "body", "creatorId", "dateCreated", "latitude", "longitude", "video" },
-                values: new object[] { 2, "u4vuh4i7wb9atdvj11rs", 1, new DateTime(2022, 5, 4, 11, 46, 42, 515, DateTimeKind.Utc).AddTicks(167), 82.862799999999993, 135.0, true });
+                values: new object[,]
+                {
+                    { 2, "u4vuh4i7wb9atdvj11rs", 1, new DateTime(2019, 5, 4, 19, 20, 14, 774, DateTimeKind.Utc), 82.862799999999993, 135.0, true },
+                    { 3, "chess is lekker", 1, new DateTime(2018, 5, 4, 19, 20, 14, 774, DateTimeKind.Utc), 2.8628, 35.0, false },
+                    { 4, "chess is KAK!", 3, new DateTime(2017, 5, 4, 19, 20, 14, 774, DateTimeKind.Utc), -82.862799999999993, 35.0, false }
+                });
 
             migrationBuilder.CreateIndex(
                 name: "IX_Comments_creatorId",

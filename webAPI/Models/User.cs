@@ -29,8 +29,5 @@ namespace webAPI.Models
         [GraphQLDescription("Indictaes whether the user has validated his email.")]
         [Required]
         public bool validated { get; set; }
-
-        // public List<Friendship>? FriendshipsSent { get; set; }
-        // public List<Friendship>? FriendshipsReceived { get; set; }
     }
 }

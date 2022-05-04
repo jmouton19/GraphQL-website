@@ -779,7 +779,7 @@ namespace webAPI.graphQL
 
         [UseDbContext(typeof(AppDbContext))]
         [Authorize]
-        public DistanceOutput Distance(AddDistanceInput input, [ScopedService] AppDbContext context)
+        public DistanceOutput Distance(AddDistanceInput input, [ScopedService] AppDbContext context, [Service] IHttpContextAccessor contextAccessor)
         {
             var response = new DistanceOutput
             {
@@ -787,11 +787,55 @@ namespace webAPI.graphQL
                 success = false,
                 posts = new List<PostDist>()
             };
+            var identity = contextAccessor.HttpContext.User.Identity as ClaimsIdentity;
+            string idendityId = identity.Claims.FirstOrDefault(u => u.Type == ClaimTypes.Sid).Value;
+            var totalPosts = new List<Post>();
 
             Coordinate origin = new Coordinate(input.latitude, input.longitude);
+            if (input.groupId != null)
+            {
+                var currentGroup = context.Groups.Where(u => u.Id == input.groupId).FirstOrDefault();
+                if (currentGroup != null)
+                {
+                    totalPosts = context.Posts.Include(x => x.creator).Where(x => x.creator.groupId == input.groupId).ToList();
+                    response.success = true;
+                    response.message = "lekker lekker";
+                }
+                else
+                {
+                    response.success = false;
+                    response.message = "Group does not exist.";
+                }
+            }
+            else
+            {
+                var friends = context.Friendships.Where(u => u.accepted == true && (u.senderId == Int32.Parse(idendityId) || u.receiverId == Int32.Parse(idendityId))).ToList();
+                foreach (Friendship friend in friends)
+                {
+                    var userId = friend.senderId;
+                    if (friend.senderId == Int32.Parse(idendityId))
+                    {
+                        userId = friend.receiverId;
+                    }
 
-            List<Post> posts = context.Posts.ToList();
-            foreach (Post post in posts)
+                    List<Post> friendsPosts = context.Posts.Include(x => x.creator).Where(x => x.creator.userId == userId).ToList();
+                    totalPosts.AddRange(friendsPosts);
+                }
+                var memberships = context.Memberships.Where(x => x.userId == Int32.Parse(idendityId)).ToList();
+                foreach (Membership membership in memberships)
+                {
+
+                    List<Post> groupPosts = context.Posts.Include(x => x.creator).Where(x => x.creator.groupId == membership.groupId && x.creator.userId != Int32.Parse(idendityId)).ToList();
+                    totalPosts.AddRange(groupPosts);
+                }
+                List<Post> myPosts = context.Posts.Include(x => x.creator).Where(x => x.creator.userId == Int32.Parse(idendityId)).ToList();
+                totalPosts.AddRange(myPosts);
+                totalPosts = totalPosts.DistinctBy(x => x.Id).ToList();
+                response.success = true;
+                response.message = "lekker lekker";
+            }
+
+            foreach (Post post in totalPosts)
             {
                 Coordinate destination = new Coordinate(post.latitude, post.longitude);
                 double distance = GeoCalculator.GetDistance(origin, destination, 2, DistanceUnit.Kilometers);
@@ -820,10 +864,11 @@ namespace webAPI.graphQL
                     quantity = response.posts.Count;
                 response.posts.RemoveRange(quantity, response.posts.Count - quantity);
             }
-            response.success = true;
-            response.message = "lekker lekker";
-            return response;
 
+            if (input.timeSort != null)
+                response.posts.Sort((s1, s2) => s1.post.dateCreated.CompareTo(s2.post.dateCreated));
+
+            return response;
         }
 
         [UseDbContext(typeof(AppDbContext))]

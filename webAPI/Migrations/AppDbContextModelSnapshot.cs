@@ -57,7 +57,7 @@ namespace webAPI.Migrations
                             Id = 1,
                             body = "i also like pengins",
                             creatorId = 2,
-                            dateCreated = new DateTime(2022, 5, 4, 11, 48, 38, 317, DateTimeKind.Utc).AddTicks(8037),
+                            dateCreated = new DateTime(2014, 5, 4, 19, 20, 14, 774, DateTimeKind.Utc),
                             postId = 1
                         });
                 });
@@ -91,7 +91,7 @@ namespace webAPI.Migrations
                         new
                         {
                             Id = 1,
-                            accepted = false,
+                            accepted = true,
                             receiverId = 2,
                             senderId = 1
                         },
@@ -99,8 +99,8 @@ namespace webAPI.Migrations
                         {
                             Id = 2,
                             accepted = true,
-                            receiverId = 4,
-                            senderId = 3
+                            receiverId = 1,
+                            senderId = 4
                         });
                 });
 
@@ -275,7 +275,7 @@ namespace webAPI.Migrations
                             Id = 1,
                             body = "I like penguins",
                             creatorId = 4,
-                            dateCreated = new DateTime(2022, 5, 4, 11, 48, 38, 317, DateTimeKind.Utc).AddTicks(8016),
+                            dateCreated = new DateTime(2012, 5, 4, 19, 20, 14, 774, DateTimeKind.Utc),
                             latitude = 29.653700000000001,
                             longitude = 79.948599999999999,
                             video = false
@@ -285,10 +285,50 @@ namespace webAPI.Migrations
                             Id = 2,
                             body = "u4vuh4i7wb9atdvj11rs",
                             creatorId = 1,
-                            dateCreated = new DateTime(2022, 5, 4, 11, 48, 38, 317, DateTimeKind.Utc).AddTicks(8018),
+                            dateCreated = new DateTime(2019, 5, 4, 19, 20, 14, 774, DateTimeKind.Utc),
                             latitude = 82.862799999999993,
                             longitude = 135.0,
                             video = true
+                        },
+                        new
+                        {
+                            Id = 3,
+                            body = "chess is lekker",
+                            creatorId = 1,
+                            dateCreated = new DateTime(2018, 5, 4, 19, 20, 14, 774, DateTimeKind.Utc),
+                            latitude = 2.8628,
+                            longitude = 35.0,
+                            video = false
+                        },
+                        new
+                        {
+                            Id = 4,
+                            body = "chess is KAK!",
+                            creatorId = 3,
+                            dateCreated = new DateTime(2017, 5, 4, 19, 20, 14, 774, DateTimeKind.Utc),
+                            latitude = -82.862799999999993,
+                            longitude = 35.0,
+                            video = false
+                        },
+                        new
+                        {
+                            Id = 5,
+                            body = "Nicol is not my friend kek",
+                            creatorId = 5,
+                            dateCreated = new DateTime(2016, 5, 4, 19, 20, 14, 774, DateTimeKind.Utc),
+                            latitude = 8.8628,
+                            longitude = 15.0,
+                            video = false
+                        },
+                        new
+                        {
+                            Id = 6,
+                            body = "i love nicol visser",
+                            creatorId = 7,
+                            dateCreated = new DateTime(2015, 5, 4, 19, 20, 14, 774, DateTimeKind.Utc),
+                            latitude = -82.862799999999993,
+                            longitude = -135.0,
+                            video = false
                         });
                 });
 
@@ -346,7 +386,7 @@ namespace webAPI.Migrations
                             email = "nicolvisser@yahoo.com",
                             firstName = "Nicol",
                             lastName = "Visser",
-                            password = "$2a$11$/3wMWWwMf.fIvhREng4VUOcqbe3qQtFE8h9/QaVi2lbHn2hCdRJk.",
+                            password = "$2a$11$WiLkFUgHz1QGGNPzRWfjFunm6QKI5TihEqoI5Lq4QxCKU8XBbb0cO",
                             username = "VisserMan",
                             validated = true
                         },
@@ -358,7 +398,7 @@ namespace webAPI.Migrations
                             email = "jcmouton@protonmail.com",
                             firstName = "Jacques",
                             lastName = "Mouton",
-                            password = "$2a$11$TmQ2MzopwmpqkxDDSVuP1.sDIPm4KA.o3eVZ7M9kPcK6cHb5Ag9Be",
+                            password = "$2a$11$xcs39XLd.2y9Gre5Wvopdux.O3cOWh9XbAuGdfaQV/nS4E36Vy7dG",
                             username = "JaySea",
                             validated = true
                         },
@@ -370,7 +410,7 @@ namespace webAPI.Migrations
                             email = "philler@gmail.com",
                             firstName = "Philip",
                             lastName = "Schommarz",
-                            password = "$2a$11$wnBzltMw3Q04cD04DEdB4eizcXaoeP13110Pn0e1ekAIvfQsbW8Fe",
+                            password = "$2a$11$y3kvImnsBrCyf9vS2xnec./pkkijFFiQ3cUcYKEjfKgjEqC/Qg7te",
                             username = "Fillet",
                             validated = true
                         },
@@ -382,7 +422,7 @@ namespace webAPI.Migrations
                             email = "mssteyn@rocketmail.com",
                             firstName = "Lize",
                             lastName = "Steyn",
-                            password = "$2a$11$rP0i6PVoVXd7PIxFWIUYz.uq6cgbZwBQhCmMFWW5x3cvs7C8dh51S",
+                            password = "$2a$11$.19ogrZWSqMtN9biYuIko.F7g4lsCVm5QrRw5yDqZtxyTe1aBOCom",
                             username = "MorneSteyn",
                             validated = true
                         },
@@ -394,7 +434,7 @@ namespace webAPI.Migrations
                             email = "eduanuys@gmail.com",
                             firstName = "Eduan",
                             lastName = "Uys",
-                            password = "$2a$11$Ajkke1usxCA3Zrg1jxUfiu9JENPYWOnDH5ZVHEoe/IKCuamys36MS",
+                            password = "$2a$11$MrSgB5erS32EZCVZ75goZex.I1I4KikfuwKipMO6T9gAwLPsufhyC",
                             username = "uysbeer",
                             validated = true
                         });

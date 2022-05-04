@@ -184,7 +184,7 @@ namespace webAPI.data
                 creatorId = 4,
                 latitude = 29.6537,
                 longitude = 79.9486,
-                dateCreated = DateTime.UtcNow
+                dateCreated = DateTime.Parse("2012-05-04T19:20:14.774Z").ToUniversalTime()
             }, new Post
             {
                 Id = 2,
@@ -193,7 +193,43 @@ namespace webAPI.data
                 creatorId = 1,
                 latitude = 82.8628,
                 longitude = 135.0000,
-                dateCreated = DateTime.UtcNow
+                dateCreated = DateTime.Parse("2019-05-04T19:20:14.774Z").ToUniversalTime()
+            }, new Post
+            {
+                Id = 3,
+                body = "chess is lekker",
+                video = false,
+                creatorId = 1,
+                latitude = 2.8628,
+                longitude = 35.0000,
+                dateCreated = DateTime.Parse("2018-05-04T19:20:14.774Z").ToUniversalTime()
+            }, new Post
+            {
+                Id = 4,
+                body = "chess is KAK!",
+                video = false,
+                creatorId = 3,
+                latitude = -82.8628,
+                longitude = 35.0000,
+                dateCreated = DateTime.Parse("2017-05-04T19:20:14.774Z").ToUniversalTime()
+            }, new Post
+            {
+                Id = 5,
+                body = "Nicol is not my friend kek",
+                video = false,
+                creatorId = 5,
+                latitude = 8.8628,
+                longitude = 15.0000,
+                dateCreated = DateTime.Parse("2016-05-04T19:20:14.774Z").ToUniversalTime()
+            }, new Post
+            {
+                Id = 6,
+                body = "i love nicol visser",
+                video = false,
+                creatorId = 7,
+                latitude = -82.8628,
+                longitude = -135.0000,
+                dateCreated = DateTime.Parse("2015-05-04T19:20:14.774Z").ToUniversalTime()
             });
 
             modelBuilder.Entity<Comment>().HasData(new Comment
@@ -202,18 +238,19 @@ namespace webAPI.data
                 body = "i also like pengins",
                 creatorId = 2,
                 postId = 1,
-                dateCreated = DateTime.UtcNow
+                dateCreated = DateTime.Parse("2014-05-04T19:20:14.774Z").ToUniversalTime()
             });
             modelBuilder.Entity<Friendship>().HasData(new Friendship
             {
                 Id = 1,
                 senderId = 1,
                 receiverId = 2,
+                accepted = true
             }, new Friendship
             {
                 Id = 2,
-                senderId = 3,
-                receiverId = 4,
+                senderId = 4,
+                receiverId = 1,
                 accepted = true
             });
         }
