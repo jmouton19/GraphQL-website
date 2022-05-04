@@ -779,7 +779,7 @@ namespace webAPI.graphQL
 
         [UseDbContext(typeof(AppDbContext))]
         [Authorize]
-        public DistanceOutput Distance(AddDistanceInput input, [ScopedService] AppDbContext context, [Service] IHttpContextAccessor contextAccessor)
+        public async Task<DistanceOutput> DistanceAsync(AddDistanceInput input, [ScopedService] AppDbContext context, [Service] IHttpContextAccessor contextAccessor)
         {
             var response = new DistanceOutput
             {
@@ -797,7 +797,7 @@ namespace webAPI.graphQL
                 var currentGroup = context.Groups.Where(u => u.Id == input.groupId).FirstOrDefault();
                 if (currentGroup != null)
                 {
-                    totalPosts = context.Posts.Include(x => x.creator).Where(x => x.creator.groupId == input.groupId).ToList();
+                    totalPosts = await context.Posts.Include(x => x.creator).Where(x => x.creator.groupId == input.groupId).ToListAsync();
                     response.success = true;
                     response.message = "lekker lekker";
                 }
@@ -809,7 +809,7 @@ namespace webAPI.graphQL
             }
             else
             {
-                List<Friendship> friends = context.Friendships.Where(u => u.accepted == true && (u.senderId == Int32.Parse(idendityId) || u.receiverId == Int32.Parse(idendityId))).ToList();
+                List<Friendship> friends = await context.Friendships.Where(u => u.accepted == true && (u.senderId == Int32.Parse(idendityId) || u.receiverId == Int32.Parse(idendityId))).ToListAsync();
                 foreach (Friendship friend in friends)
                 {
                     var userId = friend.senderId;
@@ -818,17 +818,17 @@ namespace webAPI.graphQL
                         userId = friend.receiverId;
                     }
 
-                    List<Post> friendsPosts = context.Posts.Include(x => x.creator).Where(x => x.creator.userId == userId).ToList();
+                    List<Post> friendsPosts = await context.Posts.Include(x => x.creator).Where(x => x.creator.userId == userId).ToListAsync();
                     totalPosts.AddRange(friendsPosts);
                 }
-                List<Membership> memberships = context.Memberships.Where(x => x.userId == Int32.Parse(idendityId)).ToList();
+                List<Membership> memberships = await context.Memberships.Where(x => x.userId == Int32.Parse(idendityId)).ToListAsync();
                 foreach (Membership membership in memberships)
                 {
 
-                    List<Post> groupPosts = context.Posts.Include(x => x.creator).Where(x => (x.creator.groupId == membership.groupId && x.creator.groupId != null) && x.creator.userId != Int32.Parse(idendityId)).ToList();
+                    List<Post> groupPosts = await context.Posts.Include(x => x.creator).Where(x => (x.creator.groupId == membership.groupId && x.creator.groupId != null) && x.creator.userId != Int32.Parse(idendityId)).ToListAsync();
                     totalPosts.AddRange(groupPosts);
                 }
-                List<Post> myPosts = context.Posts.Include(x => x.creator).Where(x => x.creator.userId == Int32.Parse(idendityId)).ToList();
+                List<Post> myPosts = await context.Posts.Include(x => x.creator).Where(x => x.creator.userId == Int32.Parse(idendityId)).ToListAsync();
                 totalPosts.AddRange(myPosts);
                 totalPosts = totalPosts.DistinctBy(x => x.Id).ToList();
                 response.success = true;
@@ -856,7 +856,7 @@ namespace webAPI.graphQL
                 }
 
             }
-            response.posts.Sort((s1, s2) => s1.distance.CompareTo(s2.distance));
+
             if (input.quantity != null)
             {
                 int quantity = (int)input.quantity;
@@ -867,6 +867,8 @@ namespace webAPI.graphQL
 
             if (input.timeSort != null)
                 response.posts.Sort((s1, s2) => s1.post.dateCreated.CompareTo(s2.post.dateCreated));
+            else
+                response.posts.Sort((s1, s2) => s1.distance.CompareTo(s2.distance));
 
             return response;
         }
