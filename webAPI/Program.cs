@@ -15,6 +15,11 @@ builder.Services.AddPooledDbContextFactory<AppDbContext>(opts =>
     var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
     opts.UseNpgsql(connectionString);
 });
+
+builder.Services.AddFluentEmail(builder.Configuration["SMPTsettings:user"]).AddRazorRenderer()
+.AddSmtpSender(builder.Configuration["SMPTsettings:host"], 587, builder.Configuration["SMPTsettings:user"], builder.Configuration["SMPTsettings:password"]);
+
+
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddAuthorization();
 

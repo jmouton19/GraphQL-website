@@ -7,6 +7,7 @@ using HotChocolate.AspNetCore.Authorization;
 using System.Security.Claims;
 using Geolocation;
 using Microsoft.EntityFrameworkCore;
+using FluentEmail.Core;
 
 namespace webAPI.graphQL
 {
@@ -14,7 +15,7 @@ namespace webAPI.graphQL
     public class Mutation
     {
         [UseDbContext(typeof(AppDbContext))]
-        public async Task<AuthOutput> AddUserAsync(AddUserInput input, [Service] IConfiguration config, [ScopedService] AppDbContext context)
+        public async Task<AuthOutput> AddUserAsync(AddUserInput input, [Service] IConfiguration config, [ScopedService] AppDbContext context, [Service] IFluentEmail email)
         {
             var authOutput = new AuthOutput();
             authOutput.success = false;
@@ -52,6 +53,18 @@ namespace webAPI.graphQL
                     authOutput.message = "Signed up sucessfully.";
                     var utility = new Utilities();
                     authOutput.jwt = utility.getJWT(input.email, input.password, config, context);
+
+                    var emailTemplate =
+                                @"<p>Dear @Model.username,</p> 
+                                <p>Thanks for signing up to 'Kasie!. Please click the link to activate your account.</p>
+                                <p>Sincerely,<br>JC</p>";
+
+                    var newEmail = email.To(addedUser.email)
+                        .Subject($"Thanks for signing up to 'Kasie {addedUser.username}")
+                        .UsingTemplate<User>(emailTemplate, addedUser);
+
+                    await newEmail.SendAsync();
+
                     return authOutput;
                 }
                 return authOutput;
