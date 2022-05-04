@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { styled } from '@mui/material/styles';
 import Card from '@mui/material/Card';
 import CardHeader from '@mui/material/CardHeader';
@@ -15,9 +15,11 @@ import ThumbUpIcon from '@mui/icons-material/ThumbUp';
 import VideoPlayer from '../cloudindary/VideoPlayer';
 import CommentProvider from '../../providers/CommentProvider';
 import CommentViewer from './CommentViewer';
-import { Stack } from '@mui/material';
+import { Menu, MenuItem, Stack } from '@mui/material';
 import StyledLink from '../StyledLink';
 import { useTranslation } from 'react-i18next';
+import { useDeletePost, useRefreshPosts } from '../../providers/PostProvider';
+import { useNotify } from '../../providers/NotificationProvider';
 
 const ExpandMore = styled((props) => {
   const { expand, ...other } = props;
@@ -32,7 +34,18 @@ const ExpandMore = styled((props) => {
 
 function PostCard({ postData }) {
   const { t } = useTranslation();
-  const [expanded, setExpanded] = React.useState(false);
+  const refreshPosts = useRefreshPosts();
+  const deletePost = useDeletePost();
+  const notify = useNotify();
+  const [expanded, setExpanded] = useState(false);
+  const [anchorEl, setAnchorEl] = useState(null);
+
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
 
   const handleExpandClick = () => {
     setExpanded(!expanded);
@@ -40,10 +53,39 @@ function PostCard({ postData }) {
 
   return (
     <Card>
+      <Menu
+        id="post menu"
+        anchorEl={anchorEl}
+        open={Boolean(anchorEl)}
+        onClose={handleClose}
+        anchorOrigin={{
+          vertical: 'bottom',
+          horizontal: 'right',
+        }}
+        transformOrigin={{
+          vertical: 'top',
+          horizontal: 'right',
+        }}
+      >
+        <MenuItem
+          onClick={() => {
+            deletePost(postData.id)
+              .then((message) => {
+                refreshPosts();
+                notify('success', message);
+              })
+              .catch((message) => {
+                notify('error', message);
+              });
+          }}
+        >
+          <Typography color="error">{t('delete.label')}</Typography>
+        </MenuItem>
+      </Menu>
       <CardHeader
         avatar={<Avatar src={postData.creator.user.avatar} />}
         action={
-          <IconButton aria-label="settings">
+          <IconButton aria-label="settings" onClick={handleClick}>
             <MoreVertIcon />
           </IconButton>
         }

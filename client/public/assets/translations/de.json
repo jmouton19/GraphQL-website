@@ -105,6 +105,12 @@
 
 	"addVideo.label": "Video anstatt anheften",
 
-	"radius.label": "Radius"
+	"radius.label": "Radius",
+
+	"location.label": "Standort",
+
+	"useCurrentLocation.label": "Meinen aktuellen Standort verwenden",
+
+	"delete.label": "Löschen"
 	
 }

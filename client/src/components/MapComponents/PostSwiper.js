@@ -13,7 +13,6 @@ function PostSwiper({ posts, focusedPost }) {
   const [swiper, setSwiper] = useState(null);
 
   useEffect(() => {
-    console.log(`${swiper ? 'Swiper' : 'No swiper'}`);
     if (swiper) {
       swiper.slideToLoop(posts.indexOf(focusedPost) - 1);
     }
