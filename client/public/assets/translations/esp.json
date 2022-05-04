@@ -54,5 +54,8 @@
   "addVideo.label": "Añadir vídeo en su lugar",
   "confirmAccountTitle.label": "Confirme su cuenta",
   "confirmAccountMessage.label": "Introduzca el código de activación enviado a {{email}} para confirmar su dirección de correo electrónico.",
-  "confirm.label": "Confirmar"
+  "confirm.label": "Confirmar",
+  "sendEmail.label": "Enviar correo electrónico",
+  "lostPasswordEnterEmailPrompt.label": "Por favor, introduzca su correo electrónico para restablecer su contraseña.",
+  "lostPasswordCheckEmailPrompt.label": "Por favor, compruebe su bandeja de entrada para recibir más instrucciones."
 }

@@ -109,6 +109,12 @@
 
   "confirmAccountMessage.label": "Please enter the activation code sent to {{email}} to confirm your email address.",
 
-  "confirm.label": "Confirm"
+  "confirm.label": "Confirm",
+
+  "sendEmail.label": "Send Email",
+
+  "lostPasswordEnterEmailPrompt.label": "Please enter your email to reset your password.",
+
+  "lostPasswordCheckEmailPrompt.label": "Please check your inbox for further instructions."
 
 }

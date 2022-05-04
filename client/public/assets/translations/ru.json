@@ -54,5 +54,8 @@
   "addVideo.label": "Добавить видео вместо",
   "confirmAccountTitle.label": "Пожалуйста, подтвердите свою учетную запись",
   "confirmAccountMessage.label": "Введите код активации, отправленный на {{email}} для подтверждения адреса электронной почты.",
-  "confirm.label": "Подтвердить"
+  "confirm.label": "Подтвердить",
+  "sendEmail.label": "Отправить электронное письмо",
+  "lostPasswordEnterEmailPrompt.label": "Пожалуйста, введите свой адрес электронной почты, чтобы сбросить пароль.",
+  "lostPasswordCheckEmailPrompt.label": "Пожалуйста, проверьте свой почтовый ящик для получения дальнейших инструкций."
 }

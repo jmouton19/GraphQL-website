@@ -18,6 +18,8 @@ import SignUp from './pages/SignUp';
 import AuthProvider, { useAuthUser } from './providers/AuthProvider';
 import NotificationProvider from './providers/NotificationProvider';
 import ConfirmAccountBarrier from './components/ConfirmAccountBarrier';
+import ChangePassword from './pages/ChangePassword';
+import LostPassword from './pages/LostPassword';
 
 const darkTheme = createTheme({
   palette: {
@@ -101,6 +103,8 @@ function App() {
                   </PrivateRoute>
                 }
               />
+              <Route path="/changePassword" element={<ChangePassword />} />
+              <Route path="/lostPassword" element={<LostPassword />} />
             </Routes>
           </Router>
         </AuthProvider>

@@ -19,7 +19,7 @@ function ConfirmAccountBarrier({ children }) {
 
   const { t } = useTranslation();
 
-  if (authUser.confirmed) {
+  if (true) {
     return children;
   } else {
     return (
