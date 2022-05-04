@@ -881,10 +881,19 @@ namespace webAPI.graphQL
             var addedUser = context.Users.Where(u => u.email == emailInput).FirstOrDefault();
             if (addedUser != null)
             {
-                var utility = new Utilities();
-                await utility.validationEmailAsync(addedUser, config, email);
-                response.success = true;
-                response.message = "Activation email has been sent.";
+                if (addedUser.validated == false)
+                {
+                    var utility = new Utilities();
+                    await utility.validationEmailAsync(addedUser, config, email);
+                    response.success = true;
+                    response.message = "Activation email has been sent.";
+                }
+                else
+                {
+                    response.success = false;
+                    response.message = "Your account has already been activated.";
+                }
+
             }
             else
             {
