@@ -29,7 +29,6 @@ function GroupDetails({ details, owner }) {
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [avatarUrl, setAvatarUrl] = useState(null);
-  const [id, setID] = useState(null);
 
   const notify = useNotify();
   const client = useApolloClient();

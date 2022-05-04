@@ -187,17 +187,20 @@ function EditProfile() {
       .mutate({
         mutation: gql`
             mutation {
-              deleteUser(userId:${authUser.id})
+              deleteUser(userId:${authUser.id}) {
+                success
+                message
+              }
             }
         `,
       })
       .then((result) => {
-        const userDeleted = stringToObject(result.data.deleteUser);
-        if (userDeleted.success === 'true') {
+        const { success, message } = result.data.deleteUser;
+        if (success) {
           logOut();
-          notify('success', `${userDeleted.message}`);
+          notify('success', message);
         } else {
-          notify('error', userDeleted.message);
+          notify('error', message);
         }
       });
   };
