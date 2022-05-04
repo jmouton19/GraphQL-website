@@ -57,10 +57,10 @@ namespace webAPI.graphQL
                     authOutput.jwt = null;
 
                     string tokenString = addedUser.email + addedUser.username;
-                    var token = BCrypt.Net.BCrypt.HashPassword(tokenString);
-                    var uriBuilder = new UriBuilder("https", "cs334proj2group8.herokuapp.com", 443, "/confirmEmail");
+                    var key = BCrypt.Net.BCrypt.HashPassword(tokenString);
+                    var uriBuilder = new UriBuilder(config["SMPTsettings:http"], config["SMPTsettings:domain"], Int32.Parse(config["SMPTsettings:port"]), "/confirmEmail");
                     var parameters = HttpUtility.ParseQueryString(string.Empty);
-                    parameters["token"] = token;
+                    parameters["key"] = key;
                     parameters["userId"] = authOutput.user.Id.ToString();
                     uriBuilder.Query = parameters.ToString();
                     string urlString = uriBuilder.ToString();
