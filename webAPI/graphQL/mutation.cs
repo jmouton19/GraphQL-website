@@ -809,7 +809,7 @@ namespace webAPI.graphQL
             }
             else
             {
-                var friends = context.Friendships.Where(u => u.accepted == true && (u.senderId == Int32.Parse(idendityId) || u.receiverId == Int32.Parse(idendityId))).ToList();
+                List<Friendship> friends = context.Friendships.Where(u => u.accepted == true && (u.senderId == Int32.Parse(idendityId) || u.receiverId == Int32.Parse(idendityId))).ToList();
                 foreach (Friendship friend in friends)
                 {
                     var userId = friend.senderId;
@@ -821,11 +821,11 @@ namespace webAPI.graphQL
                     List<Post> friendsPosts = context.Posts.Include(x => x.creator).Where(x => x.creator.userId == userId).ToList();
                     totalPosts.AddRange(friendsPosts);
                 }
-                var memberships = context.Memberships.Where(x => x.userId == Int32.Parse(idendityId)).ToList();
+                List<Membership> memberships = context.Memberships.Where(x => x.userId == Int32.Parse(idendityId)).ToList();
                 foreach (Membership membership in memberships)
                 {
 
-                    List<Post> groupPosts = context.Posts.Include(x => x.creator).Where(x => x.creator.groupId == membership.groupId && x.creator.userId != Int32.Parse(idendityId)).ToList();
+                    List<Post> groupPosts = context.Posts.Include(x => x.creator).Where(x => (x.creator.groupId == membership.groupId && x.creator.groupId != null) && x.creator.userId != Int32.Parse(idendityId)).ToList();
                     totalPosts.AddRange(groupPosts);
                 }
                 List<Post> myPosts = context.Posts.Include(x => x.creator).Where(x => x.creator.userId == Int32.Parse(idendityId)).ToList();
