@@ -100,8 +100,8 @@ function MapPage() {
           message={t('provideLocationAccess.label')}
         />
       </Snackbar>
-      <MapContainer center={userLocation} zoom={12} style={{ height: '40vh' }}>
-        <ChangeView center={centerLocation} />
+      <MapContainer center={userLocation} zoom={12} style={{ height: '40vh' }} >
+        <ChangeView center={centerLocation}/>
         <TileLayer
           attribution='&copy; <a href="https://stadiamaps.com/">Stadia Maps</a>, &copy; <a href="https://openmaptiles.org/">OpenMapTiles</a> &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors'
           url="https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{x}/{y}{r}.png"
@@ -127,7 +127,7 @@ function MapPage() {
           </Marker>
         ))}
         {useRadius && (
-          <Circle center={userLocation} radius={radius}/>
+          <Circle center={userLocation} radius={radius*100}/>
         )}
       </MapContainer>
       <Container>
@@ -141,7 +141,7 @@ function MapPage() {
           <FormControl>
             <FormControlLabel
               control={<Switch color="primary" />}
-              label={`${t('radius.label')}: ${radius} km`}
+              label={`${t('radius.label')}: ${(radius/10).toFixed(0)} km`}
               labelPlacement="end"
               value={useRadius}
               onChange={() => setUseRadius(!useRadius)}
@@ -149,6 +149,7 @@ function MapPage() {
           </FormControl>
           <Box sx={{ width: '50%' }}>
             <Slider
+              max={15000}
               value={radius}
               onChange={handleRadiusChange}
               disabled={!useRadius}
