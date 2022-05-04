@@ -563,7 +563,7 @@ namespace webAPI.graphQL
         public AuthOutput UserLogin(LoginInput input, [Service] IConfiguration config, [ScopedService] AppDbContext context)
         {
             var authOutput = new AuthOutput();
-            authOutput.success = false;
+            authOutput.success = true;
             authOutput.message = "Please activate your account.";
             try
             {
