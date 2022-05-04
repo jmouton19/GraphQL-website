@@ -1,6 +1,6 @@
 namespace webAPI.graphQL.inputs
 {
 
-    public record AddValidateInput(string token, int userId);
+    public record AddValidateInput(string key, int userId);
 
 }

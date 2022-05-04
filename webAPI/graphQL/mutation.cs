@@ -56,8 +56,9 @@ namespace webAPI.graphQL
                     var utility = new Utilities();
                     authOutput.jwt = null;
 
-                    var token = BCrypt.Net.BCrypt.HashPassword(authOutput.user.email + authOutput.user.username);
-                    var uriBuilder = new UriBuilder("https://cs334proj2group8.herokuapp.com/confirmEmail");
+                    string tokenString = addedUser.email + addedUser.username;
+                    var token = BCrypt.Net.BCrypt.HashPassword(tokenString);
+                    var uriBuilder = new UriBuilder("https", "cs334proj2group8.herokuapp.com", 443, "/confirmEmail");
                     var parameters = HttpUtility.ParseQueryString(string.Empty);
                     parameters["token"] = token;
                     parameters["userId"] = authOutput.user.Id.ToString();
@@ -838,17 +839,46 @@ namespace webAPI.graphQL
         }
 
         [UseDbContext(typeof(AppDbContext))]
-        [Authorize]
-        public Response ValidateEmail(AddValidateInput input, [ScopedService] AppDbContext context)
+        public async Task<Response> ValidateAccountAsync(AddValidateInput input, [ScopedService] AppDbContext context)
         {
             var response = new Response
             {
                 message = string.Empty,
                 success = false
             };
-
-            response.success = true;
-            response.message = "lekker lekker";
+            var currentUser = context.Users.Where(u => u.Id == input.userId).FirstOrDefault();
+            if (currentUser != null)
+            {
+                if (currentUser.validated == false)
+                {
+                    string tokenString = currentUser.email + currentUser.username;
+                    var token = HttpUtility.UrlDecode(input.key);
+                    bool verified = BCrypt.Net.BCrypt.Verify(tokenString, token);
+                    if (verified)
+                    {
+                        currentUser.validated = true;
+                        context.Users.Update(currentUser);
+                        await context.SaveChangesAsync();
+                        response.success = true;
+                        response.message = "Account has been activated.";
+                    }
+                    else
+                    {
+                        response.success = false;
+                        response.message = "Access denied!";
+                    }
+                }
+                else
+                {
+                    response.success = false;
+                    response.message = "Account has already been activated.";
+                }
+            }
+            else
+            {
+                response.success = false;
+                response.message = "This user does not exist.";
+            }
             return response;
         }
 
