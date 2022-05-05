@@ -107,7 +107,7 @@
   
   "confirmAccountTitle.label": "Bitte bestätigen Sie Ihr Konto",
 
-  "confirmAccountMessage.label": "Bitte geben Sie den an {{email}} gesendeten Aktivierungscode ein, um Ihre E-Mail-Adresse zu bestätigen.",
+  "confirmAccountMessage.label": "Bitte befolgen Sie die an {{email}} gesendeten Anweisungen.",
   
   "confirm.label": "Bestätigen Sie",
 
@@ -115,6 +115,8 @@
 
   "lostPasswordEnterEmailPrompt.label": "Bitte geben Sie Ihre E-Mail-Adresse ein, um Ihr Passwort zurückzusetzen.",
 
-  "lostPasswordCheckEmailPrompt.label": "Bitte prüfen Sie Ihren Posteingang auf weitere Anweisungen."
+  "lostPasswordCheckEmailPrompt.label": "Bitte prüfen Sie Ihren Posteingang auf weitere Anweisungen.",
+
+  "resendEmail.label": "E-Mail erneut senden"
 	
 }

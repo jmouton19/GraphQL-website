@@ -53,9 +53,9 @@
   "passwordMismatch.label": "密码不匹配",
   "addVideo.label": "添加视频代替",
   "confirmAccountTitle.label": "请确认您的账户",
-  "confirmAccountMessage.label": "请输入发送至 {{email}} 的激活码，以确认您的电子邮件地址。",
+  "confirmAccountMessage.label": "请按照发送至 {{email}} 的指示行事。",
   "confirm.label": "确认",
   "sendEmail.label": "发送电子邮件",
   "lostPasswordEnterEmailPrompt.label": "请输入你的电子邮件以重置你的密码。",
-  "lostPasswordCheckEmailPrompt.label": "请查看您的收件箱，了解进一步的指示。"
+  "resendEmail.label": "重新发送电子邮件"
 }

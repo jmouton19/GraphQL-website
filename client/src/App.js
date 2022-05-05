@@ -20,6 +20,7 @@ import NotificationProvider from './providers/NotificationProvider';
 import ConfirmAccountBarrier from './components/ConfirmAccountBarrier';
 import ChangePassword from './pages/ChangePassword';
 import LostPassword from './pages/LostPassword';
+import ConfirmEmail from './pages/ConfirmEmail';
 
 const darkTheme = createTheme({
   palette: {
@@ -105,6 +106,7 @@ function App() {
               />
               <Route path="/changePassword" element={<ChangePassword />} />
               <Route path="/lostPassword" element={<LostPassword />} />
+              <Route path="/confirmEmail" element={<ConfirmEmail />} />
             </Routes>
           </Router>
         </AuthProvider>

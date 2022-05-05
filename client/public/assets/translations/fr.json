@@ -53,9 +53,10 @@
   "passwordMismatch.label": "Les mots de passe ne correspondent pas",
   "addVideo.label": "Ajouter une vidéo à la place",
   "confirmAccountTitle.label": "Veuillez confirmer votre compte",
-  "confirmAccountMessage.label": "Veuillez saisir le code d'activation envoyé à {{email}} pour confirmer votre adresse électronique.",
+  "confirmAccountMessage.label": "Veuillez suivre les instructions envoyées à {{email}}.",
   "confirm.label": "Confirmer",
   "sendEmail.label": "Envoyer un courriel",
   "lostPasswordEnterEmailPrompt.label": "Veuillez saisir votre adresse électronique pour réinitialiser votre mot de passe.",
-  "lostPasswordCheckEmailPrompt.label": "Veuillez vérifier votre boîte de réception pour de nouvelles instructions."
+  "lostPasswordCheckEmailPrompt.label": "Veuillez vérifier votre boîte de réception pour de nouvelles instructions.",
+  "resendEmail.label": "Renvoyer le courriel"
 }

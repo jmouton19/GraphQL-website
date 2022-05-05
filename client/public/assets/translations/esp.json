@@ -53,9 +53,10 @@
   "passwordMismatch.label": "Las contraseñas no coinciden",
   "addVideo.label": "Añadir vídeo en su lugar",
   "confirmAccountTitle.label": "Confirme su cuenta",
-  "confirmAccountMessage.label": "Introduzca el código de activación enviado a {{email}} para confirmar su dirección de correo electrónico.",
+  "confirmAccountMessage.label": "Por favor, siga las instrucciones enviadas a {{email}}.",
   "confirm.label": "Confirmar",
   "sendEmail.label": "Enviar correo electrónico",
   "lostPasswordEnterEmailPrompt.label": "Por favor, introduzca su correo electrónico para restablecer su contraseña.",
-  "lostPasswordCheckEmailPrompt.label": "Por favor, compruebe su bandeja de entrada para recibir más instrucciones."
+  "lostPasswordCheckEmailPrompt.label": "Por favor, compruebe su bandeja de entrada para recibir más instrucciones.",
+  "resendEmail.label": "Reenviar correo electrónico"
 }

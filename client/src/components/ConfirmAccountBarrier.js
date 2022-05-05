@@ -1,3 +1,4 @@
+import { gql, useApolloClient } from '@apollo/client';
 import { DialogTitle } from '@mui/material';
 import { DialogContent } from '@mui/material';
 import { TextField } from '@mui/material';
@@ -9,17 +10,44 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { useAuthUser, useLogOut } from '../providers/AuthProvider';
+import { useNotify } from '../providers/NotificationProvider';
 
 function ConfirmAccountBarrier({ children }) {
   const authUser = useAuthUser();
   const logout = useLogOut();
   const navigate = useNavigate();
+  const client = useApolloClient();
+  const notify = useNotify();
+  const [resendDisabled, setResendDisabled] = React.useState(false);
 
-  const submit = () => {};
+  const resendEmail = () => {
+    setResendDisabled(true);
+    client
+      .mutate({
+        mutation: gql`
+        mutation {
+          resendValidation(emailInput: "${authUser.email}") {
+            success
+            message
+          }
+        }
+      `,
+      })
+      .then((response) => {
+        const { success, message } = response.data.resendValidation;
+        if (success) {
+          notify('success', message);
+          setTimeout(() => setResendDisabled(false), 5000);
+        } else {
+          notify('error', message);
+          setResendDisabled(false);
+        }
+      });
+  };
 
   const { t } = useTranslation();
 
-  if (true) {
+  if (authUser.validated) {
     return children;
   } else {
     return (
@@ -29,14 +57,6 @@ function ConfirmAccountBarrier({ children }) {
           <DialogContentText>
             {t('confirmAccountMessage.label', { email: authUser.email })}
           </DialogContentText>
-          <TextField
-            autoFocus
-            margin="dense"
-            id="name"
-            label="Code"
-            fullWidth
-            variant="standard"
-          />
         </DialogContent>
         <DialogActions>
           <Button
@@ -48,7 +68,9 @@ function ConfirmAccountBarrier({ children }) {
           >
             {t('logout.label')}
           </Button>
-          <Button onClick={submit}>{t('confirm.label')}</Button>
+          <Button disabled={resendDisabled} onClick={resendEmail}>
+            {t('resendEmail.label')}
+          </Button>
         </DialogActions>
       </Dialog>
     );
