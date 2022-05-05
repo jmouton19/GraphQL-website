@@ -11,7 +11,7 @@ import {
 import { setContext } from '@apollo/client/link/context';
 
 const httpLink = createHttpLink({
-  uri: 'http://cs334proj2group8.herokuapp.com/graphql/',
+  uri: 'https://cs334proj2group8.herokuapp.com/graphql/',
 });
 
 const initialClient = new ApolloClient({
