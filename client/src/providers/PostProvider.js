@@ -1,9 +1,9 @@
 import { gql, useApolloClient } from '@apollo/client';
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import { stringToObject } from '../utils/utils';
 
 const PostsContext = createContext();
 const AddPostContext = createContext();
+const DeletePostContext = createContext();
 const RefreshPostsContext = createContext();
 const FilterPostsContext = createContext();
 
@@ -13,6 +13,10 @@ export function usePosts() {
 
 export function useAddPost() {
   return useContext(AddPostContext);
+}
+
+export function useDeletePost() {
+  return useContext(DeletePostContext);
 }
 
 export function useRefreshPosts() {
@@ -176,16 +180,11 @@ function PostProvider(props) {
     setNeedsRefresh(false);
   }, [client, config, order, needsRefresh]);
 
-  async function addPost(video, body, creatorId) {
+  async function addPost(video, body, creatorId, latitude, longitude) {
     // if video is true, then the body is the Cloudinary Public ID of the uploaded video
     // if video is false, then the body is the text content of the text post
 
     const date = new Date();
-
-    // Todo: get from current location
-    const latitude = -33.96 + Math.random() * 0.4;
-    const longitude = 18.86 + Math.random() * 0.4;
-
     return new Promise((resolve, reject) => {
       client
         .mutate({
@@ -200,16 +199,43 @@ function PostProvider(props) {
                 longitude: ${longitude}
                 video: ${video ? 'true' : 'false'}
               }
-            )
+            ) {
+              success
+              message
+            }
           }
         `,
         })
         .then((result) => {
-          const responseData = stringToObject(result.data.addPost);
-          if (responseData.success) {
-            resolve(responseData.message);
+          const { success, message } = result.data.addPost;
+          if (success) {
+            resolve(message);
           } else {
-            reject(responseData.message);
+            reject(message);
+          }
+        });
+    });
+  }
+
+  async function deletePost(postId) {
+    return new Promise((resolve, reject) => {
+      client
+        .mutate({
+          mutation: gql`
+          mutation {
+            deletePost(postId: ${postId}){
+              success
+              message
+            }
+          }
+        `,
+        })
+        .then((result) => {
+          const { success, message } = result.data.deletePost;
+          if (success) {
+            resolve(message);
+          } else {
+            reject(message);
           }
         });
     });
@@ -235,7 +261,9 @@ function PostProvider(props) {
       <AddPostContext.Provider value={addPost}>
         <RefreshPostsContext.Provider value={refreshPosts}>
           <FilterPostsContext.Provider value={setFilterMethod}>
-            {children}
+            <DeletePostContext.Provider value={deletePost}>
+              {children}
+            </DeletePostContext.Provider>
           </FilterPostsContext.Provider>
         </RefreshPostsContext.Provider>
       </AddPostContext.Provider>

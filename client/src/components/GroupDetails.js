@@ -22,7 +22,7 @@ import { gql, useApolloClient } from '@apollo/client';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 
-function GroupDetails({ details }) {
+function GroupDetails({ details, owner }) {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const [openDialog, setOpenDialog] = useState(false);
@@ -42,27 +42,31 @@ function GroupDetails({ details }) {
   }, [details]);
 
   const createGroup = () => {
-    //TODO: Use actual date
+    const date = new Date();
     client
       .mutate({
         mutation: gql`
 	  mutation{
-		addGroup(input:{
-			name: "${name}"
-			description: "${description}"
-			avatar:"${avatarUrl}"
-			dateCreated: "2022-02-03"
-		})
+		  addGroup(input:{
+			  name: "${name}"
+			  description: "${description}"
+			  avatar:"${avatarUrl}"
+			  dateCreated: "${date.toUTCString()}"
+		  }) {
+        success
+        message
+    }
 	}
 	`,
       })
       .then((result) => {
-        if (result.data.addGroup === 'true') {
-          notify('success', 'Group has been created.');
+        const { success, message } = result.data.addGroup;
+        if (success) {
+          notify('success', message);
           setOpenDialog(false);
           navigate('/groups');
         } else {
-          notify('error', 'Unable to create group.');
+          notify('error', message);
         }
       });
   };
@@ -85,12 +89,36 @@ function GroupDetails({ details }) {
       `,
       })
       .then((result) => {
-        if (result.data.updateGroup.success) {
-          notify('success', result.data.updateGroup.message);
+        const { success, message } = result.data.updateGroup;
+        if (success) {
+          notify('success', message);
           setOpenDialog(false);
           navigate(`/group/${details.id}`);
         } else {
-          notify('error', result.data.updateGroup.message);
+          notify('error', message);
+        }
+      });
+  };
+
+  const deleteGroup = () => {
+    client
+      .mutate({
+        mutation: gql`
+          mutation {
+            deleteGroup(groupId: ${details.id}) {
+              success
+              message
+            }
+          }
+        `,
+      })
+      .then((result) => {
+        const { success, message } = result.data.deleteGroup;
+        if (success) {
+          notify('success', message);
+          navigate('/');
+        } else {
+          notify('error', message);
         }
       });
   };
@@ -152,13 +180,15 @@ function GroupDetails({ details }) {
         </DialogContent>
         <DialogActions>
           <Stack padding={1} spacing={1} direction="row">
-            {details && (
-              <IconButton color="error">
+            {details && owner && (
+              <IconButton color="error" onClick={deleteGroup}>
                 <DeleteIcon />
               </IconButton>
             )}
             {details ? (
-              <Button variant="outlined" onClick={editGroup}>{t('saveDetails.label')}</Button>
+              <Button variant="outlined" onClick={editGroup}>
+                {t('saveDetails.label')}
+              </Button>
             ) : (
               <Button variant="outlined" onClick={createGroup}>
                 {t('createGroup.label')}

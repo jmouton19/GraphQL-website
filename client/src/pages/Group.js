@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Box } from '@mui/material';
+import { Box, IconButton } from '@mui/material';
 import { Stack } from '@mui/material';
 import { Container } from '@mui/material';
 import { TabContext, TabList, TabPanel } from '@mui/lab';
@@ -22,9 +22,11 @@ import AddPostCard from '../components/PostComponents/AddPostCard';
 import { useNotify } from '../providers/NotificationProvider';
 import PostSorter from '../components/PostComponents/PostSorter';
 import { useTranslation } from 'react-i18next';
+import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
+import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
 
 function Group() {
-  const {t} = useTranslation();
+  const { t } = useTranslation();
   const [activeTabNumber, setActiveTabNumber] = useState('1');
   const navigate = useNavigate();
   const notify = useNotify();
@@ -33,6 +35,7 @@ function Group() {
 
   const authUser = useAuthUser();
   const [authUserIsMember, setAuthUserIsMember] = useState(false); // true if auth use is actually a member
+  const [authUserIsAdmin, setAuthUserIsAdmin] = useState(false);
   const [authUserMembershipId, setAuthUserMembershipId] = useState(undefined);
 
   const params = useParams();
@@ -60,7 +63,9 @@ function Group() {
               }
               memberships {
                 id
+                admin
                 user {
+                  id
                   username
                   firstName
                   lastName
@@ -80,6 +85,9 @@ function Group() {
           if (membership.user.username === authUser.username) {
             setAuthUserIsMember(true);
             setAuthUserMembershipId(membership.id);
+            if (membership.admin) {
+              setAuthUserIsAdmin(true);
+            }
           }
         });
       })
@@ -95,16 +103,66 @@ function Group() {
             mutation {
               addMember(input:{
                 groupId: ${params.groupId}
-            })
+            }) {
+              success 
+              message
+            }
             }
         `,
       })
       .then((result) => {
-        if (result.data.addMember === 'true') {
-          notify('success', 'Joined successfully.');
+        const { success, message } = result.data.addMember;
+        if (success) {
+          notify('success', message);
           navigate(`/group/${params.groupId}`);
         } else {
-          notify('error', 'Failed to join group.');
+          notify('error', message);
+        }
+      });
+  };
+
+  const kickMember = (memberId) => {
+    client
+      .mutate({
+        mutation: gql`
+          mutation {
+            kickMember(input: { userId: ${memberId}, groupId: ${params.groupId} }) {
+                success
+                message
+          }
+        }
+        `,
+      })
+      .then((result) => {
+        const { success, message } = result.data.kickMember;
+        if (success) {
+          notify('success', message);
+          navigate(`/group/${params.groupId}`);
+        } else {
+          notify('error', message);
+        }
+      });
+  };
+
+  const editAdmin = (memberId, value) => {
+    client
+      .mutate({
+        mutation: gql`
+          mutation{
+            editAdmin(input:{userId:${memberId}, groupId:${params.groupId}, admin: ${value}}) {
+              success
+              message
+          }
+      }
+        `,
+      })
+      .then((result) => {
+        const { success, message } = result.data.editAdmin;
+        if (success) {
+          notify('success', message);
+          navigate(`/group/${params.groupId}`);
+        } else {
+          notify('error', message);
         }
       });
   };
@@ -139,22 +197,21 @@ function Group() {
               style={{ width: 25, height: 35, marginRight: 10 }}
             />
             <Typography variant="h6">Cape Town, South Africa</Typography>
-            {authUser.id === groupData.owner.id && (
-              <GroupDetails details={groupData} />
+            {(authUser.id === groupData.owner.id || authUserIsAdmin) && (
+              <GroupDetails
+                details={groupData}
+                owner={authUser.id === groupData.owner.id ? true : false}
+              />
             )}
           </Stack>
           <Typography>{groupData.description}</Typography>
           {authUserIsMember ? (
             <Button variant="outlined" color="primary">
-              {t("leaveGroup.label")}
+              {t('leaveGroup.label')}
             </Button>
           ) : (
-            <Button
-              variant="outlined"
-              color="primary"
-              onClick={() => joinGroup()}
-            >
-              {t("joinGroup.label")}
+            <Button variant="outlined" color="primary" onClick={joinGroup}>
+              {t('joinGroup.label')}
             </Button>
           )}
         </Stack>
@@ -167,8 +224,8 @@ function Group() {
                 indicatorColor="primary"
                 aria-label="secondary tabs example"
               >
-                <Tab label={t("posts.label")} value="1" />
-                <Tab label={t("members.label")} value="2" />
+                <Tab label={t('posts.label')} value="1" />
+                <Tab label={t('members.label')} value="2" />
               </TabList>
             </Stack>
           </Box>
@@ -180,7 +237,7 @@ function Group() {
               }}
             >
               <Stack spacing={2}>
-                <PostSorter/>
+                <PostSorter />
                 {authUserIsMember && (
                   <AddPostCard creatorId={authUserMembershipId} />
                 )}
@@ -206,9 +263,36 @@ function Group() {
                   return null; // don't display owner again
 
                 return (
-                  <Stack direction="row" spacing={2} alignItems="center">
-                    <Avatar src={membership.user.avatar} />
-                    <Typography>{`${membership.user.firstName} ${membership.user.lastName}`}</Typography>
+                  <Stack direction="row" justifyContent="space-between">
+                    <Stack direction="row" spacing={2} alignItems="center">
+                      <Avatar src={membership.user.avatar} />
+                      <Typography>{`${membership.user.firstName} ${membership.user.lastName}`}</Typography>
+                      {membership.admin && (
+                        <Typography color="primary">(admin)</Typography>
+                      )}
+                    </Stack>
+                    {authUser.id === groupData.owner.id && (
+                      <Stack direction="row">
+                        <IconButton
+                          color="primary"
+                          onClick={() => {
+                            if(membership.admin) {
+                              editAdmin(membership.user.id, false);
+                            } else {
+                              editAdmin(membership.user.id, true);
+                            }
+                          }}
+                        >
+                          <AdminPanelSettingsIcon />
+                        </IconButton>
+                        <IconButton
+                          color="error"
+                          onClick={() => kickMember(membership.user.id)}
+                        >
+                          <RemoveCircleIcon />
+                        </IconButton>
+                      </Stack>
+                    )}
                   </Stack>
                 );
               })}

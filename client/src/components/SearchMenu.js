@@ -116,7 +116,7 @@ export default function SearchMenu() {
         id="menu-appbar"
         anchorEl={searchMenuAnchorEl}
         anchorOrigin={{
-          vertical: 'top',
+          vertical: 'bottom',
           horizontal: 'right',
         }}
         keepMounted

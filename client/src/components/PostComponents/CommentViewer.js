@@ -32,7 +32,7 @@ function CommentViewer() {
       </Typography>
       {commentsData.map((comment) => (
         <Stack key={comment.id} spacing={2} direction="row">
-          <Avatar src={comment.creator.user.avatar} />
+          <Avatar src={comment.creator.avatar} />
           <Paper
             style={{
               backgroundColor: '#222222',
@@ -41,14 +41,14 @@ function CommentViewer() {
             }}
           >
             <Typography variant="caption">
-              <strong>{`${comment.creator.user.firstName} ${comment.creator.user.lastName}`}</strong>
+              <strong>{`${comment.creator.firstName} ${comment.creator.lastName}`}</strong>
             </Typography>
             <br></br>
             <Typography variant="caption">{comment.body}</Typography>
           </Paper>
           <IconButton
             style={{ marginLeft: 'auto' }}
-            onClick={() => removeComment(comment)}
+            onClick={() => removeComment(comment.id)}
           >
             <ClearIcon />
           </IconButton>
