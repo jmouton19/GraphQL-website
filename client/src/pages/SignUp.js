@@ -23,8 +23,10 @@ import { FormControlLabel } from '@mui/material';
 import { Checkbox } from '@mui/material';
 import { Divider } from '@mui/material';
 import { useNotify } from '../providers/NotificationProvider';
+import { useTranslation } from 'react-i18next';
 
 function SignUp() {
+  const { t } = useTranslation();
   const [username, setUsername] = useState('');
   const [usernameError, setUsernameError] = useState({
     status: false,
@@ -137,13 +139,13 @@ function SignUp() {
       <Container maxWidth="sm">
         <Stack alignItems="center">
           <Typography variant="h3" color="primary" gutterBottom paddingTop={3}>
-            Sign Up
+            {t("signUp.label")}
           </Typography>
         </Stack>
 
         <Typography variant="caption" color="primary">
           <StyledLink to="/login">
-            {'Already have an account? Log in instead.'}
+            {t("alreadyHaveAccount.label")}
           </StyledLink>
         </Typography>
         <Box>
@@ -157,7 +159,7 @@ function SignUp() {
             >
               <Grid item xs={12}>
                 <FormControl fullWidth>
-                  <InputLabel htmlFor="username-input">Username</InputLabel>
+                  <InputLabel htmlFor="username-input">{t("username.label")}</InputLabel>
                   <OutlinedInput
                     id="username-input"
                     type="text"
@@ -167,7 +169,7 @@ function SignUp() {
                       setUsername(event.target.value);
                     }}
                     onBlur={validateUsername}
-                    label="Username"
+                    label={t("username.label")}
                     error={usernameError.status}
                   />
                 </FormControl>
@@ -184,7 +186,7 @@ function SignUp() {
               </Grid>
               <Grid item xs={12}>
                 <FormControl fullWidth>
-                  <InputLabel htmlFor="email-input">Email Address</InputLabel>
+                  <InputLabel htmlFor="email-input">{t("emailAddress.label")}</InputLabel>
                   <OutlinedInput
                     id="email-input"
                     type="email"
@@ -194,7 +196,7 @@ function SignUp() {
                       setEmail(event.target.value);
                     }}
                     onBlur={validateEmail}
-                    label="Email Address"
+                    label={t("emailAddress.label")}
                     error={emailError.status}
                   />
                 </FormControl>
@@ -211,7 +213,7 @@ function SignUp() {
               </Grid>
               <Grid item xs={12}>
                 <FormControl fullWidth>
-                  <InputLabel htmlFor="password-input">Password</InputLabel>
+                  <InputLabel htmlFor="password-input">{t("password.label")}</InputLabel>
                   <OutlinedInput
                     id="password-input"
                     type={showPassword ? 'text' : 'password'}
@@ -222,7 +224,7 @@ function SignUp() {
                       setPassword(event.target.value);
                     }}
                     onBlur={validatePassword}
-                    label="Password"
+                    label={t("password.label")}
                     endAdornment={
                       <InputAdornment position="end">
                         <IconButton
@@ -249,7 +251,7 @@ function SignUp() {
               <Grid item xs={12}>
                 <FormControl fullWidth>
                   <InputLabel htmlFor="password-repeat-input">
-                    Repeat Password
+                    {t("repeatPassword.label")}
                   </InputLabel>
                   <OutlinedInput
                     id="password-repeat-input"
@@ -260,7 +262,7 @@ function SignUp() {
                     onChange={(event) => {
                       setPasswordRepeated(event.target.value);
                     }}
-                    label="Repeat Password"
+                    label={t("repeatPassword.label")}
                     error={password !== passwordRepeated}
                   />
                   {password !== passwordRepeated ? (
@@ -270,7 +272,7 @@ function SignUp() {
                         color: 'red',
                       }}
                     >
-                      Passwords do not match
+                      {t("passwordMismatch.label")}
                     </FormHelperText>
                   ) : null}
                 </FormControl>
@@ -280,7 +282,7 @@ function SignUp() {
               </Grid>
               <Grid item xs={12}>
                 <FormControl fullWidth>
-                  <InputLabel htmlFor="firstname-input">First Name</InputLabel>
+                  <InputLabel htmlFor="firstname-input">{t("firstName.label")}</InputLabel>
                   <OutlinedInput
                     id="firstname-input"
                     name="firstname"
@@ -288,13 +290,13 @@ function SignUp() {
                     onChange={(event) => {
                       setFirstName(event.target.value);
                     }}
-                    label="First Name"
+                    label={t("firstName.label")}
                   />
                 </FormControl>
               </Grid>
               <Grid item xs={12}>
                 <FormControl fullWidth>
-                  <InputLabel htmlFor="lastname-input">Last Name</InputLabel>
+                  <InputLabel htmlFor="lastname-input">{t("lastName.label")}</InputLabel>
                   <OutlinedInput
                     id="lastname-input"
                     name="firstname"
@@ -302,7 +304,7 @@ function SignUp() {
                     onChange={(event) => {
                       setLastName(event.target.value);
                     }}
-                    label="Last Name"
+                    label={t("lastName.label")}
                   />
                 </FormControl>
               </Grid>
@@ -316,7 +318,7 @@ function SignUp() {
                 <FormControl fullWidth>
                   <FormControlLabel
                     control={<Checkbox />}
-                    label="Remember Me"
+                    label={t("rememberMe.label")}
                     value={rememberMe}
                     onChange={(event) => {
                       setRememberMe(event.target.value);
@@ -331,7 +333,7 @@ function SignUp() {
                     onClick={completeSignUp}
                     sx={{ mt: 2, mr: 1 }}
                   >
-                    Sign Up
+                    {t("signUp.label")}
                   </Button>
                 </FormControl>
               </Grid>

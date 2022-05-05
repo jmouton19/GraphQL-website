@@ -21,12 +21,15 @@ import SaveIcon from '@mui/icons-material/Save';
 import Typography from '@mui/material/Typography';
 import React, { useEffect, useState } from 'react';
 import { gql, useApolloClient } from '@apollo/client';
-import { useAuthUser, useLogOut } from '../providers/AuthProvider';
+import { useAuthUser, useLogOut, useLogIn } from '../providers/AuthProvider';
 import { useNotify } from '../providers/NotificationProvider';
 import { stringToObject } from '../utils/utils';
 import validator from 'validator';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
+import DeleteIcon from "@mui/icons-material/Delete";
+import { useNavigate } from "react-router-dom";
+import { useTranslation } from 'react-i18next';
 
 const fabStyle = {
   margin: 0,
@@ -38,8 +41,10 @@ const fabStyle = {
 };
 
 function EditProfile() {
+  const { t } = useTranslation();
   const authUser = useAuthUser();
   const logOut = useLogOut();
+  const login = useLogIn();
   const [edit, setEdit] = useState(false);
   const client = useApolloClient();
   const notify = useNotify();
@@ -51,13 +56,17 @@ function EditProfile() {
   const [avatarUrl, setAvatarUrl] = useState(null);
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
-  const [ , setEmail] = useState('');
+  const [rememberMe, setRememberMe] = useState(false);
+
   const [changePassword, setChangePassword] = useState(false);
+  const [confirmDelete, setConfirmDelete] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [newPassword, setNewPassword] = useState('');
   const [password, setPassword] = useState('');
   const [passwordRepeated, setPasswordRepeated] = useState('');
   const [oldPassword, setOldPassword] = useState('');
+  const [email, setEmail] = useState("");
+  const navigate = useNavigate();
 
   useEffect(() => {
     setFirstName(authUser.firstName);
@@ -152,6 +161,26 @@ function EditProfile() {
       });
   };
 
+  function saveEditDisableChecks() {
+		if (
+			authUser.username !== username ||
+			authUser.firstName !== firstName ||
+			authUser.lastName !== lastName||
+			authUser.avatar !== avatarUrl
+		) {
+			return false;
+		} else {
+			return true;
+		}
+	}
+
+  function saveDeleteDisableChecks() {
+		return password === "" || email === "";
+	}
+
+  const deleteUser = () => {
+  };
+
   return (
     <>
       <Fab
@@ -165,7 +194,7 @@ function EditProfile() {
       <Dialog open={edit} onClose={() => setEdit(false)}>
         <DialogTitle>
           <Typography sx={{ fontSize: 30 }} color="primary">
-            <b>Edit Profile</b>
+            <b>{t("editProfile.label")}</b>
           </Typography>
         </DialogTitle>
         <FormControl fullWidth>
@@ -182,7 +211,7 @@ function EditProfile() {
                 <Grid item xs={12}>
                   <Stack spacing={2}>
                     <FormControl fullWidth>
-                      <InputLabel htmlFor="username-input">Username</InputLabel>
+                      <InputLabel htmlFor="username-input">{t("username.label")}</InputLabel>
                       <OutlinedInput
                         //variant="outlined"
                         type="text"
@@ -191,7 +220,7 @@ function EditProfile() {
                           setUsername(event.target.value);
                         }}
                         onBlur={validateUsername}
-                        label="Username"
+                        label={t("username.label")}
                         error={usernameError.status}
                       />
                     </FormControl>
@@ -211,7 +240,7 @@ function EditProfile() {
                       onChange={(event) => {
                         setFirstName(event.target.value);
                       }}
-                      label="First Name"
+                      label={t("firstName.label")}
                     />
                     <TextField
                       variant="outlined"
@@ -219,7 +248,7 @@ function EditProfile() {
                       onChange={(event) => {
                         setLastName(event.target.value);
                       }}
-                      label="Last Name"
+                      label={t("lastName.label")}
                     />
                   </Stack>
                 </Grid>
@@ -235,15 +264,15 @@ function EditProfile() {
                         variant="text"
                         size="small"
                       >
-                        Change password
+                        {t("changePassword.label")}
                       </Button>
                       <Button
-                        //onClick={() => setConfirmDelete(true)}
+                        onClick={() => setConfirmDelete(true)}
                         variant="text"
                         size="small"
                         color="error"
                       >
-                        Delete account
+                        {t("deleteAccount.label")}
                       </Button>
                     </Stack>
                     <Button
@@ -266,11 +295,11 @@ function EditProfile() {
         onClose={() => setChangePassword(false)}
         fullWidth
       >
-        <DialogTitle>Change Password</DialogTitle>
+        <DialogTitle>{t("changePassword.label")}</DialogTitle>
         <FormControl fullWidth>
           <Stack padding={1} spacing={1}>
             <FormControl fullWidth>
-              <InputLabel htmlFor="password-input">New Password</InputLabel>
+              <InputLabel htmlFor="password-input">{t("newPassword.label")}</InputLabel>
               <OutlinedInput
                 id="password-input"
                 type={showPassword ? 'text' : 'password'}
@@ -279,7 +308,7 @@ function EditProfile() {
                 onBlur={(event) => {
                   setPassword(event.target.value);
                 }}
-                label="New Password"
+                label={t("newPassword.label")}
                 endAdornment={
                   <InputAdornment position="end">
                     <IconButton
@@ -294,7 +323,7 @@ function EditProfile() {
             </FormControl>
             <FormControl fullWidth>
               <InputLabel htmlFor="password-repeat-input">
-                Repeat New Password
+              {t("repeatNewPassword.label")}
               </InputLabel>
               <OutlinedInput
                 id="password-repeat-input"
@@ -306,7 +335,7 @@ function EditProfile() {
                   setPasswordRepeated(event.target.value);
                   setNewPassword(password);
                 }}
-                label="Repeat New Password"
+                label={t("repeatNewPassword.label")}
                 error={password !== passwordRepeated}
               />
               {password !== passwordRepeated ? (
@@ -316,13 +345,13 @@ function EditProfile() {
                     color: 'red',
                   }}
                 >
-                  Passwords do not match
+                  {t("passwordMismatch.label")}
                 </FormHelperText>
               ) : null}
             </FormControl>
             <Divider />
             <FormControl fullWidth>
-              <InputLabel htmlFor="password-old">Old Password</InputLabel>
+              <InputLabel htmlFor="password-old">{t("oldPassword.label")}</InputLabel>
               <OutlinedInput
                 id="password-old-input"
                 type={showPassword ? 'text' : 'password'}
@@ -331,7 +360,7 @@ function EditProfile() {
                 onChange={(event) => {
                   setOldPassword(event.target.value);
                 }}
-                label="Old Password"
+                label={t("oldPassword.label")}
               />
             </FormControl>
             <Divider />
@@ -341,7 +370,7 @@ function EditProfile() {
           <FormControl fullWidth>
             <Stack direction="row" justifyContent="space-between">
               <Button type="text" onClick={() => setChangePassword(false)}>
-                Cancel
+              {t("cancel.label")}
               </Button>
               <Button
                 onClick={() => editPassword()}
@@ -355,6 +384,86 @@ function EditProfile() {
           </FormControl>
         </DialogActions>
       </Dialog>
+      <Dialog
+				open={confirmDelete}
+				onClose={() => setConfirmDelete(false)}
+				fullWidth
+			>
+				<DialogTitle>
+        {t("confirmDelete.label")}
+				</DialogTitle>
+				<Stack padding={1} spacing={1}>
+					<FormControl fullWidth>
+						<InputLabel htmlFor="email-input">Email</InputLabel>
+						<OutlinedInput
+							id="email-input"
+							name="email"
+							onChange={(event) => {
+								setEmail(event.target.value);
+							}}
+							label="Email"
+						/>
+					</FormControl>
+					<FormControl fullWidth>
+						<InputLabel htmlFor="password-input">{t("password.label")}</InputLabel>
+						<OutlinedInput
+							id="password-input"
+							type={showPassword ? "text" : "password"}
+							name="password"
+							autoComplete="new-password"
+							onChange={(event) => {
+								setPassword(event.target.value);
+							}}
+							label={t("password.label")}
+							endAdornment={
+								<InputAdornment position="end">
+									<IconButton
+										onClick={() => setShowPassword(!showPassword)}
+										onMouseDown={() => setShowPassword(!showPassword)}
+									>
+										{showPassword ? <VisibilityOff /> : <Visibility />}
+									</IconButton>
+								</InputAdornment>
+							}
+						/>
+					</FormControl>
+				</Stack>
+				<DialogActions>
+					<FormControl fullWidth>
+						<Stack direction="row" justifyContent="space-between">
+							<Button
+								variant="text"
+								onClick={() => setConfirmDelete(false)}
+								color="primary"
+							>
+								{t("cancel.label")}
+							</Button>
+							<Button
+								onClick={() => {
+                  setRememberMe(false);
+									login(email, password, rememberMe)
+										.then(() => {
+											deleteUser()
+												.then(() => {
+													notify('success',"Account successfully deleted.");
+													logOut();
+													setTimeout(() => navigate("/"), 200);
+												})
+												.catch((err) => notify('error', ""));
+										})
+										.catch((err) => notify('error', ""));
+								}}
+								variant="contained"
+								disabled={saveDeleteDisableChecks()}
+								sx={{ borderRadius: "50%", height: 60, width: 60 }}
+								color="error"
+							>
+								<DeleteIcon />
+							</Button>
+						</Stack>
+					</FormControl>
+				</DialogActions>
+			</Dialog>
     </>
   );
 }

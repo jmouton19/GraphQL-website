@@ -16,8 +16,10 @@ import { gql, useApolloClient } from '@apollo/client';
 import { useNotify } from '../providers/NotificationProvider';
 import { Link } from 'react-router-dom';
 import { Tooltip } from '@mui/material';
+import { useTranslation } from 'react-i18next';
 
 export default function SearchMenu() {
+  const { t } = useTranslation();
   const client = useApolloClient();
   const notify = useNotify();
   const [groups, setGroups] = useState([]);
@@ -38,6 +40,7 @@ export default function SearchMenu() {
               name
               id
               description
+              avatar
             }
             }
           `,
@@ -70,6 +73,7 @@ export default function SearchMenu() {
               id
               firstName
               lastName
+              avatar
             }
             }
           `,
@@ -102,7 +106,7 @@ export default function SearchMenu() {
 
   return (
     <>
-      <Tooltip title="Search">
+      <Tooltip title={t('search.label')}>
         <IconButton size="large" color="primary" onClick={handleSearchMenu}>
           <SearchIcon />
         </IconButton>
@@ -126,7 +130,7 @@ export default function SearchMenu() {
         <ListItem onKeyDown={(e) => e.stopPropagation()}>
           <TextField
             variant="outlined"
-            label="Search"
+            label={t('search.label')}
             onChange={(event) => setSearchValue(event.target.value)}
           />
         </ListItem>
@@ -140,7 +144,7 @@ export default function SearchMenu() {
                 display="block"
                 variant="caption"
               >
-                Groups
+                {t('groups.label')}
               </Typography>
             </div>
           </ListItem>
@@ -165,7 +169,7 @@ export default function SearchMenu() {
             );
           })}
         {users.length !== 0 && (
-          <MenuItem>
+          <ListItem>
             <Divider component="div" />
             <div>
               <Typography
@@ -174,10 +178,10 @@ export default function SearchMenu() {
                 display="block"
                 variant="caption"
               >
-                Users
+                {t('users.label')}
               </Typography>
             </div>
-          </MenuItem>
+          </ListItem>
         )}
         {users &&
           users.map((user) => {

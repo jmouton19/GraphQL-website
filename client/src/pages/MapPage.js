@@ -17,10 +17,9 @@ import { usePosts } from '../providers/PostProvider';
 import { useTheme } from '@mui/material';
 import DoneIcon from '@mui/icons-material/Done';
 import CloseIcon from '@mui/icons-material/Close';
-
 import shortid from 'shortid';
-
 import CenterFocusStrongIcon from '@mui/icons-material/CenterFocusStrong';
+import { useTranslation } from 'react-i18next';
 
 const cheeseIcon = new Icon({
   iconUrl: cheeseMarker,
@@ -33,6 +32,7 @@ const userIcon = new Icon({
 });
 
 function MapPage() {
+  const { t } = useTranslation();
   const theme = useTheme();
   const [hasLocationAccess, setHasLocationAccess] = useState(
     JSON.parse(window.sessionStorage.getItem('locationAccess'))
@@ -83,7 +83,7 @@ function MapPage() {
               </IconButton>
             </>
           }
-          message="Provide location access"
+          message={t('provideLocationAccess.label')}
         />
       </Snackbar>
       <MapContainer center={userLocation} zoom={16} style={{ height: '40vh' }}>

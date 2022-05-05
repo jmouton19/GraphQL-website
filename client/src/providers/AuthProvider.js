@@ -51,6 +51,8 @@ function AuthProvider({ children }) {
       : JSON.parse(window.sessionStorage.getItem(AuthUserStorageItemName))
   );
 
+  console.log(authUser)
+
   // hooks:
   const notify = useNotify();
 
@@ -123,6 +125,7 @@ function AuthProvider({ children }) {
                   lastName
                   avatar
                   username
+                  validated
                 }
               }
             }
@@ -165,6 +168,7 @@ function AuthProvider({ children }) {
                   lastName
                   avatar
                   username
+                  validated
                 }
               }
             }

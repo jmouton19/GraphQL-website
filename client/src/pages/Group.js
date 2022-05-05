@@ -21,8 +21,10 @@ import PostList from '../components/PostComponents/PostList';
 import AddPostCard from '../components/PostComponents/AddPostCard';
 import { useNotify } from '../providers/NotificationProvider';
 import PostSorter from '../components/PostComponents/PostSorter';
+import { useTranslation } from 'react-i18next';
 
 function Group() {
+  const {t} = useTranslation();
   const [activeTabNumber, setActiveTabNumber] = useState('1');
   const navigate = useNavigate();
   const notify = useNotify();
@@ -144,7 +146,7 @@ function Group() {
           <Typography>{groupData.description}</Typography>
           {authUserIsMember ? (
             <Button variant="outlined" color="primary">
-              Leave Group
+              {t("leaveGroup.label")}
             </Button>
           ) : (
             <Button
@@ -152,7 +154,7 @@ function Group() {
               color="primary"
               onClick={() => joinGroup()}
             >
-              Join Group
+              {t("joinGroup.label")}
             </Button>
           )}
         </Stack>
@@ -165,8 +167,8 @@ function Group() {
                 indicatorColor="primary"
                 aria-label="secondary tabs example"
               >
-                <Tab label="Posts" value="1" />
-                <Tab label="Members" value="2" />
+                <Tab label={t("posts.label")} value="1" />
+                <Tab label={t("members.label")} value="2" />
               </TabList>
             </Stack>
           </Box>
