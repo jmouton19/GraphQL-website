@@ -13,10 +13,26 @@ import { Link } from 'react-router-dom';
 import StyledLink from './StyledLink';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import ChatIcon from '@mui/icons-material/Chat';
-import SearchIcon from '@mui/icons-material/Search';
+import { useAuthUser, useLogOut } from '../providers/AuthProvider';
+import logo from '../assets/logo.png';
+import { Stack } from '@mui/material';
+
+import FeedIcon from '@mui/icons-material/Feed';
+import MapIcon from '@mui/icons-material/Map';
+import { Tooltip } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
+import SearchMenu from './SearchMenu';
+import LanguageSelector from './LanguageSelector';
+import { useTranslation } from "react-i18next";
 
 function PrimaryAppBar() {
+  const { t } = useTranslation();
   const [userMenuAnchorEl, setUserMenuAnchorEl] = useState(null);
+
+  const authUser = useAuthUser();
+  const logOut = useLogOut();
+
+  const navigate = useNavigate();
 
   const handleMenu = (event) => {
     setUserMenuAnchorEl(event.currentTarget);
@@ -28,26 +44,59 @@ function PrimaryAppBar() {
 
   return (
     <>
-      <AppBar position='sticky'>
+      <AppBar position="sticky">
         <Toolbar>
           <StyledLink to="/">
-            <Typography variant="h6" component="div" color="primary">
-              <b>Kasie</b>
-            </Typography>
+            <Stack spacing={1} direction="row">
+              <img src={logo} alt="logo" style={{ height: 25 }} />
+              <Typography variant="h6" component="div" color="primary">
+                <b>'Kasie</b>
+              </Typography>
+            </Stack>
           </StyledLink>
+          <LanguageSelector/>
+
           <Box sx={{ flexGrow: 1 }} />
 
-          <IconButton size="large" color="primary">
-            <SearchIcon />
-          </IconButton>
+          <Tooltip title={t("feedView.label")}>
+            <IconButton
+              size="large"
+              color="primary"
+              onClick={() => {
+                navigate('/');
+              }}
+            >
+              <FeedIcon />
+            </IconButton>
+          </Tooltip>
 
-          <IconButton size="large" color="primary">
-            <ChatIcon />
-          </IconButton>
+          <Tooltip title={t("mapView.label")}>
+            <IconButton
+              size="large"
+              color="primary"
+              onClick={() => {
+                navigate('/map');
+              }}
+            >
+              <MapIcon />
+            </IconButton>
+          </Tooltip>
 
-          <IconButton size="large" color="primary">
-            <NotificationsIcon />
-          </IconButton>
+          <Box sx={{ flexGrow: 1 }} />
+
+          <SearchMenu />
+
+          <Tooltip title={t("directMessages.label")}>
+            <IconButton size="large" color="primary">
+              <ChatIcon />
+            </IconButton>
+          </Tooltip>
+
+          <Tooltip title={t("notifications.label")}>
+            <IconButton size="large" color="primary">
+              <NotificationsIcon />
+            </IconButton>
+          </Tooltip>
 
           <IconButton
             size="large"
@@ -57,18 +106,14 @@ function PrimaryAppBar() {
             onClick={handleMenu}
             color="inherit"
           >
-            <Avatar
-              src={
-                'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png'
-              }
-            ></Avatar>
+            <Avatar src={authUser ? authUser.avatar : null}></Avatar>
           </IconButton>
 
           <Menu
             id="menu-appbar"
             anchorEl={userMenuAnchorEl}
             anchorOrigin={{
-              vertical: 'top',
+              vertical: 'bottom',
               horizontal: 'right',
             }}
             keepMounted
@@ -79,41 +124,51 @@ function PrimaryAppBar() {
             open={Boolean(userMenuAnchorEl)}
             onClose={handleUserMenuClose}
           >
-            <MenuItem
-              component={Link}
-              to={`/login`}
-              onClick={handleUserMenuClose}
-            >
-              Login
-            </MenuItem>
-            <MenuItem
-              component={Link}
-              to={`/signup`}
-              onClick={handleUserMenuClose}
-            >
-              Signup
-            </MenuItem>
-            <MenuItem
-              component={Link}
-              to={`/profile`}
-              onClick={handleUserMenuClose}
-            >
-              Profile
-            </MenuItem>
-            <MenuItem
-              component={Link}
-              to={`/map`}
-              onClick={handleUserMenuClose}
-            >
-              Map
-            </MenuItem>
-            <MenuItem
-              component={Link}
-              to={`/feed`}
-              onClick={handleUserMenuClose}
-            >
-              Feed
-            </MenuItem>
+            {!authUser && (
+              <MenuItem
+                component={Link}
+                to={`/login`}
+                onClick={handleUserMenuClose}
+              >
+                {t("login.label")}
+              </MenuItem>
+            )}
+            {!authUser && (
+              <MenuItem
+                component={Link}
+                to={`/signup`}
+                onClick={handleUserMenuClose}
+              >
+                {t("signUp.label")}
+              </MenuItem>
+            )}
+            {authUser && (
+              <MenuItem
+                component={Link}
+                to={`/profile/${authUser.username}`}
+                onClick={handleUserMenuClose}
+              >
+                {t("profile.label")}
+              </MenuItem>
+            )}
+            {authUser && (
+              <MenuItem
+                component={Link}
+                to={`/groups`}
+                onClick={handleUserMenuClose}
+              >
+                {t("findGroups.label")}
+              </MenuItem>
+            )}
+            {authUser && (
+              <MenuItem
+                onClick={() => {
+                  logOut();
+                }}
+              >
+                {t("logout.label")}
+              </MenuItem>
+            )}
           </Menu>
         </Toolbar>
       </AppBar>
