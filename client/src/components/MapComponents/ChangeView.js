@@ -1,8 +1,8 @@
 import { useMap } from 'react-leaflet';
 
-function ChangeView({ center, zoom }) {
+function ChangeView({ center }) {
   const map = useMap();
-  map.flyTo(center, zoom, { duration: 1 });
+  map.flyTo(center, map.getZoom(), { duration: 1 });
   return null;
 }
 export default ChangeView;

@@ -1,24 +1,30 @@
 import React, { useEffect, useState } from 'react';
-import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
+import { MapContainer, TileLayer, Marker, Popup, Circle } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import cheeseMarker from '../assets/cheese-pin.png';
 import userMarker from '../assets/userMarker.png';
 import { Icon } from 'leaflet';
 import ChangeView from '../components/MapComponents/ChangeView';
-import PostSlider from '../components/MapComponents/PostSlider';
+import PostSwiper from '../components/MapComponents/PostSwiper';
 import {
   Container,
   Fab,
+  FormControl,
+  FormControlLabel,
   IconButton,
+  Slider,
   Snackbar,
   SnackbarContent,
+  Stack,
+  Switch,
 } from '@mui/material';
 import { usePosts } from '../providers/PostProvider';
 import { useTheme } from '@mui/material';
 import DoneIcon from '@mui/icons-material/Done';
 import CloseIcon from '@mui/icons-material/Close';
-
 import CenterFocusStrongIcon from '@mui/icons-material/CenterFocusStrong';
+import { useTranslation } from 'react-i18next';
+import { Box } from '@mui/system';
 
 const cheeseIcon = new Icon({
   iconUrl: cheeseMarker,
@@ -30,7 +36,12 @@ const userIcon = new Icon({
   iconSize: [32, 32],
 });
 
+function scaleSlider(value){
+  return (0.9**-value) -1;
+};
+
 function MapPage() {
+  const { t } = useTranslation();
   const theme = useTheme();
   const [hasLocationAccess, setHasLocationAccess] = useState(
     JSON.parse(window.sessionStorage.getItem('locationAccess'))
@@ -38,6 +49,8 @@ function MapPage() {
   const [userLocation, setUserLocation] = useState([-33.9321, 18.8602]);
   const [focusedPost, setFocusedPost] = useState(null);
   const [centerLocation, setCenterLocation] = useState([-33.9321, 18.8602]);
+  const [radius, setRadius] = useState(30);
+  const [useRadius, setUseRadius] = useState(false);
   const posts = usePosts();
 
   useEffect(() => {
@@ -57,29 +70,39 @@ function MapPage() {
     window.sessionStorage.setItem('locationAccess', state);
   }
 
+  const handleRadiusChange = (event, newValue) => {
+    setRadius(newValue);
+  };
+
   return (
     <>
       <Snackbar
         anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
-        open={(hasLocationAccess == null ? true : false)}
+        open={hasLocationAccess == null ? true : false}
       >
         <SnackbarContent
           sx={{ backgroundColor: theme.palette.primary.main }}
           action={
             <>
-              <IconButton color="inherit" onClick={() => setLocationAccessState(true)}>
+              <IconButton
+                color="inherit"
+                onClick={() => setLocationAccessState(true)}
+              >
                 <DoneIcon />
               </IconButton>
-              <IconButton color="inherit" onClick={() => setLocationAccessState(false)}>
+              <IconButton
+                color="inherit"
+                onClick={() => setLocationAccessState(false)}
+              >
                 <CloseIcon />
               </IconButton>
             </>
           }
-          message="Provide location access"
+          message={t('provideLocationAccess.label')}
         />
       </Snackbar>
-      <MapContainer center={userLocation} zoom={16} style={{ height: '40vh' }}>
-        <ChangeView center={centerLocation} zoom={16} />
+      <MapContainer center={userLocation} zoom={12} style={{ height: '40vh' }} >
+        <ChangeView center={centerLocation}/>
         <TileLayer
           attribution='&copy; <a href="https://stadiamaps.com/">Stadia Maps</a>, &copy; <a href="https://openmaptiles.org/">OpenMapTiles</a> &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors'
           url="https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{x}/{y}{r}.png"
@@ -91,21 +114,51 @@ function MapPage() {
         </Marker>
         {posts.map((post) => (
           <Marker
-            position={post.location}
+            key={post.id}
+            position={[post.latitude, post.longitude]}
             icon={cheeseIcon}
             eventHandlers={{
               click: () => {
                 setFocusedPost(post);
-                setCenterLocation(post.location);
+                setCenterLocation([post.latitude, post.longitude]);
               },
             }}
           >
-            <Popup>{post.caption}</Popup>
+            <Popup>{post.video ? 'Video' : post.body}</Popup>
           </Marker>
         ))}
+        {useRadius && (
+          <Circle center={userLocation} radius={((0.9**-radius)-1)*100}/>
+        )}
       </MapContainer>
-      <Container flexGrow>
-        <PostSlider posts={posts} focusedPost={focusedPost} />
+      <Container>
+        <Stack
+          direction="row"
+          spacing={2}
+          justifyContent="center"
+          mt={2}
+          alignItems="center"
+        >
+          <FormControl>
+            <FormControlLabel
+              control={<Switch color="primary" />}
+              label={`${t('radius.label')}: ${(((0.9**-radius) -1)/10).toFixed(0)} km`}
+              labelPlacement="end"
+              value={useRadius}
+              onChange={() => setUseRadius(!useRadius)}
+            />
+          </FormControl>
+          <Box sx={{ width: '50%' }}>
+            <Slider
+              max={100}
+              value={radius}
+              onChange={handleRadiusChange}
+              disabled={!useRadius}
+              scale={scaleSlider}
+            />
+          </Box>
+        </Stack>
+        <PostSwiper posts={posts} focusedPost={focusedPost}/>
       </Container>
       <Fab
         style={{
@@ -123,6 +176,7 @@ function MapPage() {
         }}
       >
         <CenterFocusStrongIcon />
+       
       </Fab>
     </>
   );

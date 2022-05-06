@@ -14,12 +14,19 @@ import {
 } from '@mui/material';
 import React, { useState } from 'react';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
-
+import { Navigate } from 'react-router-dom';
 import AvatarPicker from '../components/AvatarPicker';
 import StyledLink from '../components/StyledLink';
 import validator from 'validator';
+import { useAuthUser, useSignUp } from '../providers/AuthProvider';
+import { FormControlLabel } from '@mui/material';
+import { Checkbox } from '@mui/material';
+import { Divider } from '@mui/material';
+import { useNotify } from '../providers/NotificationProvider';
+import { useTranslation } from 'react-i18next';
 
 function SignUp() {
+  const { t } = useTranslation();
   const [username, setUsername] = useState('');
   const [usernameError, setUsernameError] = useState({
     status: false,
@@ -35,6 +42,14 @@ function SignUp() {
   });
   const [showPassword, setShowPassword] = useState(false);
   const [avatarUrl, setAvatarUrl] = useState(null);
+
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
+  const [rememberMe, setRememberMe] = useState(false);
+
+  const signUp = useSignUp();
+
+  const notify = useNotify();
 
   function toggleShowPassword() {
     setShowPassword(!showPassword);
@@ -98,14 +113,25 @@ function SignUp() {
   };
 
   function completeSignUp() {
-    let data;
-    data = {
-      username,
-      email,
-      password,
+    const data = {
       avatar: avatarUrl,
+      email,
+      firstName,
+      lastName,
+      password,
+      rememberMe,
+      username,
     };
-    console.log(data);
+
+    signUp(data)
+      .then(() => notify('success', 'Signed up successfully.'))
+      .catch(() => notify('error', 'Sign up failed'));
+  }
+
+  const authUser = useAuthUser();
+
+  if (authUser) {
+    return <Navigate to="/" />;
   }
 
   return (
@@ -113,13 +139,13 @@ function SignUp() {
       <Container maxWidth="sm">
         <Stack alignItems="center">
           <Typography variant="h3" color="primary" gutterBottom paddingTop={3}>
-            Sign Up
+            {t("signUp.label")}
           </Typography>
         </Stack>
 
         <Typography variant="caption" color="primary">
           <StyledLink to="/login">
-            {'Already have an account? Log in instead.'}
+            {t("alreadyHaveAccount.label")}
           </StyledLink>
         </Typography>
         <Box>
@@ -133,7 +159,7 @@ function SignUp() {
             >
               <Grid item xs={12}>
                 <FormControl fullWidth>
-                  <InputLabel htmlFor="username-input">Username</InputLabel>
+                  <InputLabel htmlFor="username-input">{t("username.label")}</InputLabel>
                   <OutlinedInput
                     id="username-input"
                     type="text"
@@ -143,7 +169,7 @@ function SignUp() {
                       setUsername(event.target.value);
                     }}
                     onBlur={validateUsername}
-                    label="Username"
+                    label={t("username.label")}
                     error={usernameError.status}
                   />
                 </FormControl>
@@ -160,7 +186,7 @@ function SignUp() {
               </Grid>
               <Grid item xs={12}>
                 <FormControl fullWidth>
-                  <InputLabel htmlFor="email-input">Email Address</InputLabel>
+                  <InputLabel htmlFor="email-input">{t("emailAddress.label")}</InputLabel>
                   <OutlinedInput
                     id="email-input"
                     type="email"
@@ -170,7 +196,7 @@ function SignUp() {
                       setEmail(event.target.value);
                     }}
                     onBlur={validateEmail}
-                    label="Email Address"
+                    label={t("emailAddress.label")}
                     error={emailError.status}
                   />
                 </FormControl>
@@ -187,7 +213,7 @@ function SignUp() {
               </Grid>
               <Grid item xs={12}>
                 <FormControl fullWidth>
-                  <InputLabel htmlFor="password-input">Password</InputLabel>
+                  <InputLabel htmlFor="password-input">{t("password.label")}</InputLabel>
                   <OutlinedInput
                     id="password-input"
                     type={showPassword ? 'text' : 'password'}
@@ -198,7 +224,7 @@ function SignUp() {
                       setPassword(event.target.value);
                     }}
                     onBlur={validatePassword}
-                    label="Password"
+                    label={t("password.label")}
                     endAdornment={
                       <InputAdornment position="end">
                         <IconButton
@@ -225,7 +251,7 @@ function SignUp() {
               <Grid item xs={12}>
                 <FormControl fullWidth>
                   <InputLabel htmlFor="password-repeat-input">
-                    Repeat Password
+                    {t("repeatPassword.label")}
                   </InputLabel>
                   <OutlinedInput
                     id="password-repeat-input"
@@ -236,7 +262,7 @@ function SignUp() {
                     onChange={(event) => {
                       setPasswordRepeated(event.target.value);
                     }}
-                    label="Repeat Password"
+                    label={t("repeatPassword.label")}
                     error={password !== passwordRepeated}
                   />
                   {password !== passwordRepeated ? (
@@ -246,9 +272,40 @@ function SignUp() {
                         color: 'red',
                       }}
                     >
-                      Passwords do not match
+                      {t("passwordMismatch.label")}
                     </FormHelperText>
                   ) : null}
+                </FormControl>
+              </Grid>
+              <Grid item xs={12}>
+                <Divider />
+              </Grid>
+              <Grid item xs={12}>
+                <FormControl fullWidth>
+                  <InputLabel htmlFor="firstname-input">{t("firstName.label")}</InputLabel>
+                  <OutlinedInput
+                    id="firstname-input"
+                    name="firstname"
+                    value={firstName}
+                    onChange={(event) => {
+                      setFirstName(event.target.value);
+                    }}
+                    label={t("firstName.label")}
+                  />
+                </FormControl>
+              </Grid>
+              <Grid item xs={12}>
+                <FormControl fullWidth>
+                  <InputLabel htmlFor="lastname-input">{t("lastName.label")}</InputLabel>
+                  <OutlinedInput
+                    id="lastname-input"
+                    name="firstname"
+                    value={lastName}
+                    onChange={(event) => {
+                      setLastName(event.target.value);
+                    }}
+                    label={t("lastName.label")}
+                  />
                 </FormControl>
               </Grid>
               <Grid item xs={12}>
@@ -259,12 +316,24 @@ function SignUp() {
               </Grid>
               <Grid item xs={12}>
                 <FormControl fullWidth>
+                  <FormControlLabel
+                    control={<Checkbox />}
+                    label={t("rememberMe.label")}
+                    value={rememberMe}
+                    onChange={(event) => {
+                      setRememberMe(event.target.value);
+                    }}
+                  />
+                </FormControl>
+              </Grid>
+              <Grid item xs={12}>
+                <FormControl fullWidth>
                   <Button
                     variant="contained"
                     onClick={completeSignUp}
                     sx={{ mt: 2, mr: 1 }}
                   >
-                    Sign Up
+                    {t("signUp.label")}
                   </Button>
                 </FormControl>
               </Grid>
