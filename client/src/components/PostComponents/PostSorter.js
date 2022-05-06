@@ -47,9 +47,9 @@ function PostSorter() {
           </ToggleButton>
         </Tooltip>
       </ToggleButtonGroup>
-      <ToggleButtonGroup exclusive onChange={handleFilterTypeChange}>
+      <ToggleButtonGroup  value="fitler" exclusive onChange={handleFilterTypeChange}>
         <Tooltip title={`Show ${filterType} posts`}>
-          <ToggleButton>
+          <ToggleButton value="fitler">
             {filterType !== 'text' && <VideoFileIcon />}
             {filterType !== 'video' && <InsertDriveFileIcon />}
           </ToggleButton>
