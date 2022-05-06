@@ -1,5 +1,6 @@
 import { gql, useApolloClient } from '@apollo/client';
 import React, { createContext, useContext, useEffect, useState } from 'react';
+import { useNotify } from './NotificationProvider';
 
 const PostsContext = createContext();
 const AddPostContext = createContext();
@@ -27,124 +28,9 @@ export function useFilterPosts() {
   return useContext(FilterPostsContext);
 }
 
-async function loadGroupPosts(client, groupId, order) {
-  return new Promise((resolve) => {
-    client
-      .query({
-        fetchPolicy: 'no-cache',
-        query: gql`
-          query {
-            posts(where: { creator: { groupId: { eq: ${groupId} } } }, order: { dateCreated: ${order} }) {
-              id
-              body
-              creator {
-                user {
-                  firstName
-                  lastName
-                  avatar
-                }
-                group {
-                  name
-                }
-              }
-              dateCreated
-              latitude
-              longitude
-              video
-            }
-          }
-        `,
-      })
-      .then((result) => {
-        resolve(result.data.posts);
-      });
-  });
-}
-
-async function loadUserPosts(client, userId, order) {
-  return new Promise((resolve) => {
-    client
-      .query({
-        fetchPolicy: 'no-cache',
-        query: gql`
-        query {
-          posts (where: {creator: {userId:{eq:${userId}}}}, order: { dateCreated: ${order} }) {
-              id
-              body
-              creator{
-                  user {
-                      avatar
-                      firstName
-                      lastName
-                      username
-                  }
-              }
-              creatorId
-              dateCreated
-              dateCreated
-              latitude
-              longitude
-              video
-          }
-        }
-        `,
-      })
-      .then((result) => {
-        resolve(result.data.posts);
-      });
-  });
-}
-
-async function loadAllPosts(client, order) {
-  return new Promise((resolve) => {
-    client
-      .query({
-        fetchPolicy: 'no-cache',
-        query: gql`
-          query {
-            posts(order: { dateCreated: ${order} }) {
-              id
-              body
-              creator {
-                user {
-                  firstName
-                  lastName
-                  avatar
-                }
-                group {
-                  name
-                  avatar
-                  id
-                }
-              }
-              dateCreated
-              latitude
-              longitude
-              video
-            }
-          }
-        `,
-      })
-      .then((result) => {
-        resolve(result.data.posts);
-      });
-  });
-}
-
 function PostProvider(props) {
   // props:
-  const { children, config } = props;
-
-  const order = 'DESC';
-
-  /*
-  Examples of config prop
-  const config = {
-    type: 'group',
-    groupId: 1,
-  };
-  */
-  // order can be "DESC" or "ASC"
+  const { children, page, location } = props;
 
   // state:
   const [postData, setPostData] = useState([]);
@@ -153,32 +39,50 @@ function PostProvider(props) {
 
   // hooks:
   const client = useApolloClient();
+  const notify = useNotify();
 
   // load posts initially
   useEffect(() => {
-    if (config === undefined)
-      loadAllPosts(client, order)
-        .then((data) => {
-          setPostData(data);
-        })
-        .catch((e) => console.error(e));
+    // load approprate posts here
 
-    if (config && config.type === 'group')
-      loadGroupPosts(client, config.groupId, order)
-        .then((data) => {
-          setPostData(data);
-        })
-        .catch((e) => console.error(e));
+    console.log(location);
 
-    if (config && config.type === 'user')
-      loadUserPosts(client, config.userId, order)
-        .then((data) => {
-          setPostData(data);
+    if (page === 'feed') {
+      client
+        .mutate({
+          mutation: gql`
+            mutation {
+              distance(input: { latitude: ${location[0]}, longitude: ${location[0]} }) {
+                success
+                message
+                posts {
+                  post {
+                    id
+                    body
+                    creator {
+                      groupId
+                      userId
+                    }
+                  }
+                  distance
+                }
+              }
+            }
+          `,
         })
-        .catch((e) => console.error(e));
+        .then((response) => {
+          const { success, message, posts } = response.data.distance;
+          if (success) {
+            console.log(posts);
+            setPostData(posts);
+          } else {
+            notify('error', message);
+          }
+        });
+    }
 
     setNeedsRefresh(false);
-  }, [client, config, order, needsRefresh]);
+  }, [client, needsRefresh, location, notify, page]);
 
   async function addPost(video, body, creatorId, latitude, longitude) {
     // if video is true, then the body is the Cloudinary Public ID of the uploaded video
