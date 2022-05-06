@@ -57,12 +57,7 @@ function PostProvider(props) {
                 message
                 posts {
                   post {
-                    id
-                    body
-                    creator {
-                      groupId
-                      userId
-                    }
+                    id                    
                   }
                   distance
                 }
@@ -73,14 +68,15 @@ function PostProvider(props) {
         .then((response) => {
           const { success, message, posts } = response.data.distance;
           if (success) {
-            console.log(posts);
-            setPostData(posts);
+            const newPostData = posts.map((post) => {
+              return { id: post.post.id, distance: post.distance };
+            });
+            setPostData(newPostData);
           } else {
             notify('error', message);
           }
         });
     }
-
     setNeedsRefresh(false);
   }, [client, needsRefresh, location, notify, page]);
 
