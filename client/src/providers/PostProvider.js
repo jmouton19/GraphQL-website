@@ -7,6 +7,7 @@ const AddPostContext = createContext();
 const DeletePostContext = createContext();
 const RefreshPostsContext = createContext();
 const FilterPostsContext = createContext();
+const SortPostsContext = createContext();
 
 export function usePosts() {
   return useContext(PostsContext);
@@ -28,14 +29,19 @@ export function useFilterPosts() {
   return useContext(FilterPostsContext);
 }
 
+export function useSortPosts() {
+  return useContext(SortPostsContext);
+}
+
 function PostProvider(props) {
   // props:
-  const { children, page, location } = props;
+  const { children, location, page } = props;
 
   // state:
   const [postData, setPostData] = useState([]);
   const [needsRefresh, setNeedsRefresh] = useState(false);
   const [filterBy, setFilterBy] = useState('all');
+  const [sortByTime, setSortByTime] = useState(true);
 
   // hooks:
   const client = useApolloClient();
@@ -45,19 +51,20 @@ function PostProvider(props) {
   useEffect(() => {
     // load approprate posts here
 
-    console.log(location);
-
     if (page === 'feed') {
       client
         .mutate({
           mutation: gql`
             mutation {
-              distance(input: { latitude: ${location[0]}, longitude: ${location[0]} }) {
+              distance(input: { latitude: ${location[0]}, longitude: ${
+            location[0]
+          }${sortByTime ? ', timeSort:true' : ''} }) {
                 success
                 message
                 posts {
                   post {
-                    id                    
+                    id
+                    video                  
                   }
                   distance
                 }
@@ -69,7 +76,11 @@ function PostProvider(props) {
           const { success, message, posts } = response.data.distance;
           if (success) {
             const newPostData = posts.map((post) => {
-              return { id: post.post.id, distance: post.distance };
+              return {
+                id: post.post.id,
+                distance: post.distance,
+                video: post.post.video,
+              };
             });
             setPostData(newPostData);
           } else {
@@ -78,7 +89,7 @@ function PostProvider(props) {
         });
     }
     setNeedsRefresh(false);
-  }, [client, needsRefresh, location, notify, page]);
+  }, [client, needsRefresh, location, notify, page, sortByTime]);
 
   async function addPost(video, body, creatorId, latitude, longitude) {
     // if video is true, then the body is the Cloudinary Public ID of the uploaded video
@@ -145,6 +156,14 @@ function PostProvider(props) {
     setFilterBy(method);
   }
 
+  function setSortMethod(method) {
+    if (method === 'time') {
+      setSortByTime(true);
+    } else {
+      setSortByTime(false);
+    }
+  }
+
   function refreshPosts() {
     setNeedsRefresh(true);
   }
@@ -162,7 +181,9 @@ function PostProvider(props) {
         <RefreshPostsContext.Provider value={refreshPosts}>
           <FilterPostsContext.Provider value={setFilterMethod}>
             <DeletePostContext.Provider value={deletePost}>
-              {children}
+              <SortPostsContext.Provider value={setSortMethod}>
+                {children}
+              </SortPostsContext.Provider>
             </DeletePostContext.Provider>
           </FilterPostsContext.Provider>
         </RefreshPostsContext.Provider>

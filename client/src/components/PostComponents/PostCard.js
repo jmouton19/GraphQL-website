@@ -57,7 +57,7 @@ const GET_POST = gql`
   }
 `;
 
-function PostCard({ postId }) {
+function PostCard({ postId, distance }) {
   const { t } = useTranslation();
   const refreshPosts = useRefreshPosts();
   const deletePost = useDeletePost();
@@ -122,7 +122,12 @@ function PostCard({ postId }) {
         </MenuItem>
       </Menu>
       <CardHeader
-        avatar={<Avatar src={postData.creator.user.avatar} />}
+        avatar={
+          <Avatar
+            sx={{ width: 50, height: 50 }}
+            src={postData.creator.user.avatar}
+          />
+        }
         action={
           <IconButton aria-label="settings" onClick={handleClick}>
             <MoreVertIcon />
@@ -130,9 +135,15 @@ function PostCard({ postId }) {
         }
         title={`${postData.creator.user.firstName} ${postData.creator.user.lastName}`}
         subheader={
-          <Typography variant="caption" color="gray">
-            {new Date(postData.dateCreated).toLocaleString()}
-          </Typography>
+          <>
+            <Typography variant="caption" color="gray">
+              {`${new Date(postData.dateCreated).toLocaleString()}`}
+            </Typography>
+            <br />
+            <Typography variant="caption" color="gray">
+              {`${distance} km away`}
+            </Typography>
+          </>
         }
       />
       {postData.video ? (

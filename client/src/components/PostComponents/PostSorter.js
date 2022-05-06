@@ -7,19 +7,19 @@ import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile';
 import React, { useState, useEffect } from 'react';
 import Tooltip from '@mui/material/Tooltip';
 import { Stack } from '@mui/material';
-import { useFilterPosts } from '../../providers/PostProvider';
+import { useFilterPosts, useSortPosts } from '../../providers/PostProvider';
 import { useTranslation } from 'react-i18next';
 
 function PostSorter() {
   const { t } = useTranslation();
-  const [sortBy, setSortBy] = useState('newest');
   const [filterType, setFilterType] = useState('all');
 
   const filterPostsBy = useFilterPosts();
+  const sortPostsBy = useSortPosts();
 
   const handleSortByChange = (event, newSortMethod) => {
     if (newSortMethod) {
-      setSortBy(newSortMethod);
+      sortPostsBy(newSortMethod);
     }
   };
 
@@ -35,21 +35,25 @@ function PostSorter() {
 
   return (
     <Stack direction="row" spacing={2}>
-      <ToggleButtonGroup value={sortBy} exclusive onChange={handleSortByChange}>
+      <ToggleButtonGroup exclusive onChange={handleSortByChange}>
         <Tooltip title={t('sortNewest.label')}>
-          <ToggleButton value="newest">
+          <ToggleButton value="time">
             <CalendarTodayIcon />
           </ToggleButton>
         </Tooltip>
         <Tooltip title={t('sortNearest.label')}>
-          <ToggleButton value="nearest">
+          <ToggleButton value="location">
             <StraightenIcon />
           </ToggleButton>
         </Tooltip>
       </ToggleButtonGroup>
-      <ToggleButtonGroup  value="fitler" exclusive onChange={handleFilterTypeChange}>
+      <ToggleButtonGroup
+        value="filter"
+        exclusive
+        onChange={handleFilterTypeChange}
+      >
         <Tooltip title={`Show ${filterType} posts`}>
-          <ToggleButton value="fitler">
+          <ToggleButton value="filter">
             {filterType !== 'text' && <VideoFileIcon />}
             {filterType !== 'video' && <InsertDriveFileIcon />}
           </ToggleButton>

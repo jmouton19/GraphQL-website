@@ -5,11 +5,10 @@ import PostCard from './PostCard';
 function PostsViewer() {
   const data = usePosts();
 
-  console.log(data);
   return (
     <React.Fragment>
       {data.map((postData) => (
-        <PostCard key={postData.id} postId={postData.id} />
+        <PostCard key={postData.id} postId={postData.id} distance={postData.distance} />
       ))}
     </React.Fragment>
   );

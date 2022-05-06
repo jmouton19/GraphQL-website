@@ -53,6 +53,7 @@ function Feed() {
           <PostProvider
             location={userLocation}
             page="feed"
+            sortByTime={false}
             userId={authUser.id}
           >
             <Stack spacing={2}>
