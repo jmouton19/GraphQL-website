@@ -21,6 +21,7 @@ import ConfirmAccountBarrier from './components/ConfirmAccountBarrier';
 import ChangePassword from './pages/ChangePassword';
 import LostPassword from './pages/LostPassword';
 import ConfirmEmail from './pages/ConfirmEmail';
+import LocationProvider from './providers/LocationProvider';
 
 const darkTheme = createTheme({
   palette: {
@@ -46,69 +47,71 @@ function App() {
     <ThemeProvider theme={darkTheme}>
       <NotificationProvider>
         <AuthProvider>
-          <Router>
-            <CssBaseline />
-            <PrimaryAppBar />
-            <Routes>
-              <Route path="/login" element={<Login />} />
-              <Route path="/signup" element={<SignUp />} />
-              <Route
-                path="/map"
-                element={
-                  <PrivateRoute>
-                    <PostProvider>
-                      <MapPage />
-                    </PostProvider>
-                  </PrivateRoute>
-                }
-              />
-              <Route
-                path="/"
-                element={
-                  <PrivateRoute>
-                    <Home />
-                  </PrivateRoute>
-                }
-              />
-              <Route
-                path="/profile"
-                element={
-                  <PrivateRoute>
-                    <PostProvider>
+          <LocationProvider>
+            <Router>
+              <CssBaseline />
+              <PrimaryAppBar />
+              <Routes>
+                <Route path="/login" element={<Login />} />
+                <Route path="/signup" element={<SignUp />} />
+                <Route
+                  path="/map"
+                  element={
+                    <PrivateRoute>
+                      <PostProvider>
+                        <MapPage />
+                      </PostProvider>
+                    </PrivateRoute>
+                  }
+                />
+                <Route
+                  path="/"
+                  element={
+                    <PrivateRoute>
+                      <Home />
+                    </PrivateRoute>
+                  }
+                />
+                <Route
+                  path="/profile"
+                  element={
+                    <PrivateRoute>
+                      <PostProvider>
+                        <Profile />
+                      </PostProvider>
+                    </PrivateRoute>
+                  }
+                />
+                <Route
+                  path="/profile/:username"
+                  element={
+                    <PrivateRoute>
                       <Profile />
-                    </PostProvider>
-                  </PrivateRoute>
-                }
-              />
-              <Route
-                path="/profile/:username"
-                element={
-                  <PrivateRoute>
-                    <Profile />
-                  </PrivateRoute>
-                }
-              />
-              <Route
-                path="/groups"
-                element={
-                  <PrivateRoute>
-                    <Groups />
-                  </PrivateRoute>
-                }
-              />
-              <Route
-                path="/group/:groupId"
-                element={
-                  <PrivateRoute>
-                    <Group />
-                  </PrivateRoute>
-                }
-              />
-              <Route path="/changePassword" element={<ChangePassword />} />
-              <Route path="/lostPassword" element={<LostPassword />} />
-              <Route path="/confirmEmail" element={<ConfirmEmail />} />
-            </Routes>
-          </Router>
+                    </PrivateRoute>
+                  }
+                />
+                <Route
+                  path="/groups"
+                  element={
+                    <PrivateRoute>
+                      <Groups />
+                    </PrivateRoute>
+                  }
+                />
+                <Route
+                  path="/group/:groupId"
+                  element={
+                    <PrivateRoute>
+                      <Group />
+                    </PrivateRoute>
+                  }
+                />
+                <Route path="/changePassword" element={<ChangePassword />} />
+                <Route path="/lostPassword" element={<LostPassword />} />
+                <Route path="/confirmEmail" element={<ConfirmEmail />} />
+              </Routes>
+            </Router>
+          </LocationProvider>
         </AuthProvider>
       </NotificationProvider>
     </ThemeProvider>

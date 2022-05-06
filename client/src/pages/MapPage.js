@@ -11,20 +11,15 @@ import {
   Fab,
   FormControl,
   FormControlLabel,
-  IconButton,
   Slider,
-  Snackbar,
-  SnackbarContent,
   Stack,
   Switch,
 } from '@mui/material';
 import { usePosts } from '../providers/PostProvider';
-import { useTheme } from '@mui/material';
-import DoneIcon from '@mui/icons-material/Done';
-import CloseIcon from '@mui/icons-material/Close';
 import CenterFocusStrongIcon from '@mui/icons-material/CenterFocusStrong';
 import { useTranslation } from 'react-i18next';
 import { Box } from '@mui/system';
+import { useUserLocation } from '../providers/LocationProvider';
 
 const cheeseIcon = new Icon({
   iconUrl: cheeseMarker,
@@ -36,39 +31,23 @@ const userIcon = new Icon({
   iconSize: [32, 32],
 });
 
-function scaleSlider(value){
-  return (0.9**-value) -1;
-};
+function scaleSlider(value) {
+  return 0.9 ** -value - 1;
+}
 
 function MapPage() {
-  const { t } = useTranslation();
-  const theme = useTheme();
-  const [hasLocationAccess, setHasLocationAccess] = useState(
-    JSON.parse(window.sessionStorage.getItem('locationAccess'))
-  );
-  const [userLocation, setUserLocation] = useState([-33.9321, 18.8602]);
   const [focusedPost, setFocusedPost] = useState(null);
   const [centerLocation, setCenterLocation] = useState([-33.9321, 18.8602]);
   const [radius, setRadius] = useState(30);
   const [useRadius, setUseRadius] = useState(false);
-  const posts = usePosts();
 
-  useEffect(() => {
-    if (hasLocationAccess) {
-      navigator.geolocation.getCurrentPosition(function (position) {
-        setUserLocation([position.coords.latitude, position.coords.longitude]);
-      });
-    }
-  }, [hasLocationAccess]);
+  const posts = usePosts();
+  const { t } = useTranslation();
+  const userLocation = useUserLocation();
 
   useEffect(() => {
     setCenterLocation(userLocation);
   }, [userLocation]);
-
-  function setLocationAccessState(state) {
-    setHasLocationAccess(state);
-    window.sessionStorage.setItem('locationAccess', state);
-  }
 
   const handleRadiusChange = (event, newValue) => {
     setRadius(newValue);
@@ -76,33 +55,8 @@ function MapPage() {
 
   return (
     <>
-      <Snackbar
-        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
-        open={hasLocationAccess == null ? true : false}
-      >
-        <SnackbarContent
-          sx={{ backgroundColor: theme.palette.primary.main }}
-          action={
-            <>
-              <IconButton
-                color="inherit"
-                onClick={() => setLocationAccessState(true)}
-              >
-                <DoneIcon />
-              </IconButton>
-              <IconButton
-                color="inherit"
-                onClick={() => setLocationAccessState(false)}
-              >
-                <CloseIcon />
-              </IconButton>
-            </>
-          }
-          message={t('provideLocationAccess.label')}
-        />
-      </Snackbar>
-      <MapContainer center={userLocation} zoom={12} style={{ height: '40vh' }} >
-        <ChangeView center={centerLocation}/>
+      <MapContainer center={userLocation} zoom={12} style={{ height: '40vh' }}>
+        <ChangeView center={centerLocation} />
         <TileLayer
           attribution='&copy; <a href="https://stadiamaps.com/">Stadia Maps</a>, &copy; <a href="https://openmaptiles.org/">OpenMapTiles</a> &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors'
           url="https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{x}/{y}{r}.png"
@@ -128,7 +82,7 @@ function MapPage() {
           </Marker>
         ))}
         {useRadius && (
-          <Circle center={userLocation} radius={((0.9**-radius)-1)*100}/>
+          <Circle center={userLocation} radius={(0.9 ** -radius - 1) * 100} />
         )}
       </MapContainer>
       <Container>
@@ -142,7 +96,10 @@ function MapPage() {
           <FormControl>
             <FormControlLabel
               control={<Switch color="primary" />}
-              label={`${t('radius.label')}: ${(((0.9**-radius) -1)/10).toFixed(0)} km`}
+              label={`${t('radius.label')}: ${(
+                (0.9 ** -radius - 1) /
+                10
+              ).toFixed(0)} km`}
               labelPlacement="end"
               value={useRadius}
               onChange={() => setUseRadius(!useRadius)}
@@ -158,7 +115,7 @@ function MapPage() {
             />
           </Box>
         </Stack>
-        <PostSwiper posts={posts} focusedPost={focusedPost}/>
+        <PostSwiper posts={posts} focusedPost={focusedPost} />
       </Container>
       <Fab
         style={{
@@ -176,7 +133,6 @@ function MapPage() {
         }}
       >
         <CenterFocusStrongIcon />
-       
       </Fab>
     </>
   );
