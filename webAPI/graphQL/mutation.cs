@@ -950,5 +950,67 @@ namespace webAPI.graphQL
             return response;
         }
 
+
+
+        [UseDbContext(typeof(AppDbContext))]
+        public async Task<Response> ResetPasswordAsync(AddResetInput input, [ScopedService] AppDbContext context)
+        {
+            var response = new Response
+            {
+                message = string.Empty,
+                success = false
+            };
+            var currentUser = context.Users.Where(u => u.Id == input.userId).FirstOrDefault();
+            if (currentUser != null)
+            {
+
+                currentUser.password = BCrypt.Net.BCrypt.HashPassword(input.password);
+                context.Users.Update(currentUser);
+                await context.SaveChangesAsync();
+                response.success = true;
+                response.message = "Password has been reset.";
+
+            }
+            else
+            {
+                response.success = false;
+                response.message = "This user does not exist.";
+            }
+
+            return response;
+        }
+        [UseDbContext(typeof(AppDbContext))]
+        public async Task<Response> ResetPassEmailAsync(string emailInput, [Service] IConfiguration config, [ScopedService] AppDbContext context, [Service] IFluentEmail email)
+        {
+            var response = new Response
+            {
+                message = string.Empty,
+                success = false
+            };
+            var currentUser = context.Users.Where(u => u.email == emailInput).FirstOrDefault();
+            if (currentUser != null)
+            {
+                var utility = new Utilities();
+                try
+                {
+                    await utility.ResetPasswordAsync(currentUser, config, email);
+                    response.success = true;
+                    response.message = "Password reset email has been sent.";
+                }
+                catch (Exception)
+                {
+                    response.success = false;
+                    response.message = "Password reset email could not be sent.";
+                }
+            }
+            else
+            {
+                response.success = false;
+                response.message = "This user does not exist.";
+            }
+
+            return response;
+        }
     }
 }
+

@@ -64,6 +64,29 @@ namespace webAPI.Models.other
 
             await newEmail.SendAsync();
         }
+        //this is not very modular :) single email sending fucntion with parameters would be better but im 2 lazy :)
+        public async Task ResetPasswordAsync(User addedUser, IConfiguration config, IFluentEmail email)
+        {
+            string tokenString = addedUser.email + addedUser.username;
+            var key = BCrypt.Net.BCrypt.HashPassword(tokenString);
+            var uriBuilder = new UriBuilder(config["SMPTsettings:http"], config["SMPTsettings:domain"], Int32.Parse(config["SMPTsettings:port"]), "/resetPassword");
+            var parameters = HttpUtility.ParseQueryString(string.Empty);
+            parameters["key"] = key;
+            parameters["userId"] = addedUser.Id.ToString();
+            uriBuilder.Query = parameters.ToString();
+            string urlString = uriBuilder.ToString();
+            var emailTemplate =
+                        @"<p>Dear @Model.user.username,</p> 
+                                <p>Please click the link below to reset your password.</p>
+                                <p>@Model.url</p>
+                                <p>Sincerely,<br>Kasie Team</p>";
+
+            var newEmail = email.To(addedUser.email)
+                .Subject($"It looks like you forgot your password {addedUser.username}!")
+                .UsingTemplate(emailTemplate, new { user = addedUser, url = urlString });
+
+            await newEmail.SendAsync();
+        }
 
     }
 
