@@ -23,7 +23,7 @@ import { Tooltip } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import SearchMenu from './SearchMenu';
 import LanguageSelector from './LanguageSelector';
-import { useTranslation } from "react-i18next";
+import { useTranslation } from 'react-i18next';
 
 function PrimaryAppBar() {
   const { t } = useTranslation();
@@ -54,11 +54,11 @@ function PrimaryAppBar() {
               </Typography>
             </Stack>
           </StyledLink>
-          <LanguageSelector/>
+          <LanguageSelector />
 
           <Box sx={{ flexGrow: 1 }} />
 
-          <Tooltip title={t("feedView.label")}>
+          <Tooltip title={t('feedView.label')}>
             <IconButton
               size="large"
               color="primary"
@@ -70,7 +70,7 @@ function PrimaryAppBar() {
             </IconButton>
           </Tooltip>
 
-          <Tooltip title={t("mapView.label")}>
+          <Tooltip title={t('mapView.label')}>
             <IconButton
               size="large"
               color="primary"
@@ -86,13 +86,19 @@ function PrimaryAppBar() {
 
           <SearchMenu />
 
-          <Tooltip title={t("directMessages.label")}>
-            <IconButton size="large" color="primary">
+          <Tooltip title={t('directMessages.label')}>
+            <IconButton
+              size="large"
+              color="primary"
+              onClick={() => {
+                navigate('/messages');
+              }}
+            >
               <ChatIcon />
             </IconButton>
           </Tooltip>
 
-          <Tooltip title={t("notifications.label")}>
+          <Tooltip title={t('notifications.label')}>
             <IconButton size="large" color="primary">
               <NotificationsIcon />
             </IconButton>
@@ -130,7 +136,7 @@ function PrimaryAppBar() {
                 to={`/login`}
                 onClick={handleUserMenuClose}
               >
-                {t("login.label")}
+                {t('login.label')}
               </MenuItem>
             )}
             {!authUser && (
@@ -139,7 +145,7 @@ function PrimaryAppBar() {
                 to={`/signup`}
                 onClick={handleUserMenuClose}
               >
-                {t("signUp.label")}
+                {t('signUp.label')}
               </MenuItem>
             )}
             {authUser && (
@@ -148,7 +154,7 @@ function PrimaryAppBar() {
                 to={`/profile/${authUser.username}`}
                 onClick={handleUserMenuClose}
               >
-                {t("profile.label")}
+                {t('profile.label')}
               </MenuItem>
             )}
             {authUser && (
@@ -157,7 +163,7 @@ function PrimaryAppBar() {
                 to={`/groups`}
                 onClick={handleUserMenuClose}
               >
-                {t("findGroups.label")}
+                {t('findGroups.label')}
               </MenuItem>
             )}
             {authUser && (
@@ -166,7 +172,7 @@ function PrimaryAppBar() {
                   logOut();
                 }}
               >
-                {t("logout.label")}
+                {t('logout.label')}
               </MenuItem>
             )}
           </Menu>

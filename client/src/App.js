@@ -21,6 +21,7 @@ import ConfirmAccountBarrier from './components/ConfirmAccountBarrier';
 import ChangePassword from './pages/ChangePassword';
 import LostPassword from './pages/LostPassword';
 import ConfirmEmail from './pages/ConfirmEmail';
+import DirectMessages from './pages/DirectMessages';
 
 const darkTheme = createTheme({
   palette: {
@@ -77,6 +78,14 @@ function App() {
                     <PostProvider>
                       <Profile />
                     </PostProvider>
+                  </PrivateRoute>
+                }
+              />
+              <Route
+                path="/messages"
+                element={
+                  <PrivateRoute>
+                    <DirectMessages />
                   </PrivateRoute>
                 }
               />
