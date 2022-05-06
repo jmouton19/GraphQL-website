@@ -963,13 +963,22 @@ namespace webAPI.graphQL
             var currentUser = context.Users.Where(u => u.Id == input.userId).FirstOrDefault();
             if (currentUser != null)
             {
-
-                currentUser.password = BCrypt.Net.BCrypt.HashPassword(input.password);
-                context.Users.Update(currentUser);
-                await context.SaveChangesAsync();
-                response.success = true;
-                response.message = "Password has been reset.";
-
+                string tokenString = currentUser.email + currentUser.username;
+                var token = HttpUtility.UrlDecode(input.key);
+                bool verified = BCrypt.Net.BCrypt.Verify(tokenString, token);
+                if (verified)
+                {
+                    currentUser.password = BCrypt.Net.BCrypt.HashPassword(input.password);
+                    context.Users.Update(currentUser);
+                    await context.SaveChangesAsync();
+                    response.success = true;
+                    response.message = "Password has been reset.";
+                }
+                else
+                {
+                    response.success = false;
+                    response.message = "Access denied!";
+                }
             }
             else
             {
@@ -993,6 +1002,7 @@ namespace webAPI.graphQL
                 var utility = new Utilities();
                 try
                 {
+
                     await utility.ResetPasswordAsync(currentUser, config, email);
                     response.success = true;
                     response.message = "Password reset email has been sent.";
