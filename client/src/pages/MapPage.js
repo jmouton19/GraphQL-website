@@ -40,7 +40,12 @@ function MapPage() {
   };
 
   return (
-    <PostProvider page="map" location={userLocation}>
+    <PostProvider
+      page="map"
+      location={userLocation}
+      useRadius={useRadius}
+      radius={(0.9 ** -radius - 1) / 10}
+    >
       <MapView
         centerLocation={centerLocation}
         setCenterLocation={setCenterLocation}

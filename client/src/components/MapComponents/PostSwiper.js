@@ -21,8 +21,6 @@ function PostSwiper({ focusedPost }) {
     }
   }, [swiper, focusedPost, posts]);
 
-  console.log(posts);
-
   return (
     <>
       <Swiper

@@ -35,7 +35,8 @@ export function useSortPosts() {
 
 function PostProvider(props) {
   // props:
-  const { children, location, page, groupId, userId } = props;
+  const { children, location, page, groupId, userId, radius, useRadius } =
+    props;
 
   // state:
   const [postData, setPostData] = useState([]);
@@ -156,7 +157,9 @@ function PostProvider(props) {
         .mutate({
           mutation: gql`
           mutation {
-            distance(input: { latitude: ${location[0]}, longitude: ${location[1]}}) {
+            distance(input: { latitude: ${location[0]}, longitude: ${
+            location[1]
+          } ${useRadius ? `, radius: ${radius}` : ''}}) {
                   success
                   message
                   posts{
@@ -203,6 +206,8 @@ function PostProvider(props) {
     sortByTime,
     groupId,
     userId,
+    radius,
+    useRadius,
   ]);
 
   async function addPost(video, body, creatorId, latitude, longitude) {
