@@ -76,9 +76,7 @@ function App() {
                   path="/profile"
                   element={
                     <PrivateRoute>
-                      <PostProvider>
-                        <Profile />
-                      </PostProvider>
+                      <Profile />
                     </PrivateRoute>
                   }
                 />
