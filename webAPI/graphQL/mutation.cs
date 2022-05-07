@@ -866,7 +866,7 @@ namespace webAPI.graphQL
             }
 
             if (input.timeSort != null)
-                response.posts.Sort((s1, s2) => s1.post.dateCreated.CompareTo(s2.post.dateCreated));
+                response.posts.Sort((s2, s1) => s1.post.dateCreated.CompareTo(s2.post.dateCreated));
             else
                 response.posts.Sort((s1, s2) => s1.distance.CompareTo(s2.distance));
 
