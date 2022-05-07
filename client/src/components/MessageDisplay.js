@@ -6,9 +6,12 @@ import {
   Stack,
   InputLabel,
   OutlinedInput,
-  Button,
   Typography,
+  IconButton,
+  Box,
+  Paper,
 } from '@mui/material';
+import SendIcon from '@mui/icons-material/Send';
 
 const gun = Gun({
   peers: ['http://localhost:3030/gun'],
@@ -37,7 +40,7 @@ function MessageDisplay({ node }) {
     return () => {
       //cleanup to close connection. Avoids multiple connections
       gun.off();
-    }
+    };
   }, [node]);
 
   function saveMessage() {
@@ -53,27 +56,53 @@ function MessageDisplay({ node }) {
 
   return (
     <>
-      <Stack>
-        <Stack direction="row">
-          <FormControl fullWidth>
-            <InputLabel>Message</InputLabel>
-            <OutlinedInput
-              value={message}
-              onChange={(event) => {
-                setMessage(event.target.value);
-              }}
-              label="Message"
-            />
-          </FormControl>
-          <Button onClick={saveMessage}>Send</Button>
-        </Stack>
-        <Stack>
-          {messageChain.map((msg) => (
-            <Typography
-              key={messageChain.indexOf(msg)}
-            >{`${msg.createdAt}:    ${msg.username}: ${msg.message}`}</Typography>
-          ))}
-        </Stack>
+      <Stack padding={2} spacing={1}>
+        <FormControl fullWidth>
+          <InputLabel>Message</InputLabel>
+          <OutlinedInput
+            value={message}
+            onKeyUp={(event) => {
+              if (event.key === 'Enter') {
+                saveMessage();
+              }
+            }}
+            onChange={(event) => {
+              setMessage(event.target.value);
+            }}
+            label="Message"
+            endAdornment={
+              <IconButton onClick={saveMessage} color="primary">
+                <SendIcon />
+              </IconButton>
+            }
+          />
+        </FormControl>
+        <Box height='75vh' sx={{ overflowY: 'scroll', overflowX: 'hidden' }}>
+          <Stack spacing={2} >
+            {messageChain.map((msg) => (
+              <Stack
+                key={messageChain.indexOf(msg)}
+                spacing={2}
+                direction="row"
+                alignSelf={msg.username === authUser.username ? 'flex-end': 'flex-start'}
+              >
+                <Paper
+                  style={{
+                    backgroundColor: '#222222',
+                    paddingLeft: 15,
+                    paddingRight: 15,
+                  }}
+                >
+                  <Typography variant="caption">
+                    <strong>{`${msg.username} `}</strong>
+                  </Typography>
+                  <br></br>
+                  <Typography variant="caption">{msg.message}</Typography>
+                </Paper>
+              </Stack>
+            ))}
+          </Stack>
+        </Box>
       </Stack>
     </>
   );
