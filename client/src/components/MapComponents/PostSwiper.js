@@ -13,13 +13,15 @@ import { usePosts } from '../../providers/PostProvider';
 function PostSwiper({ focusedPost }) {
   const [swiper, setSwiper] = useState(null);
 
-  const posts = usePosts()
+  const posts = usePosts();
 
   useEffect(() => {
     if (swiper) {
       swiper.slideToLoop(posts.indexOf(focusedPost) - 1);
     }
   }, [swiper, focusedPost, posts]);
+
+  console.log(posts);
 
   return (
     <>
@@ -41,7 +43,7 @@ function PostSwiper({ focusedPost }) {
       >
         {posts.map((post) => (
           <SwiperSlide key={post.id} padding={1}>
-            <PostCard postId={post.id} />
+            <PostCard postId={post.id} distance={post.distance} />
           </SwiperSlide>
         ))}
       </Swiper>

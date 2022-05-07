@@ -147,7 +147,7 @@ function PostCard({ postId, distance }) {
               {`${new Date(postData.dateCreated).toLocaleString()}`}
             </Typography>
             <br />
-            {distance && (
+            {distance !== undefined && (
               <Typography variant="caption" color="gray">
                 {`${distance} km away`}
               </Typography>
