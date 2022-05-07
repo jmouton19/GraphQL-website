@@ -14,7 +14,7 @@ import {
 import SendIcon from '@mui/icons-material/Send';
 
 const gun = Gun({
-  peers: ['https://cs334gun.herokuapp.com/gun'],
+  peers: ['http://localhost:3030/gun','https://cs334gun.herokuapp.com/gun'],
 });
 
 function MessageDisplay({ node }) {
@@ -27,14 +27,16 @@ function MessageDisplay({ node }) {
     if (node !== '') {
       const stream = gun.get(node);
       stream.map().on((m) => {
-        setMessageChain((messageChain) => {
-          if (messageChain[0] !== m) {
-            return [m, ...messageChain];
-          } else {
-            return [...messageChain];
-          }
-        });
-      });
+        if (m !== undefined) {
+          setMessageChain((messageChain) => {
+            if (messageChain[0] !== m) {
+              return [m, ...messageChain];
+            } else {
+              return [...messageChain];
+            }
+          });
+        }
+      }, true);
     }
 
     return () => {
