@@ -122,6 +122,11 @@ function Login() {
                 </StyledLink>
               </Typography>
             </Grid>
+            <Grid item xs={12}>
+              <Typography variant="caption" color="primary">
+                <StyledLink to="/lostPassword">Forgot Password?</StyledLink>
+              </Typography>
+            </Grid>
           </Grid>
         </Box>
       </Container>
