@@ -1,11 +1,13 @@
 import { gql, useApolloClient } from '@apollo/client';
 import React, { createContext, useContext, useEffect, useState } from 'react';
+import { useNotify } from './NotificationProvider';
 
 const PostsContext = createContext();
 const AddPostContext = createContext();
 const DeletePostContext = createContext();
 const RefreshPostsContext = createContext();
 const FilterPostsContext = createContext();
+const SortPostsContext = createContext();
 
 export function usePosts() {
   return useContext(PostsContext);
@@ -27,158 +29,186 @@ export function useFilterPosts() {
   return useContext(FilterPostsContext);
 }
 
-async function loadGroupPosts(client, groupId, order) {
-  return new Promise((resolve) => {
-    client
-      .query({
-        fetchPolicy: 'no-cache',
-        query: gql`
-          query {
-            posts(where: { creator: { groupId: { eq: ${groupId} } } }, order: { dateCreated: ${order} }) {
-              id
-              body
-              creator {
-                user {
-                  firstName
-                  lastName
-                  avatar
-                }
-                group {
-                  name
-                }
-              }
-              dateCreated
-              latitude
-              longitude
-              video
-            }
-          }
-        `,
-      })
-      .then((result) => {
-        resolve(result.data.posts);
-      });
-  });
-}
-
-async function loadUserPosts(client, userId, order) {
-  return new Promise((resolve) => {
-    client
-      .query({
-        fetchPolicy: 'no-cache',
-        query: gql`
-        query {
-          posts (where: {creator: {userId:{eq:${userId}}}}, order: { dateCreated: ${order} }) {
-              id
-              body
-              creator{
-                  user {
-                      avatar
-                      firstName
-                      lastName
-                      username
-                  }
-              }
-              creatorId
-              dateCreated
-              dateCreated
-              latitude
-              longitude
-              video
-          }
-        }
-        `,
-      })
-      .then((result) => {
-        resolve(result.data.posts);
-      });
-  });
-}
-
-async function loadAllPosts(client, order) {
-  return new Promise((resolve) => {
-    client
-      .query({
-        fetchPolicy: 'no-cache',
-        query: gql`
-          query {
-            posts(order: { dateCreated: ${order} }) {
-              id
-              body
-              creator {
-                user {
-                  firstName
-                  lastName
-                  avatar
-                }
-                group {
-                  name
-                  avatar
-                  id
-                }
-              }
-              dateCreated
-              latitude
-              longitude
-              video
-            }
-          }
-        `,
-      })
-      .then((result) => {
-        resolve(result.data.posts);
-      });
-  });
+export function useSortPosts() {
+  return useContext(SortPostsContext);
 }
 
 function PostProvider(props) {
   // props:
-  const { children, config } = props;
-
-  const order = 'DESC';
-
-  /*
-  Examples of config prop
-  const config = {
-    type: 'group',
-    groupId: 1,
-  };
-  */
-  // order can be "DESC" or "ASC"
+  const { children, location, page, groupId, userId, radius, useRadius } =
+    props;
 
   // state:
   const [postData, setPostData] = useState([]);
   const [needsRefresh, setNeedsRefresh] = useState(false);
   const [filterBy, setFilterBy] = useState('all');
+  const [sortByTime, setSortByTime] = useState(true);
 
   // hooks:
   const client = useApolloClient();
+  const notify = useNotify();
 
   // load posts initially
   useEffect(() => {
-    if (config === undefined)
-      loadAllPosts(client, order)
-        .then((data) => {
-          setPostData(data);
-        })
-        .catch((e) => console.error(e));
+    // load approprate posts here
 
-    if (config && config.type === 'group')
-      loadGroupPosts(client, config.groupId, order)
-        .then((data) => {
-          setPostData(data);
+    if (page === 'feed') {
+      client
+        .mutate({
+          mutation: gql`
+            mutation {
+              distance(input: { latitude: ${location[0]}, longitude: ${
+            location[1]
+          }${sortByTime ? ', timeSort:true' : ''} }) {
+                success
+                message
+                posts {
+                  post {
+                    id
+                    video                  
+                  }
+                  distance
+                }
+              }
+            }
+          `,
         })
-        .catch((e) => console.error(e));
+        .then((response) => {
+          const { success, message, posts } = response.data.distance;
+          if (success) {
+            const newPostData = posts.map((post) => {
+              return {
+                id: post.post.id,
+                distance: post.distance,
+                video: post.post.video,
+              };
+            });
+            setPostData(newPostData);
+          } else {
+            notify('error', message);
+          }
+        });
+    }
 
-    if (config && config.type === 'user')
-      loadUserPosts(client, config.userId, order)
-        .then((data) => {
-          setPostData(data);
+    if (page === 'group') {
+      client
+        .mutate({
+          mutation: gql`
+            mutation {
+              distance(input: { latitude: ${location[0]}, longitude: ${
+            location[1]
+          }, groupId: ${groupId}${sortByTime ? ', timeSort:true' : ''} }) {
+                success
+                message
+                posts {
+                  post {
+                    id
+                    video
+                  }
+                  distance
+                }
+              }
+            }
+          `,
         })
-        .catch((e) => console.error(e));
+        .then((response) => {
+          const { success, message, posts } = response.data.distance;
+          if (success) {
+            const newPostData = posts.map((post) => {
+              return {
+                id: post.post.id,
+                distance: post.distance,
+                video: post.post.video,
+              };
+            });
+            setPostData(newPostData);
+          } else {
+            notify('error', message);
+          }
+        });
+    }
+
+    if (page === 'profile') {
+      client
+        .query({
+          query: gql`
+            query {
+              posts(where: { creator: { userId: { eq: ${userId} } } }) {
+                id
+                video
+              }
+            }
+          `,
+        })
+        .then((response) => {
+          const newPostData = response.data.posts.map((post) => {
+            return {
+              id: post.id,
+              distance: null,
+              video: post.video,
+            };
+          });
+          setPostData(newPostData);
+        });
+    }
+
+    if (page === 'map') {
+      client
+        .mutate({
+          mutation: gql`
+          mutation {
+            distance(input: { latitude: ${location[0]}, longitude: ${
+            location[1]
+          } ${useRadius ? `, radius: ${radius}` : ''}}) {
+                  success
+                  message
+                  posts{
+                      post{
+                          id
+                          body
+                          latitude
+                          longitude
+                          video
+                      }
+                      distance
+                  }
+            }
+          }
+          `,
+        })
+        .then((response) => {
+          const { success, message, posts } = response.data.distance;
+          if (success) {
+            const newPostData = posts.map((post) => {
+              return {
+                id: post.post.id,
+                video: post.post.video,
+                latitude: post.post.latitude,
+                longitude: post.post.longitude,
+                body: post.post.body,
+                distance: post.distance,
+              };
+            });
+            setPostData(newPostData);
+          } else {
+            notify('error', message);
+          }
+        });
+    }
 
     setNeedsRefresh(false);
-  }, [client, config, order, needsRefresh]);
+  }, [
+    client,
+    needsRefresh,
+    location,
+    notify,
+    page,
+    sortByTime,
+    groupId,
+    userId,
+    radius,
+    useRadius,
+  ]);
 
   async function addPost(video, body, creatorId, latitude, longitude) {
     // if video is true, then the body is the Cloudinary Public ID of the uploaded video
@@ -245,6 +275,14 @@ function PostProvider(props) {
     setFilterBy(method);
   }
 
+  function setSortMethod(method) {
+    if (method === 'time') {
+      setSortByTime(true);
+    } else {
+      setSortByTime(false);
+    }
+  }
+
   function refreshPosts() {
     setNeedsRefresh(true);
   }
@@ -262,7 +300,9 @@ function PostProvider(props) {
         <RefreshPostsContext.Provider value={refreshPosts}>
           <FilterPostsContext.Provider value={setFilterMethod}>
             <DeletePostContext.Provider value={deletePost}>
-              {children}
+              <SortPostsContext.Provider value={setSortMethod}>
+                {children}
+              </SortPostsContext.Provider>
             </DeletePostContext.Provider>
           </FilterPostsContext.Provider>
         </RefreshPostsContext.Provider>
