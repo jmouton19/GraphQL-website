@@ -44,6 +44,7 @@ const GET_POST = gql`
       longitude
       creator {
         user {
+          username
           firstName
           lastName
           avatar
@@ -123,17 +124,23 @@ function PostCard({ postId, distance }) {
       </Menu>
       <CardHeader
         avatar={
-          <Avatar
-            sx={{ width: 50, height: 50 }}
-            src={postData.creator.user.avatar}
-          />
+          <StyledLink to={`/profile/${postData.creator.user.username}`}>
+            <Avatar
+              sx={{ width: 50, height: 50 }}
+              src={postData.creator.user.avatar}
+            />
+          </StyledLink>
         }
         action={
           <IconButton aria-label="settings" onClick={handleClick}>
             <MoreVertIcon />
           </IconButton>
         }
-        title={`${postData.creator.user.firstName} ${postData.creator.user.lastName}`}
+        title={
+          <StyledLink
+            to={`/profile/${postData.creator.user.username}`}
+          >{`${postData.creator.user.firstName} ${postData.creator.user.lastName}`}</StyledLink>
+        }
         subheader={
           <>
             <Typography variant="caption" color="gray">
