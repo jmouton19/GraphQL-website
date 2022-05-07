@@ -23,18 +23,25 @@ const gun = Gun({
 });
 
 const initialState = {
-  messages: [{}],
+  messages: [],
 };
 
 function reducer(state, message) {
   switch (message.action) {
     case 'ADD':
-      return {
-        messages: [message, ...state.messages],
-      };
+      if (state.messages == undefined) {
+        return {
+          messages: [message],
+        };
+      } else {
+        return {
+          messages: [message, ...state.messages],
+        };
+      }
     case 'RESET':
+      console.log('in here')
       return {
-        messages: [{}],
+        ...initialState
       };
   }
 }
@@ -47,6 +54,7 @@ export default function DirectMessages() {
   const [friends, setFriends] = useState([]);
   const [selectedFriend, setSelectedFriend] = useState(null);
   const [node, setNode] = useState('');
+  console.log(state);
 
   useEffect(() => {
     getFriends();
@@ -55,18 +63,14 @@ export default function DirectMessages() {
   useEffect(() => {
     if (node !== '') {
       const stream = gun.get(node);
+      console.log(stream)
       stream.map().once((m) => {
-        if (
-          state.messages[0].name !== m.name &&
-          state.messages[0].message !== m.message
-        ) {
-          dispatch({
-            name: m.name,
-            message: m.message,
-            createdAt: m.createdAt,
-            action: 'ADD',
-          });
-        }
+        dispatch({
+          username: m.username,
+          message: m.message,
+          createdAt: m.createdAt,
+          action: 'ADD',
+        });
       });
     }
   }, [node]);
@@ -85,7 +89,7 @@ export default function DirectMessages() {
     const messages = gun.get(node);
     const date = new Date();
     messages.set({
-      name: authUser.username,
+      username: authUser.username,
       message: message,
       createdAt: date.toUTCString(),
     });
@@ -135,7 +139,10 @@ export default function DirectMessages() {
         <Grid item xs={4}>
           <List>
             {friends.map((friend) => (
-              <ListItemButton key={friend.id}>
+              <ListItemButton
+                key={friend.id}
+                selected={friend === selectedFriend}
+              >
                 <ListItem onClick={() => startStream(friend)}>
                   <ListItemAvatar>
                     <Avatar src={friend.avatar} />
@@ -167,13 +174,9 @@ export default function DirectMessages() {
             </Stack>
             <Stack>
               {state.messages.map((msg) => (
-                <div>
-                  {msg.name !== undefined && (
-                    <Typography
-                      key={msg.indexOf}
-                    >{`${msg.name}: ${msg.message}`}</Typography>
-                  )}
-                </div>
+                <Typography
+                  key={state.messages.indexOf(msg)}
+                >{`${msg.createdAt}:    ${msg.username}: ${msg.message}`}</Typography>
               ))}
             </Stack>
           </Stack>
