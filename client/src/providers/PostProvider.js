@@ -35,7 +35,7 @@ export function useSortPosts() {
 
 function PostProvider(props) {
   // props:
-  const { children, location, page } = props;
+  const { children, location, page, groupId } = props;
 
   // state:
   const [postData, setPostData] = useState([]);
@@ -57,7 +57,7 @@ function PostProvider(props) {
           mutation: gql`
             mutation {
               distance(input: { latitude: ${location[0]}, longitude: ${
-            location[0]
+            location[1]
           }${sortByTime ? ', timeSort:true' : ''} }) {
                 success
                 message
@@ -88,6 +88,45 @@ function PostProvider(props) {
           }
         });
     }
+
+    if (page === 'group') {
+      client
+        .mutate({
+          mutation: gql`
+            mutation {
+              distance(input: { latitude: ${location[0]}, longitude: ${
+            location[1]
+          }, groupId: ${groupId}${sortByTime ? ', timeSort:true' : ''} }) {
+                success
+                message
+                posts {
+                  post {
+                    id
+                    video
+                  }
+                  distance
+                }
+              }
+            }
+          `,
+        })
+        .then((response) => {
+          const { success, message, posts } = response.data.distance;
+          if (success) {
+            const newPostData = posts.map((post) => {
+              return {
+                id: post.post.id,
+                distance: post.distance,
+                video: post.post.video,
+              };
+            });
+            setPostData(newPostData);
+          } else {
+            notify('error', message);
+          }
+        });
+    }
+
     setNeedsRefresh(false);
   }, [client, needsRefresh, location, notify, page, sortByTime]);
 
