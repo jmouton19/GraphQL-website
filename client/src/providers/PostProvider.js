@@ -151,6 +151,48 @@ function PostProvider(props) {
         });
     }
 
+    if (page === 'map') {
+      client
+        .mutate({
+          mutation: gql`
+          mutation {
+            distance(input: { latitude: ${location[0]}, longitude: ${location[1]}}) {
+                  success
+                  message
+                  posts{
+                      post{
+                          id
+                          body
+                          latitude
+                          longitude
+                          video
+                      }
+                      distance
+                  }
+            }
+          }
+          `,
+        })
+        .then((response) => {
+          const { success, message, posts } = response.data.distance;
+          if (success) {
+            const newPostData = posts.map((post) => {
+              return {
+                id: post.post.id,
+                video: post.post.video,
+                latitude: post.post.latitude,
+                longitude: post.post.longitude,
+                body: post.post.body,
+                distance: post.distance,
+              };
+            });
+            setPostData(newPostData);
+          } else {
+            notify('error', message);
+          }
+        });
+    }
+
     setNeedsRefresh(false);
   }, [
     client,

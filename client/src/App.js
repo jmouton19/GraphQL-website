@@ -12,7 +12,6 @@ import Group from './pages/Group';
 import Groups from './pages/Groups';
 import MapPage from './pages/MapPage';
 import PrimaryAppBar from './components/AppBar';
-import PostProvider from './providers/PostProvider';
 import Login from './pages/Login';
 import SignUp from './pages/SignUp';
 import AuthProvider, { useAuthUser } from './providers/AuthProvider';
@@ -58,9 +57,7 @@ function App() {
                   path="/map"
                   element={
                     <PrivateRoute>
-                      <PostProvider>
-                        <MapPage />
-                      </PostProvider>
+                      <MapPage />
                     </PrivateRoute>
                   }
                 />

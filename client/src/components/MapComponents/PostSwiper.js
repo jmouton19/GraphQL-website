@@ -8,9 +8,12 @@ import 'swiper/css/navigation';
 
 // import required modules
 import { Pagination, Navigation } from 'swiper';
+import { usePosts } from '../../providers/PostProvider';
 
-function PostSwiper({ posts, focusedPost }) {
+function PostSwiper({ focusedPost }) {
   const [swiper, setSwiper] = useState(null);
+
+  const posts = usePosts()
 
   useEffect(() => {
     if (swiper) {
@@ -38,7 +41,7 @@ function PostSwiper({ posts, focusedPost }) {
       >
         {posts.map((post) => (
           <SwiperSlide key={post.id} padding={1}>
-            <PostCard postData={post} />
+            <PostCard postId={post.id} />
           </SwiperSlide>
         ))}
       </Swiper>
