@@ -14,7 +14,7 @@ import {
 import SendIcon from '@mui/icons-material/Send';
 
 const gun = Gun({
-  peers: ['http://localhost:3030/gun'],
+  peers: ['https://cs334gun.herokuapp.com/gun'],
 });
 
 function MessageDisplay({ node }) {
@@ -26,7 +26,7 @@ function MessageDisplay({ node }) {
     setMessageChain([]);
     if (node !== '') {
       const stream = gun.get(node);
-      stream.map().once((m) => {
+      stream.map().on((m) => {
         setMessageChain((messageChain) => {
           if (messageChain[0] !== m) {
             return [m, ...messageChain];
@@ -77,14 +77,16 @@ function MessageDisplay({ node }) {
             }
           />
         </FormControl>
-        <Box height='75vh' sx={{ overflowY: 'scroll', overflowX: 'hidden' }}>
-          <Stack spacing={2} >
+        <Box height="75vh" sx={{ overflowY: 'scroll', overflowX: 'hidden' }}>
+          <Stack spacing={2}>
             {messageChain.map((msg) => (
               <Stack
                 key={messageChain.indexOf(msg)}
                 spacing={2}
                 direction="row"
-                alignSelf={msg.username === authUser.username ? 'flex-end': 'flex-start'}
+                alignSelf={
+                  msg.username === authUser.username ? 'flex-end' : 'flex-start'
+                }
               >
                 <Paper
                   style={{
