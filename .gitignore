@@ -367,3 +367,5 @@ FodyWeavers.xsd
 
 
 webAPI/.config/dotnet-tools.json
+
+gun/radata/!

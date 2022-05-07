@@ -20,6 +20,8 @@ import StyledLink from '../StyledLink';
 import { useTranslation } from 'react-i18next';
 import { useDeletePost, useRefreshPosts } from '../../providers/PostProvider';
 import { useNotify } from '../../providers/NotificationProvider';
+import { gql, useQuery } from '@apollo/client';
+import PostCardSkeleton from './PostCardSkeleton';
 
 const ExpandMore = styled((props) => {
   const { expand, ...other } = props;
@@ -32,13 +34,41 @@ const ExpandMore = styled((props) => {
   }),
 }));
 
-function PostCard({ postData }) {
+const GET_POST = gql`
+  query Post($postId: Int!) {
+    posts(where: { id: { eq: $postId } }) {
+      video
+      dateCreated
+      body
+      latitude
+      longitude
+      creator {
+        user {
+          username
+          firstName
+          lastName
+          avatar
+        }
+        group {
+          name
+          avatar
+        }
+      }
+    }
+  }
+`;
+
+function PostCard({ postId, distance }) {
   const { t } = useTranslation();
   const refreshPosts = useRefreshPosts();
   const deletePost = useDeletePost();
   const notify = useNotify();
   const [expanded, setExpanded] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
+
+  const { loading, error, data } = useQuery(GET_POST, {
+    variables: { postId },
+  });
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -50,6 +80,16 @@ function PostCard({ postData }) {
   const handleExpandClick = () => {
     setExpanded(!expanded);
   };
+
+  if (loading) {
+    return <PostCardSkeleton />;
+  }
+
+  if (error) {
+    return <div>Error retrieving this post...</div>;
+  }
+
+  const postData = data.posts[0];
 
   return (
     <Card>
@@ -69,7 +109,7 @@ function PostCard({ postData }) {
       >
         <MenuItem
           onClick={() => {
-            deletePost(postData.id)
+            deletePost(postId)
               .then((message) => {
                 refreshPosts();
                 notify('success', message);
@@ -83,17 +123,36 @@ function PostCard({ postData }) {
         </MenuItem>
       </Menu>
       <CardHeader
-        avatar={<Avatar src={postData.creator.user.avatar} />}
+        avatar={
+          <StyledLink to={`/profile/${postData.creator.user.username}`}>
+            <Avatar
+              sx={{ width: 50, height: 50 }}
+              src={postData.creator.user.avatar}
+            />
+          </StyledLink>
+        }
         action={
           <IconButton aria-label="settings" onClick={handleClick}>
             <MoreVertIcon />
           </IconButton>
         }
-        title={`${postData.creator.user.firstName} ${postData.creator.user.lastName}`}
+        title={
+          <StyledLink
+            to={`/profile/${postData.creator.user.username}`}
+          >{`${postData.creator.user.firstName} ${postData.creator.user.lastName}`}</StyledLink>
+        }
         subheader={
-          <Typography variant="caption" color="gray">
-            {new Date(postData.dateCreated).toLocaleString()}
-          </Typography>
+          <>
+            <Typography variant="caption" color="gray">
+              {`${new Date(postData.dateCreated).toLocaleString()}`}
+            </Typography>
+            <br />
+            {distance !== undefined && (
+              <Typography variant="caption" color="gray">
+                {`${distance} km away`}
+              </Typography>
+            )}
+          </>
         }
       />
       {postData.video ? (
@@ -140,7 +199,7 @@ function PostCard({ postData }) {
       </CardActions>
       <Collapse in={expanded} timeout="auto" unmountOnExit>
         <CardContent>
-          <CommentProvider postId={postData.id}>
+          <CommentProvider postId={postId}>
             <CommentViewer />
           </CommentProvider>
         </CardContent>

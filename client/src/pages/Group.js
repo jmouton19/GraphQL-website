@@ -24,6 +24,7 @@ import PostSorter from '../components/PostComponents/PostSorter';
 import { useTranslation } from 'react-i18next';
 import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
 import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
+import { useUserLocation } from '../providers/LocationProvider';
 
 function Group() {
   const { t } = useTranslation();
@@ -39,8 +40,8 @@ function Group() {
   const [authUserMembershipId, setAuthUserMembershipId] = useState(undefined);
 
   const params = useParams();
-
   const client = useApolloClient();
+  const userLocation = useUserLocation();
 
   useEffect(() => {
     client
@@ -231,10 +232,9 @@ function Group() {
           </Box>
           <TabPanel value="1">
             <PostProvider
-              config={{
-                type: 'group',
-                groupId: params.groupId,
-              }}
+              location={userLocation}
+              page="group"
+              groupId={params.groupId}
             >
               <Stack spacing={2}>
                 <PostSorter />
@@ -276,7 +276,7 @@ function Group() {
                         <IconButton
                           color="primary"
                           onClick={() => {
-                            if(membership.admin) {
+                            if (membership.admin) {
                               editAdmin(membership.user.id, false);
                             } else {
                               editAdmin(membership.user.id, true);

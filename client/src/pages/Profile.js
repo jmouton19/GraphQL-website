@@ -30,7 +30,6 @@ import { useNavigate } from 'react-router-dom';
 import EditProfile from './EditProfile';
 import PostProvider from '../providers/PostProvider';
 import PostList from '../components/PostComponents/PostList';
-import PostSorter from '../components/PostComponents/PostSorter';
 import { useTranslation } from 'react-i18next';
 
 function Profile() {
@@ -267,14 +266,8 @@ function Profile() {
             </Stack>
           </Box>
           <TabPanel value="1">
-            <PostProvider
-              config={{
-                type: 'user',
-                userId: viewUser.id,
-              }}
-            >
+            <PostProvider page="profile" userId={viewUser.id}>
               <Stack spacing={2}>
-                <PostSorter />
                 <PostList />
               </Stack>
             </PostProvider>

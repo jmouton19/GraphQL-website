@@ -8,10 +8,12 @@ import PostList from '../components/PostComponents/PostList';
 import PostSorter from '../components/PostComponents/PostSorter';
 import { useAuthUser } from '../providers/AuthProvider';
 import PostProvider from '../providers/PostProvider';
+import { useUserLocation } from '../providers/LocationProvider';
 
 function Feed() {
   const authUser = useAuthUser();
   const client = useApolloClient();
+  const userLocation = useUserLocation();
 
   // fetch correct membership id to make individual posts
   const [creatorId, setCreatorId] = useState(1);
@@ -33,7 +35,7 @@ function Feed() {
         .then((result) => {
           result.data.users[0].memberships.forEach((membership) => {
             if (membership.groupId === null) {
-              setCreatorId(membership.id)
+              setCreatorId(membership.id);
             }
           });
         });
@@ -48,9 +50,13 @@ function Feed() {
             padding: 2,
           }}
         >
-          <PostProvider>
+          <PostProvider
+            location={userLocation}
+            page="feed"
+            userId={authUser.id}
+          >
             <Stack spacing={2}>
-              <PostSorter/>
+              <PostSorter />
               {creatorId && <AddPostCard creatorId={creatorId} />}
               <PostList />
             </Stack>
