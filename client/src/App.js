@@ -103,19 +103,19 @@ function App() {
                   }
                 />
                 <Route
-                path="/messages"
-                element={
-                  <PrivateRoute>
-                    <DirectMessages />
-                  </PrivateRoute>
-                }
-              />
+                  path="/messages"
+                  element={
+                    <PrivateRoute>
+                      <DirectMessages />
+                    </PrivateRoute>
+                  }
+                />
                 <Route path="/resetPassword" element={<ResetPassword />} />
                 <Route path="/lostPassword" element={<LostPassword />} />
                 <Route path="/confirmEmail" element={<ConfirmEmail />} />
               </Routes>
             </Router>
-          </LocationProvider>   
+          </LocationProvider>
         </AuthProvider>
       </NotificationProvider>
     </ThemeProvider>
