@@ -35,7 +35,7 @@ export function useSortPosts() {
 
 function PostProvider(props) {
   // props:
-  const { children, location, page, groupId } = props;
+  const { children, location, page, groupId, userId } = props;
 
   // state:
   const [postData, setPostData] = useState([]);
@@ -127,8 +127,41 @@ function PostProvider(props) {
         });
     }
 
+    if (page === 'profile') {
+      client
+        .query({
+          query: gql`
+            query {
+              posts(where: { creator: { userId: { eq: ${userId} } } }) {
+                id
+                video
+              }
+            }
+          `,
+        })
+        .then((response) => {
+          const newPostData = response.data.posts.map((post) => {
+            return {
+              id: post.id,
+              distance: null,
+              video: post.video,
+            };
+          });
+          setPostData(newPostData);
+        });
+    }
+
     setNeedsRefresh(false);
-  }, [client, needsRefresh, location, notify, page, sortByTime]);
+  }, [
+    client,
+    needsRefresh,
+    location,
+    notify,
+    page,
+    sortByTime,
+    groupId,
+    userId,
+  ]);
 
   async function addPost(video, body, creatorId, latitude, longitude) {
     // if video is true, then the body is the Cloudinary Public ID of the uploaded video
