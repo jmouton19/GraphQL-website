@@ -311,6 +311,7 @@ function Profile() {
                         color="primary"
                         onClick={(e) => {
                           e.stopPropagation();
+                          navigate('/messages');
                         }}
                       >
                         <ChatIcon />

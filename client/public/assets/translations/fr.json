@@ -62,5 +62,6 @@
   "radius.label": "Rayon",
   "location.label": "Localisation",
   "useCurrentLocation.label": "Utiliser ma position actuelle",
-  "delete.label": "Supprimer"
+  "delete.label": "Supprimer",
+  "message.label": "Message"
 }

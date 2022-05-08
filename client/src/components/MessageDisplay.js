@@ -12,12 +12,14 @@ import {
   Paper,
 } from '@mui/material';
 import SendIcon from '@mui/icons-material/Send';
+import { useTranslation } from 'react-i18next';
 
 const gun = Gun({
   peers: ['https://cs334gun.herokuapp.com/gun'],
 });
 
 function MessageDisplay({ node }) {
+  const { t } = useTranslation();
   const authUser = useAuthUser();
   const [message, setMessage] = useState('');
   const [messageChain, setMessageChain] = useState([]);
@@ -64,7 +66,7 @@ function MessageDisplay({ node }) {
     <>
       <Stack padding={2} spacing={1}>
         <FormControl fullWidth>
-          <InputLabel>Message</InputLabel>
+          <InputLabel>{t('message.label')}</InputLabel>
           <OutlinedInput
             value={message}
             onKeyUp={(event) => {
@@ -75,7 +77,7 @@ function MessageDisplay({ node }) {
             onChange={(event) => {
               setMessage(event.target.value);
             }}
-            label="Message"
+            label={t('message.label')}
             endAdornment={
               <IconButton onClick={saveMessage} color="primary">
                 <SendIcon />
