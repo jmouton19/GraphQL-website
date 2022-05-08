@@ -41,7 +41,7 @@ function MessageDisplay({ node }) {
               });
             }
           },
-          { wait: 1000 }
+          { wait: 1500 }
         );
     }
 
