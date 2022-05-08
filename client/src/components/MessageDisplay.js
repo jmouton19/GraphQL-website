@@ -30,7 +30,6 @@ function MessageDisplay({ node }) {
         .map()
         .once(
           (m) => {
-            console.log(m);
             if (m) {
               setMessageChain((messageChain) => {
                 if (messageChain[0] !== m) {
