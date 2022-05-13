@@ -246,12 +246,11 @@ function Profile() {
             </IconButton>
           )}
         </Stack>
-        <Typography> </Typography>
       </Stack>
-      {authUser === viewUser && (
-        <TabContext value={activeTabNumber}>
-          <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-            <Stack direction="row">
+      <TabContext value={activeTabNumber}>
+        <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+          <Stack direction="row">
+            {authUser === viewUser ? (
               <TabList
                 onChange={handleTabChange}
                 textColor="primary"
@@ -262,110 +261,119 @@ function Profile() {
                 <Tab label={t('groups.label')} value="2" />
                 <Tab label={t('friends.label')} value="3" />
               </TabList>
-              <EditProfile />
+            ) : (
+              <TabList
+                onChange={handleTabChange}
+                textColor="primary"
+                indicatorColor="primary"
+                aria-label="secondary tabs example"
+              >
+                <Tab label={t('posts.label')} value="1" />
+              </TabList>
+            )}
+            <EditProfile />
+          </Stack>
+        </Box>
+        <TabPanel value="1">
+          <PostProvider page="profile" userId={viewUser.id}>
+            <Stack spacing={2}>
+              <PostList />
             </Stack>
-          </Box>
-          <TabPanel value="1">
-            <PostProvider page="profile" userId={viewUser.id}>
-              <Stack spacing={2}>
-                <PostList />
-              </Stack>
-            </PostProvider>
-          </TabPanel>
-          <TabPanel value="2">
-            <List>
-              {groups.map((group) => (
-                <ListItemButton key={group.id}>
-                  <ListItem onClick={() => navigate(`/group/${group.id}`)}>
-                    <ListItemAvatar>
-                      {group.ownerId === authUser.id ? (
-                        <Badge
-                          overlap="circular"
-                          anchorOrigin={{
-                            vertical: 'bottom',
-                            horizontal: 'right',
-                          }}
-                          badgeContent={<ManageAccountsIcon color="primary" />}
-                        >
-                          <Avatar src={group.avatar} />
-                        </Badge>
-                      ) : (
+          </PostProvider>
+        </TabPanel>
+        <TabPanel value="2">
+          <List>
+            {groups.map((group) => (
+              <ListItemButton key={group.id}>
+                <ListItem onClick={() => navigate(`/group/${group.id}`)}>
+                  <ListItemAvatar>
+                    {group.ownerId === authUser.id ? (
+                      <Badge
+                        overlap="circular"
+                        anchorOrigin={{
+                          vertical: 'bottom',
+                          horizontal: 'right',
+                        }}
+                        badgeContent={<ManageAccountsIcon color="primary" />}
+                      >
                         <Avatar src={group.avatar} />
-                      )}
-                    </ListItemAvatar>
+                      </Badge>
+                    ) : (
+                      <Avatar src={group.avatar} />
+                    )}
+                  </ListItemAvatar>
 
-                    <ListItemText primary={group.name} />
-                  </ListItem>
-                </ListItemButton>
-              ))}
-            </List>
-          </TabPanel>
-          <TabPanel value="3">
-            <List>
-              {acceptedFriends.map((friend) => (
-                <ListItemButton key={friend.id}>
-                  <ListItem
-                    onClick={() => navigate(`/profile/${friend.username}`)}
-                    secondaryAction={
-                      <IconButton
-                        color="primary"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          navigate('/messages');
-                        }}
-                      >
-                        <ChatIcon />
-                      </IconButton>
-                    }
-                  >
-                    <ListItemAvatar>
-                      <Avatar src={friend.avatar} />
-                    </ListItemAvatar>
+                  <ListItemText primary={group.name} />
+                </ListItem>
+              </ListItemButton>
+            ))}
+          </List>
+        </TabPanel>
+        <TabPanel value="3">
+          <List>
+            {acceptedFriends.map((friend) => (
+              <ListItemButton key={friend.id}>
+                <ListItem
+                  onClick={() => navigate(`/profile/${friend.username}`)}
+                  secondaryAction={
+                    <IconButton
+                      color="primary"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        navigate('/messages');
+                      }}
+                    >
+                      <ChatIcon />
+                    </IconButton>
+                  }
+                >
+                  <ListItemAvatar>
+                    <Avatar src={friend.avatar} />
+                  </ListItemAvatar>
 
-                    <ListItemText
-                      primary={friend.username}
-                      secondary={`${friend.firstName} ${friend.lastName}`}
-                    />
-                  </ListItem>
-                </ListItemButton>
-              ))}
-              {pendingFriends.length !== 0 && (
-                <>
-                  <Divider>Friend Requests</Divider>
-                </>
-              )}
-              {pendingFriends.map((friend) => (
-                <ListItemButton>
-                  <ListItem
-                    key={friend.id}
-                    onClick={() => navigate(`/profile/${friend.username}`)}
-                    secondaryAction={
-                      <IconButton
-                        color="success"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          acceptFriend(friend.id);
-                        }}
-                      >
-                        <DoneIcon />
-                      </IconButton>
-                    }
-                  >
-                    <ListItemAvatar>
-                      <Avatar src={friend.avatar} />
-                    </ListItemAvatar>
+                  <ListItemText
+                    primary={friend.username}
+                    secondary={`${friend.firstName} ${friend.lastName}`}
+                  />
+                </ListItem>
+              </ListItemButton>
+            ))}
+            {pendingFriends.length !== 0 && (
+              <>
+                <Divider>Friend Requests</Divider>
+              </>
+            )}
+            {pendingFriends.map((friend) => (
+              <ListItemButton>
+                <ListItem
+                  key={friend.id}
+                  onClick={() => navigate(`/profile/${friend.username}`)}
+                  secondaryAction={
+                    <IconButton
+                      color="success"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        acceptFriend(friend.id);
+                      }}
+                    >
+                      <DoneIcon />
+                    </IconButton>
+                  }
+                >
+                  <ListItemAvatar>
+                    <Avatar src={friend.avatar} />
+                  </ListItemAvatar>
 
-                    <ListItemText
-                      primary={friend.username}
-                      secondary={`${friend.firstName} ${friend.lastName}`}
-                    />
-                  </ListItem>
-                </ListItemButton>
-              ))}
-            </List>
-          </TabPanel>
-        </TabContext>
-      )}
+                  <ListItemText
+                    primary={friend.username}
+                    secondary={`${friend.firstName} ${friend.lastName}`}
+                  />
+                </ListItem>
+              </ListItemButton>
+            ))}
+          </List>
+        </TabPanel>
+      </TabContext>
     </Container>
   );
 }

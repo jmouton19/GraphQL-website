@@ -50,6 +50,7 @@ const GET_POST = gql`
           avatar
         }
         group {
+          id
           name
           avatar
         }
