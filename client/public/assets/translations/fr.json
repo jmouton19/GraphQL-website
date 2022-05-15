@@ -63,5 +63,6 @@
   "location.label": "Localisation",
   "useCurrentLocation.label": "Utiliser ma position actuelle",
   "delete.label": "Supprimer",
-  "message.label": "Message"
+  "message.label": "Message",
+  "distanceAway.label": "de distance"
 }

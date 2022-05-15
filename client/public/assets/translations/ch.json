@@ -62,5 +62,6 @@
   "location.label": "地点",
   "useCurrentLocation.label": "使用我当前的位置",
   "delete.label": "删除",
-  "message.label": "留言"
+  "message.label": "留言",
+  "distanceAway.label": "公里外"
 }

@@ -63,5 +63,6 @@
   "location.label": "Местонахождение",
   "useCurrentLocation.label": "Использовать мое текущее местоположение",
   "delete.label": "Удалить",
-  "message.label": "Сообщение"
+  "message.label": "Сообщение",
+  "distanceAway.label": "от отеля"
 }
