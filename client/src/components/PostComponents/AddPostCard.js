@@ -26,7 +26,7 @@ import { MapContainer, Marker, TileLayer, useMapEvents } from 'react-leaflet';
 import { Icon } from 'leaflet';
 import ChangeView from '../MapComponents/ChangeView';
 
-import { useAuthUser } from '../../providers/AuthProvider'
+import { useAuthUser } from '../../providers/AuthProvider';
 
 const emptyPostData = {
   description: '',
@@ -44,7 +44,11 @@ function LocationMarker(props) {
   const { newPostData } = props;
   useMapEvents({
     click(e) {
-      props.setNewPostData({ ...newPostData, latitude: e.latlng.lat, longitude: e.latlng.lng });
+      props.setNewPostData({
+        ...newPostData,
+        latitude: e.latlng.lat,
+        longitude: e.latlng.lng,
+      });
     },
   });
   return null;
@@ -82,9 +86,40 @@ function AddPostCard({ creatorId }) {
   const useCurrentLocation = () => {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(function (position) {
-        setNewPostData({ ...newPostData, latitude: position.coords.latitude, longitude: position.coords.longitude });
+        setNewPostData({
+          ...newPostData,
+          latitude: position.coords.latitude,
+          longitude: position.coords.longitude,
+        });
       });
     }
+  };
+
+  function handleCreatePost() {
+    let video, body;
+    if (hasVideoData) {
+      video = true;
+      body = newPostData.videoPublicID;
+    } else if (hasTextData) {
+      video = false;
+      body = newPostData.description;
+    }
+    addPost(
+      video,
+      body,
+      creatorId,
+      newPostData.latitude,
+      newPostData.longitude
+    )
+      .then((message) => {
+        notify('success', message);
+        setNewPostData(emptyPostData);
+        refreshPosts();
+      })
+      .catch((message) => {
+        notify('error', message);
+      });
+
   }
 
   return (
@@ -104,6 +139,11 @@ function AddPostCard({ creatorId }) {
                   ...newPostData,
                   description: event.target.value,
                 });
+              }}
+              onKeyDown={(event) => {
+                if (event.key === 'Enter') {
+                  handleCreatePost()
+                }
               }}
             />
           )}
@@ -152,23 +192,7 @@ function AddPostCard({ creatorId }) {
           disabled={!(hasVideoData || hasTextData)}
           style={{ marginLeft: 'auto', marginRight: 10 }}
           onClick={() => {
-            let video, body;
-            if (hasVideoData) {
-              video = true;
-              body = newPostData.videoPublicID;
-            } else if (hasTextData) {
-              video = false;
-              body = newPostData.description;
-            }
-            addPost(video, body, creatorId, newPostData.latitude, newPostData.longitude)
-              .then((message) => {
-                notify('success', message);
-                setNewPostData(emptyPostData);
-                refreshPosts();
-              })
-              .catch((message) => {
-                notify('error', message);
-              });
+            handleCreatePost()
           }}
         >
           {t('post.label')}
@@ -194,13 +218,21 @@ function AddPostCard({ creatorId }) {
               zoom={12}
               style={{ minWidth: 300, minHeight: 250 }}
             >
-              <ChangeView center={[newPostData.latitude, newPostData.longitude]} />
+              <ChangeView
+                center={[newPostData.latitude, newPostData.longitude]}
+              />
               <TileLayer
                 attribution='&copy; <a href="https://stadiamaps.com/">Stadia Maps</a>, &copy; <a href="https://openmaptiles.org/">OpenMapTiles</a> &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors'
                 url="https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{x}/{y}{r}.png"
               />
-              <LocationMarker setNewPostData={setNewPostData} newPostData={newPostData} />
-              <Marker position={[newPostData.latitude, newPostData.longitude]} icon={cheeseIcon} />
+              <LocationMarker
+                setNewPostData={setNewPostData}
+                newPostData={newPostData}
+              />
+              <Marker
+                position={[newPostData.latitude, newPostData.longitude]}
+                icon={cheeseIcon}
+              />
             </MapContainer>
             <Button onClick={useCurrentLocation}>
               {t('useCurrentLocation.label')}

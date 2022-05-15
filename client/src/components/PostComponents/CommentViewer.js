@@ -27,6 +27,13 @@ function CommentViewer() {
     return <LoadingPage minHeight={5} />;
   }
 
+  function handleAddComment() {
+    if (newCommentBody !== '') {
+      addComment(newCommentBody);
+      setNewCommentBody('');
+    }
+  }
+
   return (
     <Stack spacing={2}>
       <Typography paragraph>
@@ -68,13 +75,11 @@ function CommentViewer() {
           onChange={(event) => {
             setNewCommentBody(event.target.value);
           }}
+          onKeyDown={(event) => { if (event.key === "Enter") { handleAddComment() } }}
         />
         <IconButton
           onClick={() => {
-            if (newCommentBody !== '') {
-              addComment(newCommentBody);
-              setNewCommentBody('');
-            }
+            handleAddComment()
           }}
         >
           <SendIcon />
