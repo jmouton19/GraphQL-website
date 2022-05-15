@@ -14,12 +14,14 @@ import {
 import SendIcon from '@mui/icons-material/Send';
 import ClearIcon from '@mui/icons-material/Clear';
 import LoadingPage from '../../pages/LoadingPage';
+import { useAuthUser } from '../../providers/AuthProvider';
 
 function CommentViewer() {
   const [newCommentBody, setNewCommentBody] = useState('');
   const commentsData = useComments();
   const removeComment = useCommentRemove();
   const addComment = useCommentAdd();
+  const authUser = useAuthUser();
 
   if (commentsData === null) {
     return <LoadingPage minHeight={5} />;
@@ -56,7 +58,7 @@ function CommentViewer() {
       ))}
       <Divider />
       <Stack direction="row" spacing={2} alignItems="center">
-        <Avatar />
+        <Avatar src={authUser.avatar} />
         <TextField
           fullWidth
           id="outlined-basic"
