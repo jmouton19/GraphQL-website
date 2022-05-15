@@ -332,6 +332,7 @@ function SignUp() {
                     variant="contained"
                     onClick={completeSignUp}
                     sx={{ mt: 2, mr: 1 }}
+                    disabled={passwordError.status || emailError.status || (password !== passwordRepeated)}
                   >
                     {t("signUp.label")}
                   </Button>
