@@ -11,6 +11,12 @@ RUNNING CLIENT LOCALLY
 
 RUNNING BACKEND LOCALLY
 0) Clone repo
+1) Navigate to /group_8/webAPI/
+2) $ dotnet run
+3) Navigate to https://localhost:7017 OR http://localhost:5116 /graphql
+
+RUNNING APPLICATION LOCALLY
+0) Clone repo
 1) Install Docker https://docs.docker.com/get-docker/ and open
 2) Build image of Dockerfile (On vscode with docker extension: Right-click Dockerfile -> build image -> hit enter)
 3) $ docker run -it --rm -p 4000:80 group8pro2:latest
