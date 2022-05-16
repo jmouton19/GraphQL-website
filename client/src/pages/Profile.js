@@ -314,7 +314,10 @@ function Profile() {
             {acceptedFriends.map((friend) => (
               <ListItemButton key={friend.id}>
                 <ListItem
-                  onClick={() => navigate(`/profile/${friend.username}`)}
+                  onClick={() => {
+                    setActiveTabNumber('1');
+                    navigate(`/profile/${friend.username}`);
+                  }}
                   secondaryAction={
                     <IconButton
                       color="primary"
@@ -347,7 +350,10 @@ function Profile() {
               <ListItemButton>
                 <ListItem
                   key={friend.id}
-                  onClick={() => navigate(`/profile/${friend.username}`)}
+                  onClick={() => {
+                    setActiveTabNumber('1');
+                    navigate(`/profile/${friend.username}`);
+                  }}
                   secondaryAction={
                     <IconButton
                       color="success"
