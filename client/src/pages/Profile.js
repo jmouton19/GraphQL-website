@@ -50,6 +50,7 @@ function Profile() {
   };
 
   useEffect(() => {
+    setActiveTabNumber('1');
     if (params.username === authUser.username) {
       setViewUser(authUser);
       getFriends();
@@ -315,7 +316,6 @@ function Profile() {
               <ListItemButton key={friend.id}>
                 <ListItem
                   onClick={() => {
-                    setActiveTabNumber('1');
                     navigate(`/profile/${friend.username}`);
                   }}
                   secondaryAction={
@@ -351,7 +351,6 @@ function Profile() {
                 <ListItem
                   key={friend.id}
                   onClick={() => {
-                    setActiveTabNumber('1');
                     navigate(`/profile/${friend.username}`);
                   }}
                   secondaryAction={
