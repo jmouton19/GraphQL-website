@@ -1,4 +1,4 @@
-CS334 Project 2 Group 8 - 'Kasie
+CS334 Project 2 Group 8 - 'Kasie - Phillip Schommarz (22621105),Nicol Visser (16986431),Lize Steyn (21772037),JC Mouton (22549889)
 
 Social Networking Application for Computer Science 334. Report located in the root directory.
 To view a cloud deployed version of this website, visit https://cs334proj2group8.herokuapp.com/. 
